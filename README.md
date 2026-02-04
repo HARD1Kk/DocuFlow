@@ -63,30 +63,39 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
 
 ```
 .
+├── data/               # Source PDFs for ingestion
 ├── src/
-│   ├── config.py       # Pydantic settings management
-│   ├── ingestion.py    # PDF to Markdown conversion & splitting
-│   ├── rag.py          # Main RAG pipeline logic
-│   └── main.py         # Entry point
-├── .env                # Environment secrets (not committed)
-├── pyproject.toml      # Project metadata & dependencies
-└── README.md
+│   ├── core/           # Business Logic
+│   │   ├── ingestion.py# PDF Conversion & Chunking
+│   │   └── rag.py      # RAG Retrieval & Generation
+│   └── utils/          # Utilities & Config
+│       ├── config.py   # Settings management
+│       ├── logger.py   # Centralized logging
+│       └── debug_md.py # Markdown inspection tool
+├── main.py             # Root entry point
+├── .env                # Environment secrets
+└── pyproject.toml      # Dependencies
 ```
 
 ## 🧩 Usage
 
-*Work in Progress*
+Simply place your PDF files in the `data/` folder and run the system from the root:
 
-The core ingestion logic can be found in `src/ingestion.py`. It converts a PDF to markdown and then splits it by headers.
+```bash
+uv run main.py
+```
+
+### Manual Ingestion Flow
+You can also import specific logic for your own scripts:
 
 ```python
-from src.ingestion import convert_pdf_to_md, smart_split
+from src.core.ingestion import convert_pdf_to_md, smart_split
 
 # 1. Convert PDF to Markdown
-markdown_content = convert_pdf_to_md("docs/whitepaper.pdf")
+markdown_content = convert_pdf_to_md("data/document.pdf")
 
-# 2. Split into chunks
-chunks = smart_split() # Note: Requires valid markdown_text input
+# 2. Split into chunks based on headers
+chunks = smart_split(markdown_content)
 ```
 
 ## 🚧 Roadmap / To-Do

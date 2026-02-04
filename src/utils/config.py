@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,7 +14,13 @@ class Settings(BaseSettings):
     AZURE_CHATOPENAI_DEPLOYMENT: str = ""
     AZURE_CHATOPENAI_API_VERSION: str = ""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # Logging config
+    log_dir: Path = Path("logs")
+    log_file: str = "app.log"
+
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
 
 # INSTANTIATION

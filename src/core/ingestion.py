@@ -1,10 +1,10 @@
-import logging
 from pathlib import Path
 from typing import List
+
 import pymupdf4llm
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
-from utils.debug_md import save_pdf_to_md
+
 
 def convert_pdf_to_md(pdf_path: str) -> str:
     """

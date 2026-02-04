@@ -4,13 +4,17 @@ version = "0.1.0"
 description = "A Rag system"
 readme = "README.md"
 requires-python = ">=3.11"
+
 dependencies = [
     "langchain>=1.2.7",
     "langchain-openai>=1.1.7",
-    "mypy>=1.19.1",
+    "langchain-text-splitters>=1.1.0",
+    "pydantic-settings>=2.12.0",
+    "pymupdf>=1.26.6",
+    "pymupdf-layout>=1.26.6",
     "pymupdf4llm>=0.2.9",
-    "ruff>=0.14.14",
 ]
+
 [tool.ruff]
 line-length = 88
 target-version = "py311"
@@ -19,6 +23,15 @@ target-version = "py311"
 select = ["E", "F", "I"]  # Enable standard errors, formatting errors, and Import sorting
 
 [tool.mypy]
+plugins = ["pydantic.mypy"]
 python_version = "3.11"
 strict = true
 ignore_missing_imports = true
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "ruff>=0.14.14",
+]
+
+
