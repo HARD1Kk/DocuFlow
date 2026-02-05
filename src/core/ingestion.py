@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import List
 
@@ -12,7 +13,14 @@ def convert_pdf_to_md(pdf_path: str) -> str:
     Preserves tables and multi-column layouts.
     """
     # Simply returns the whole doc as a clean markdown string
-    md_text: str = pymupdf4llm.to_markdown(pdf_path)
+
+    pages:list = pymupdf4llm.to_markdown(pdf_path, page_chunks = True)
+    logging.info(pages)
+
+    md_text = "\n\n".join(p["text"] for p in pages)
+    logging.info("Total length of extracted text: %d", len(md_text))
+    logging.info(md_text)
+
     return md_text
 
 

@@ -68,21 +68,26 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
 │   ├── core/           # Business Logic
 │   │   ├── ingestion.py# PDF Conversion & Chunking
 │   │   └── rag.py      # RAG Retrieval & Generation
-│   └── utils/          # Utilities & Config
-│       ├── config.py   # Settings management
-│       ├── logger.py   # Centralized logging
-│       └── debug_md.py # Markdown inspection tool
-├── main.py             # Root entry point
+│   ├── utils/          # Utilities & Config
+│   │   ├── config.py   # Settings management
+│   │   ├── logger.py   # Centralized logging
+│   │   └── debug_md.py # Markdown inspection tool
+│   └── main.py         # Application entry point
 ├── .env                # Environment secrets
+├── justfile            # Task runner
 └── pyproject.toml      # Dependencies
 ```
 
 ## 🧩 Usage
 
-Simply place your PDF files in the `data/` folder and run the system from the root:
+Simply place your PDF files in the `data/` folder and run the system using `just` (recommended) or `uv`:
 
 ```bash
-uv run main.py
+# Using just (runs src/main.py)
+just run
+
+# Or directly with uv
+uv run src/main.py
 ```
 
 ### Manual Ingestion Flow

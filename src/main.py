@@ -1,6 +1,5 @@
-from ingestion import ingest_data
-
-from ..utils.logger import setup_logging
+from core.ingestion import ingest_data
+from utils.logger import setup_logging
 
 
 def start() -> None:
