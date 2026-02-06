@@ -1,7 +1,7 @@
 fmt:
-    uv run ruff format . && uv run ruff check --fix && uv run ruff format .
+    uv run ruff format .  && uv run ruff check --fix && uv run ruff format .
 
-run:
+go:
     uv run src/main.py
 
 check:
