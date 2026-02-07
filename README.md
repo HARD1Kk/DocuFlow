@@ -2,30 +2,27 @@
 
 DocuFlow is a modern Retrieval-Augmented Generation (RAG) system designed to process complex PDF documents with precision. By converting PDFs to structured Markdown before ingestion, DocuFlow preserves document layout, tables, and headers, ensuring higher-quality context for Large Language Models.
 
-Powered by **Azure OpenAI** and **LangChain**.
 
 ## 🚀 Features
 
 - **Automatic Batch Processing**: Automatically detects and processes all PDF files in the `data/` directory.
 - **High-Fidelity Ingestion**: Uses `pymupdf4llm` to convert PDFs to Markdown, preserving tables and multi-column layouts.
 - **OCR Support**: Handles scanned PDFs by performing optional OCR extraction (via pymupdf4llm).
-- **Smart Splitting**: Implements structure-aware splitting based on Markdown headers (`#`, `##`, `###`) to keep semantic sections together.
-- **Azure Integration**: Built-in configuration for Azure OpenAI (Chat & Embeddings).
+- **Smart Splitting**: Implements structure-aware splitting based on Markdown headers (`#`, `##`, `###`) with recursive character fallback to ensure optimal chunk sizes.
 - **Modern Stack**: Fully typed Python 3.11+ codebase managed with `uv` and linted with `ruff`.
 
 ## 🛠️ Tech Stack
 
 - **Core**: Python 3.11+
-- **LLM & Embeddings**: Azure OpenAI
+- **LLM & Embeddings**: 
 - **Orchestration**: LangChain
 - **Document Processing**: PyMuPDF4LLM (with OCR capabilities)
 - **Configuration**: Pydantic Settings
 
 ## 📋 Prerequisites
 
-Ensure you have access to an Azure OpenAI resource with deployments for:
-- An embedding model (e.g., `text-embedding-3-small`)
-- A chat model (e.g., `gpt-4o`)
+- Python 3.11+
+- `uv` package manager (recommended)
 
 ## ⚙️ Installation
 
@@ -40,13 +37,8 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
    ```bash
    touch .env
    ```
-   Add your Azure credentials:
+   Configure your settings:
    ```env
-   AZURE_OPENAI_API_KEY=your_key_here
-   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-   AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small
-   AZURE_OPENAI_API_VERSION=2024-02-01
-
    # Logging
    LOG_LEVEL=INFO
    ```
@@ -70,6 +62,7 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
 │   ├── utils/          # Utilities & Config
 │   │   ├── settings.py # Settings management (Pydantic)
 │   │   ├── logger.py   # Centralized logging
+│   │   ├── chunking.py # Semantic & Recursive Text Splitting
 │   │   ├── conversion.py # PDF to MD conversion logic
 │   │   └── load_fie.py # File loading utilities
 │   └── main.py         # Application entry point
