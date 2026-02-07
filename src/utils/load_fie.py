@@ -14,7 +14,6 @@ def get_all_pdfs(pdf_dir: Path) -> List[Path]:
 def get_latest_pdf(pdf_dir: Path) -> Path:
     """Returns the most recently modified PDF file."""
     pdfs = get_all_pdfs(pdf_dir)
-
     if not pdfs:
         raise FileNotFoundError("No PDF found in directory")
 

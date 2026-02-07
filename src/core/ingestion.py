@@ -1,61 +1,38 @@
 import logging
-from pathlib import Path
-from typing import List
 
-import pymupdf4llm
-from langchain_core.documents import Document
-from langchain_text_splitters import MarkdownHeaderTextSplitter
-
-
-def convert_pdf_to_md(pdf_path: str) -> str:
-    """
-    Converts a PDF to Markdown using layout analysis.
-    Preserves tables and multi-column layouts.
-    """
-    # Simply returns the whole doc as a clean markdown string
-
-    pages:list = pymupdf4llm.to_markdown(pdf_path, page_chunks = True)
-    logging.info(pages)
-
-    md_text = "\n\n".join(p["text"] for p in pages)
-    logging.info("Total length of extracted text: %d", len(md_text))
-    logging.info(md_text)
-
-    return md_text
-
-
-def smart_split(markdown_text: str) -> List[Document]:
-    # step 1 Define the rules for splitting
-    split_rules = [("#", "Header 1"), ("##", "Header 2"), ("###", "Header 3")]
-
-    # step 2 create splitter using these rules
-    splitter = MarkdownHeaderTextSplitter(headers_to_split_on=split_rules)
-
-    # Step 3: Give the markdown text to the splitter
-    sections = splitter.split_text(markdown_text)
-
-    return sections
+from utils.chunking import get_sections
+from utils.conversion import convert_pdf_to_md, save_markdown
+from utils.load_fie import get_all_pdfs
+from utils.settings import settings
 
 
 def ingest_data() -> None:
-    folder_path = Path("data")
+    """Main entrypoint to convert and save a PDF to markdown.
 
-    logging.info("Finding Folder if exists")
+    Automatically picks the latest PDF from the configured directory.
+    """
+    # Get all PDFs from the directory
+    pdfs = get_all_pdfs(settings.pdf_dir)
 
-    if not folder_path.exists():
-        raise FileNotFoundError("Folder not found")
+    for pdf_path in pdfs:
+        logging.info(f"Processing PDF: {pdf_path.name}")
 
-    list_pdfs = list(folder_path.glob("*.pdf"))
+        # Convert PDF to markdown
+        md_text = convert_pdf_to_md(str(pdf_path))
 
-    print(f"files found : {[pdf.name for pdf in list_pdfs]}")
-    for pdf in list_pdfs:
-        print(f"currently processing file: {pdf.name}")
+        # Generate output filename based on input PDF name
+        output_filename = pdf_path.stem + ".md"  # stem gets filename without extension
+        output_path = settings.output_dir / output_filename
 
-        try:
-            text = convert_pdf_to_md(str(pdf))
-            chunks = smart_split(text)
-            logging.info(f"Found {len(chunks)} in this file")
-        except Exception as e:
-            logging.error(f"Failed to process {pdf.name}: {e}")
+        # Save the markdown
+        saved_path = save_markdown(md_text, str(output_path))
 
-    return None
+        # 3. Create Chunks
+        chunks = get_sections(md_text)
+        logging.info(f"Generated {len(chunks)} chunks from {pdf_path.name}")
+
+        # Log first chunk for debug (optional)
+        if chunks:
+            logging.info(f"First chunk preview: {chunks[0].page_content[:200]}...")
+
+        logging.info(f"Saved markdown to: {saved_path}")

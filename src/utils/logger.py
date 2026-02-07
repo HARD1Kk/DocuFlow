@@ -1,6 +1,6 @@
 import logging
 
-from utils.config import settings
+from utils.settings import settings
 
 
 def setup_logging() -> None:

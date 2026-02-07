@@ -6,17 +6,19 @@ Powered by **Azure OpenAI** and **LangChain**.
 
 ## 🚀 Features
 
+- **Automatic Batch Processing**: Automatically detects and processes all PDF files in the `data/` directory.
 - **High-Fidelity Ingestion**: Uses `pymupdf4llm` to convert PDFs to Markdown, preserving tables and multi-column layouts.
+- **OCR Support**: Handles scanned PDFs by performing optional OCR extraction (via pymupdf4llm).
 - **Smart Splitting**: Implements structure-aware splitting based on Markdown headers (`#`, `##`, `###`) to keep semantic sections together.
 - **Azure Integration**: Built-in configuration for Azure OpenAI (Chat & Embeddings).
-- **Modern Stack**: Fully typed Python 3.11+ codebase managed with `uv` (or standard pip) and linted with `ruff`.
+- **Modern Stack**: Fully typed Python 3.11+ codebase managed with `uv` and linted with `ruff`.
 
 ## 🛠️ Tech Stack
 
 - **Core**: Python 3.11+
 - **LLM & Embeddings**: Azure OpenAI
 - **Orchestration**: LangChain
-- **Document Processing**: PyMuPDF4LLM
+- **Document Processing**: PyMuPDF4LLM (with OCR capabilities)
 - **Configuration**: Pydantic Settings
 
 ## 📋 Prerequisites
@@ -45,33 +47,31 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
    AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small
    AZURE_OPENAI_API_VERSION=2024-02-01
 
-   AZURE_CHATOPENAI_API_KEY=your_key_here
-   AZURE_CHATOPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-   AZURE_CHATOPENAI_DEPLOYMENT=gpt-4o
-   AZURE_CHATOPENAI_API_VERSION=2024-02-01
+   # Logging
+   LOG_LEVEL=INFO
    ```
 
 3. **Install dependencies**
    Refers to `pyproject.toml` for the list of dependencies.
    ```bash
-   pip install .
-   # OR if using uv
-   uv pip install .
+   # Using uv (recommended)
+   uv sync
    ```
 
 ## 📂 Project Structure
 
 ```
 .
-├── data/               # Source PDFs for ingestion
+├── data/               # Source PDFs for ingestion & Output Markdown
 ├── src/
 │   ├── core/           # Business Logic
-│   │   ├── ingestion.py# PDF Conversion & Chunking
+│   │   ├── ingestion.py# PDF Conversion & Batch Processing
 │   │   └── rag.py      # RAG Retrieval & Generation
 │   ├── utils/          # Utilities & Config
-│   │   ├── config.py   # Settings management
+│   │   ├── settings.py # Settings management (Pydantic)
 │   │   ├── logger.py   # Centralized logging
-│   │   └── debug_md.py # Markdown inspection tool
+│   │   ├── conversion.py # PDF to MD conversion logic
+│   │   └── load_fie.py # File loading utilities
 │   └── main.py         # Application entry point
 ├── .env                # Environment secrets
 ├── justfile            # Task runner
@@ -80,11 +80,11 @@ Ensure you have access to an Azure OpenAI resource with deployments for:
 
 ## 🧩 Usage
 
-Simply place your PDF files in the `data/` folder and run the system using `just` (recommended) or `uv`:
+Simply place your PDF files in the `data/` folder. The system will process **all** found PDFs.
 
 ```bash
-# Using just (runs src/main.py)
-just run
+# Using just (recommended)
+just go
 
 # Or directly with uv
 uv run src/main.py
@@ -94,13 +94,10 @@ uv run src/main.py
 You can also import specific logic for your own scripts:
 
 ```python
-from src.core.ingestion import convert_pdf_to_md, smart_split
+from src.core.ingestion import ingest_data
 
-# 1. Convert PDF to Markdown
-markdown_content = convert_pdf_to_md("data/document.pdf")
-
-# 2. Split into chunks based on headers
-chunks = smart_split(markdown_content)
+# Process all PDFs in the data directory
+ingest_data()
 ```
 
 ## 🚧 Roadmap / To-Do
