@@ -831,20 +831,6 @@ wheels = [
 ]
 
 [[package]]
-name = "langchain-openai"
-version = "1.1.7"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "langchain-core" },
-    { name = "openai" },
-    { name = "tiktoken" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/38/b7/30bfc4d1b658a9ee524bcce3b0b2ec9c45a11c853a13c4f0c9da9882784b/langchain_openai-1.1.7.tar.gz", hash = "sha256:f5ec31961ed24777548b63a5fe313548bc6e0eb9730d6552b8c6418765254c81", size = 1039134, upload-time = "2026-01-07T19:44:59.728Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/64/a1/50e7596aca775d8c3883eceeaf47489fac26c57c1abe243c00174f715a8a/langchain_openai-1.1.7-py3-none-any.whl", hash = "sha256:34e9cd686aac1a120d6472804422792bf8080a2103b5d21ee450c9e42d053815", size = 84753, upload-time = "2026-01-07T19:44:58.629Z" },
-]
-
-[[package]]
 name = "langchain-text-splitters"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2309,7 +2295,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "langchain" },
-    { name = "langchain-openai" },
     { name = "langchain-text-splitters" },
     { name = "pydantic-settings" },
     { name = "pymupdf" },
@@ -2329,7 +2314,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "langchain", specifier = ">=1.2.7" },
-    { name = "langchain-openai", specifier = ">=1.1.7" },
     { name = "langchain-text-splitters", specifier = ">=0.2.0" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "pymupdf", specifier = ">=1.26.6" },

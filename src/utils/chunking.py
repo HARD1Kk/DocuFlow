@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 from langchain_core.documents import Document
@@ -19,6 +20,14 @@ def get_sections(markdown_text: str) -> List[Document]:
         ("###", "Header 3"),
     ]
 
+    # MD splits
+
+    # Preprocess: Convert pseudo-headers in tables to real Markdown headers
+    # Matches lines like ||**EDUCATION**|| and converts them to ### EDUCATION
+    markdown_text = re.sub(
+        r"^\|\|\*\*(.*?)\*\*\|\|", r"### \1", markdown_text, flags=re.MULTILINE
+    )
+
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=headers_to_split_on
     )
@@ -27,9 +36,11 @@ def get_sections(markdown_text: str) -> List[Document]:
     # 2. Second pass: Split large chunks recursively (Size limit)
     # 2000 chars ~ 500 tokens. Adjust based on your embedding model limits.
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000, chunk_overlap=200, separators=["\n\n", "\n", ".", " ", ""]
+        chunk_size=250, chunk_overlap=30, separators=["\n\n", "\n", ".", " ", ""]
     )
-
+    # Split
     final_splits = text_splitter.split_documents(header_splits)
-
+    # logging.info(f"Split document into {len(final_splits)} chunks:")
+    # for i, split in enumerate(final_splits):
+    #     logging.info(f"Chunk {i+1}:\nContent: {split.page_content}\nMetadata: {split.metadata}\n---")
     return final_splits

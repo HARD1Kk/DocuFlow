@@ -5,8 +5,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    
-
     # Path of Pdf
     pdf_dir: Path = Field(
         default=Path("data/"), description="Directory containing PDF files"
