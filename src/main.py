@@ -1,4 +1,4 @@
-from core.ingestion import ingest_data
+from core.ingestion.ingestion_pipeline import ingest_data
 from utils.logger import setup_logging
 
 

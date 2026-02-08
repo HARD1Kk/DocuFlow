@@ -23,6 +23,10 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
         extra = "ignore"  # Ignore extra fields from .env
 
+    # Embedding model
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    chunk_size: int = 800
+
 
 # INSTANTIATION
 settings = Settings()
