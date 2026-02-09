@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 import numpy as np
@@ -6,10 +7,14 @@ from FlagEmbedding import FlagModel
 from utils.settings import settings
 
 # Global model instance
-model = FlagModel(settings.embedding_model, use_fp16=False)
+model = FlagModel(
+    settings.embedding_model,
+    query_instruction_for_retrieval="Represent this sentence for searching relevant passages:",
+    use_fp16=False,
+)
 
 
-def embed_texts(texts: List[str]) -> List[List[float]]:
+def embed_texts(texts: List[str], batch_size: int = 64) -> List[List[float]]:
     """
     Generate dense embeddings for a list of texts.
 
@@ -19,10 +24,23 @@ def embed_texts(texts: List[str]) -> List[List[float]]:
     Returns:
         List of embeddings (lists of floats).
     """
-    # FlagModel.encode returns the embeddings directly as a numpy array
-    embeddings = model.encode(texts)
 
-    # Convert numpy array to list of lists for JSON serialization/storage compatibility
-    if isinstance(embeddings, np.ndarray):
-        return embeddings.tolist()
-    return embeddings  # type: ignore
+    if not texts:
+        return []
+
+    try:
+        all_embeddings = []
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i : i + batch_size]
+            embeddings = model.encode(batch)
+            # FlagModel.encode returns the embeddings directly as a numpy array
+            # Convert numpy array to list of lists for JSON serialization/storage compatibility
+            if isinstance(embeddings, np.ndarray):
+                all_embeddings.extend(embeddings.tolist())  # ← extend, not return
+            else:
+                all_embeddings.extend(embeddings)
+        return all_embeddings
+    except Exception as e:
+        logging.error(f"Embedding failed for {len(texts)} texts: {e}")
+        raise

@@ -41,14 +41,3 @@ def ingest_data() -> None:
         chunk_texts = [chunk.page_content for chunk in chunks]
         vectors = embed_texts(chunk_texts)
         logging.info(f"Generated {len(vectors)} vectors")
-
-        # 5. Store in Vector DB
-        import services.vector_store_service as vector_store_service
-
-        # Prepare data for storage
-        ids = [f"{pdf_path.stem}_{i}" for i in range(len(chunks))]
-        metadatas = [chunk.metadata for chunk in chunks]
-
-        vector_store_service.add_chunks(
-            ids=ids, documents=chunk_texts, embeddings=vectors, metadatas=metadatas
-        )
