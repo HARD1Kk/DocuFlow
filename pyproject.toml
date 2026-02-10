@@ -40,8 +40,8 @@ mypy_path = ["src"]
 dev = [
     "langchain-community>=0.4.1",
     "llama-index>=0.14.13",
-    "mypy>=1.19.1",
     "ruff>=0.14.14",
+    "ty>=0.0.15",
 ]
 
 
