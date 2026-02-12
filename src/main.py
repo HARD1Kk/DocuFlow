@@ -1,11 +1,10 @@
 from core.ingestion.ingestion_pipeline import ingest_data
-from utils.logger import setup_logging
+from utils.logger import get_logger
 
 
 def start() -> None:
-    setup_logging()
+    get_logger()
     ingest_data()
-
     return None
 
 

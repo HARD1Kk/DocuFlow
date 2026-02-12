@@ -6,6 +6,8 @@ from services.embedding_service import embed_texts
 from utils.load_fie import get_all_pdfs
 from utils.settings import settings
 
+logger = logging.getLogger(__name__)
+
 
 def ingest_data() -> None:
     """Main entrypoint to convert and save a PDF to markdown.
@@ -16,7 +18,7 @@ def ingest_data() -> None:
     pdfs = get_all_pdfs(settings.pdf_dir)
 
     for pdf_path in pdfs:
-        logging.info(f"Processing PDF: {pdf_path.name}")
+        logger.info(f"Processing PDF: {pdf_path.name}")
 
         # Convert PDF to markdown
         md_text = convert_pdf_to_md(str(pdf_path))
@@ -31,13 +33,13 @@ def ingest_data() -> None:
         # 3. Create Chunks
         chunks = get_sections(md_text)
 
-        logging.info(f"Generated {len(chunks)} chunks from {pdf_path.name}")
+        logger.info(f"Generated {len(chunks)} chunks from {pdf_path.name}")
 
         # Log first chunk for debug (optional)
         if chunks:
-            logging.info(f"First chunk preview: {chunks[0].page_content[:200]}...")
+            logger.info(f"First chunk preview: {chunks[0].page_content[:200]}...")
 
         # Extract text content from chunks
         chunk_texts = [chunk.page_content for chunk in chunks]
         vectors = embed_texts(chunk_texts)
-        logging.info(f"Generated {len(vectors)} vectors")
+        logger.info(f"Generated {len(vectors)} vectors")

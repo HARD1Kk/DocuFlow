@@ -1,23 +1,33 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
-from utils.settings import settings
 
+def get_logger():
+    logger = logging.getLogger(__name__)
 
-def setup_logging() -> None:
-    """Configures logging for the entire application."""
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    # Prevent duplicate logs
+    if logger.handlers:
+        return logger
 
-    log_path = settings.log_dir / settings.log_file
+    logger.setLevel(logging.DEBUG)
 
-    # Ensure the directory exists
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-
-    handler = logging.FileHandler(log_path, mode="a", encoding="utf-8")
     formatter = logging.Formatter(
-        "%(asctime)s - %(filename)s - %(levelname)s - %(message)s",
-        datefmt="%d-%m-%Y %I:%M:%S %p",
+        "%(name)s |  %(levelname)s | %(filename)s | %(message)s"
     )
-    handler.setFormatter(formatter)
 
-    root_logger.addHandler(handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(formatter)
+
+    file_handler = RotatingFileHandler(
+        "rag-logger.log", maxBytes=5_000_000, backupCount=3
+    )
+
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(console_handler)
+
+    logger.addHandler(file_handler)
+    logger.propagate = False
+    return logger

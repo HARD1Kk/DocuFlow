@@ -6,6 +6,9 @@ from FlagEmbedding import FlagModel
 
 from utils.settings import settings
 
+logger = logging.getLogger(__name__)
+
+
 # Global model instance
 model = FlagModel(
     settings.embedding_model,
@@ -42,5 +45,5 @@ def embed_texts(texts: List[str], batch_size: int = 64) -> List[List[float]]:
                 all_embeddings.extend(embeddings)
         return all_embeddings
     except Exception as e:
-        logging.error(f"Embedding failed for {len(texts)} texts: {e}")
+        logger.error(f"Embedding failed for {len(texts)} texts: {e}")
         raise

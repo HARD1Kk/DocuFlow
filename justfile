@@ -5,4 +5,4 @@ go:
     uv run src/main.py
 
 check:
-    uv run mypy . 
+    uv run ty 
