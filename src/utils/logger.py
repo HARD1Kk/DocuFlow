@@ -1,6 +1,8 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
+from utils.settings import settings
+
 
 def get_logger():
     logger = logging.getLogger(__name__)
@@ -9,7 +11,7 @@ def get_logger():
     if logger.handlers:
         return logger
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
         "%(name)s |  %(levelname)s | %(filename)s | %(message)s"
@@ -20,14 +22,12 @@ def get_logger():
     console_handler.setFormatter(formatter)
 
     file_handler = RotatingFileHandler(
-        "rag-logger.log", maxBytes=5_000_000, backupCount=3
+        settings.log_path, maxBytes=5_000_000, backupCount=3
     )
-
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
 
     logger.addHandler(console_handler)
-
     logger.addHandler(file_handler)
     logger.propagate = False
     return logger

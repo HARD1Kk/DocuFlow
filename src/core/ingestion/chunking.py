@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import List
 
@@ -6,6 +7,8 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def get_sections(markdown_text: str) -> List[Document]:
@@ -31,6 +34,7 @@ def get_sections(markdown_text: str) -> List[Document]:
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=headers_to_split_on
     )
+    logger.info(header_splitter)
     header_splits = header_splitter.split_text(markdown_text)
 
     # 2. Second pass: Split large chunks recursively (Size limit)
