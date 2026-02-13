@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List
-
+import logging
+logger = logging.getLogger(__name__)
 
 def get_all_pdfs(pdf_dir: Path) -> List[Path]:
     """Returns a list of all PDF files in the directory."""
@@ -8,6 +9,7 @@ def get_all_pdfs(pdf_dir: Path) -> List[Path]:
         raise FileNotFoundError(f"Directory not found: {pdf_dir}")
 
     pdfs = list(pdf_dir.glob("*.pdf"))
+    logger.info(f"Here is the list of pdfs :  {pdfs}")
     return pdfs
 
 

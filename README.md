@@ -33,7 +33,7 @@ DocuFlow is a modern Retrieval-Augmented Generation (RAG) system designed to pro
    # Using uv (recommended)
    uv sync
    ```
-
+[![GitHub Streak](https://streak-stats.demolab.com/?user=hard1kk&theme=dark)](https://git.io/streak-stats)
 3. **Configure Settings (Optional)**
    Create a `.env` file if you need to override defaults:
    ```env
