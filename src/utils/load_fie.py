@@ -1,7 +1,9 @@
+import logging
 from pathlib import Path
 from typing import List
-import logging
+
 logger = logging.getLogger(__name__)
+
 
 def get_all_pdfs(pdf_dir: Path) -> List[Path]:
     """Returns a list of all PDF files in the directory."""
