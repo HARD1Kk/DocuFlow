@@ -4,5 +4,5 @@ fmt:
 go:
     uv run src/main.py
 
-check:
-    uv run ty 
+activate:
+    source .venv/bin/activate

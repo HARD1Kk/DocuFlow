@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     log_dir: Path = Field(default=Path("logs"), description="Directory for log files")
     log_file: str = Field(default="app.log", description="Log file name")
 
+    @property
+    def log_path(self)-> Path:
+        return self.log_dir / self.log_file
+
+
     # Logging config
     class Config:
         env_file = ".env"

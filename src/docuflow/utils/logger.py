@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from utils.settings import settings
+from docuflow.utils.settings import settings
 
 
 def get_logger():
