@@ -1,7 +1,10 @@
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import BaseModel, Field, computed_field
 from pydantic_settings import BaseSettings
+
+
+class logs(BaseModel): ...
 
 
 class Settings(BaseSettings):
@@ -17,10 +20,15 @@ class Settings(BaseSettings):
     log_dir: Path = Field(default=Path("logs"), description="Directory for log files")
     log_file: str = Field(default="app.log", description="Log file name")
 
-    @property
-    def log_path(self)-> Path:
-        return self.log_dir / self.log_file
+    # chroma db path
+    db_path: Path = Field(
+        default=Path("chroma"), description="Directory for chroma db vector storage"
+    )
 
+    @computed_field
+    @property
+    def log_path(self) -> Path:
+        return self.log_dir / self.log_file
 
     # Logging config
     class Config:

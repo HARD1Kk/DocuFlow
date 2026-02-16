@@ -2,11 +2,9 @@ import logging
 
 import chromadb
 
-from docuflow.core.ingestion.conversion import convert_pdf_to_md
-from docuflow.services.embedding_service import embed_texts
+from docuflow.configs.settings import settings
 from docuflow.utils.load_fie import get_all_pdfs
-from docuflow.utils.settings import settings
-import numpy as np
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,12 +12,16 @@ def store_documents():
     """Load PDFs, generate embeddings, store in ChromaDB"""
     pdfs = get_all_pdfs(settings.pdf_dir)
     print(type(pdfs))
+    print(pdfs)
 
-    
+    client = chromadb.PersistentClient(path=settings.db_path)
+    print(client)
+    print(type(client))
+
     # documents  = []
 
     # documents.convert_pdf_to_md(pdfs)
-    
+
     # all_embeddings = embed_texts(documents)
     # print(type(all_embeddings))
     # client = chromadb.PersistentClient(path="./chromadb/vector_db")
@@ -33,6 +35,7 @@ def store_documents():
     # logger.info(f"Stored {collections.count()} documents")
 
     # return collections
+
 
 if __name__ == "__main__":
     store_documents()

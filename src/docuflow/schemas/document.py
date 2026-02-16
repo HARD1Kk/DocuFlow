@@ -1,5 +1,5 @@
-from pydantic.settings import BaseSettings
+# from pydantic.settings import BaseSettings
 
 
-class documents(BaseSettings):
-    documents:list[str]
+# class documents(BaseSettings):
+#     documents: list[str]
