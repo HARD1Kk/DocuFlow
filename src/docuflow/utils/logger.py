@@ -14,7 +14,8 @@ def get_logger():
     logger.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
-        "%(name)s |  %(levelname)s | %(filename)s | %(message)s"
+        "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     console_handler = logging.StreamHandler()

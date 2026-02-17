@@ -1,10 +1,10 @@
 import logging
 
+from docuflow.configs.settings import settings
 from docuflow.core.ingestion.chunking import get_sections
 from docuflow.core.ingestion.conversion import convert_pdf_to_md, save_markdown
 from docuflow.services.embedding_service import embed_texts
 from docuflow.utils.load_fie import get_all_pdfs
-from docuflow.configs.settings import settings
 
 logger = logging.getLogger(__name__)
 

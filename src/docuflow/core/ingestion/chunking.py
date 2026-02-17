@@ -22,29 +22,42 @@ def get_sections(markdown_text: str) -> List[Document]:
         ("##", "Header 2"),
         ("###", "Header 3"),
     ]
-
+    logger.info(headers_to_split_on)
     # MD splits
 
-    # Preprocess: Convert pseudo-headers in tables to real Markdown headers
-    # Matches lines like ||**EDUCATION**|| and converts them to ### EDUCATION
     markdown_text = re.sub(
-        r"^\|\|\*\*(.*?)\*\*\|\|", r"### \1", markdown_text, flags=re.MULTILINE
+        r"^\*\*(.*?)\*\*", r"## \1", markdown_text, flags=re.MULTILINE
     )
+
+    logger.info(markdown_text)
+    print(markdown_text)
 
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=headers_to_split_on
     )
-    logger.info(header_splitter)
+
+    print(header_splitter)
     header_splits = header_splitter.split_text(markdown_text)
 
+    logger.info(header_splits)
+
     # 2. Second pass: Split large chunks recursively (Size limit)
-    # 2000 chars ~ 500 tokens. Adjust based on your embedding model limits.
+
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=250, chunk_overlap=30, separators=["\n\n", "\n", ".", " ", ""]
+        chunk_size=500, chunk_overlap=100, separators=["\n\n", "\n", ". ", " ", ""]
     )
+
     # Split
     final_splits = text_splitter.split_documents(header_splits)
+
+    # logger.info(final_splits.metadata)
+    # print(final_splits)
     # logging.info(f"Split document into {len(final_splits)} chunks:")
     # for i, split in enumerate(final_splits):
     #     logging.info(f"Chunk {i+1}:\nContent: {split.page_content}\nMetadata: {split.metadata}\n---")
     return final_splits
+
+
+# if __name__ == "__main__":
+#     pdf = get_latest_pdf(settings.pdf_dir)
+#     get_sections(convert_pdf_to_md(str(pdf)))
