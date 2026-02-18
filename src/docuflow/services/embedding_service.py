@@ -3,6 +3,7 @@ from typing import List
 
 import numpy as np
 from FlagEmbedding import FlagModel
+
 from docuflow.configs.settings import settings
 
 logger = logging.getLogger(__name__)

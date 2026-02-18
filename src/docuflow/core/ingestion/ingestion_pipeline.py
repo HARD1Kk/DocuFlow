@@ -4,6 +4,7 @@ from docuflow.configs.settings import settings
 from docuflow.core.ingestion.chunking import get_sections
 from docuflow.core.ingestion.conversion import convert_pdf_to_md, save_markdown
 from docuflow.services.embedding_service import embed_texts
+from docuflow.services.vector_store_service import store_documents
 from docuflow.utils.load_fie import get_all_pdfs
 
 logger = logging.getLogger(__name__)
@@ -42,4 +43,9 @@ def ingest_data() -> None:
         # Extract text content from chunks
         chunk_texts = [chunk.page_content for chunk in chunks]
         vectors = embed_texts(chunk_texts)
+        # print(vectors)
+
+        documents = get_sections(md_text)
+        vector_db_create = store_documents(documents)
+        # print(vector_db_create)
         logger.info(f"Generated {len(vectors)} vectors")
