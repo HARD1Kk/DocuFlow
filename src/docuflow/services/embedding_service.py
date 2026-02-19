@@ -17,33 +17,73 @@ model = FlagModel(
 )
 
 
-def embed_texts(texts: List[str], batch_size: int = 64) -> List[List[float]]:
-    """
-    Generate dense embeddings for a list of texts.
+class EmbeddingServices:
+    def __init__(self, model, batch_size: int = 64):
+        """
+        Store the model and batch_size inside this service object.
+        """
+        self.model = model
+        self.batch_size = batch_size
 
-    Args:
-        texts: List of strings to embed.
+    def embed_texts(self, texts: List[str]) -> List[List[float]]:
+        """
+        Generate dense embeddings for a list of texts.
 
-    Returns:
-        List of embeddings (lists of floats).
-    """
+        Args:
+            texts: List of strings to embed.
 
-    if not texts:
-        return []
+        Returns:
+            List of embeddings (lists of floats).
+        """
 
-    try:
-        all_embeddings = []
+        if not texts:
+            return []
 
-        for i in range(0, len(texts), batch_size):
-            batch = texts[i : i + batch_size]
-            embeddings = model.encode(batch)
-            # FlagModel.encode returns the embeddings directly as a numpy array
-            # Convert numpy array to list of lists for JSON serialization/storage compatibility
-            if isinstance(embeddings, np.ndarray):
-                all_embeddings.extend(embeddings.tolist())  # ← extend, not return
-            else:
-                all_embeddings.extend(embeddings)
-        return all_embeddings
-    except Exception as e:
-        logger.error(f"Embedding failed for {len(texts)} texts: {e}")
-        raise
+        try:
+            all_embeddings = []
+
+            for i in range(0, len(texts), self.batch_size):
+                batch = texts[i : i + self.batch_size]
+                embeddings = self.model.encode(batch)
+                # FlagModel.encode returns the embeddings directly as a numpy array
+                # Convert numpy array to list of lists for JSON serialization/storage compatibility
+                if isinstance(embeddings, np.ndarray):
+                    all_embeddings.extend(embeddings.tolist())  # ← extend, not return
+                else:
+                    all_embeddings.extend(embeddings)
+            return all_embeddings
+        except Exception as e:
+            logger.error(f"Embedding failed for {len(texts)} texts: {e}")
+            raise
+
+    def embed_query(self, query: str) -> List[float]:
+        """
+        Generate dense embeddings for a list of query.
+
+        Args:
+            texts: List of strings to embed.
+
+        Returns:
+            List of embeddings (lists of floats).
+        """
+
+        # Encode returns a 2D array if we pass a list,
+        # so we wrap the query in a list and take the first vector.
+        if not query:
+            return []
+
+        embedding = model.encode([query])
+
+        # Convert numpy array to a list if needed
+
+        if isinstance(embedding, np.ndarray):
+            return embedding[0].tolist()
+
+        else:
+            return embedding[0]
+
+
+# Example usage:
+# svc = EmbeddingServices(model, batch_size=64)
+# vectors = svc.embed_texts(["text1", "text2"])
+# query_vec = svc.embed_query("example query")
