@@ -3,39 +3,67 @@ import logging
 import chromadb
 
 from docuflow.configs.settings import settings
-from docuflow.utils.load_fie import get_all_pdfs
+from docuflow.utils.document_helper import get_meta_content_id
 
 logger = logging.getLogger(__name__)
 
+class VectorStoreService():
+    def __init__(self,db_path:str,collection_name:str):
+        self.client = chroma.PersistentClient(path=db_path)
+        self.collection = self.client.create_collection(name="my_docuflow_collection")
 
-def store_documents():
-    """Load PDFs, generate embeddings, store in ChromaDB"""
-    pdfs = get_all_pdfs(settings.pdf_dir)
-    print(type(pdfs))
-    print(pdfs)
+    def add_document(self,ids, documents,embeddings,metadatas=None):
+        self.collection.upsert(
+            ids=ids,
+            documents=documents,
+            embeddings=embeddings,
+            metadatas=metadatas,
+        )        
+    def query(self,query_embeddings,n_results=5):
+        return self.collection.query(
+            query_embeddings = [query_embeddings],
+            n_results= n_results
+        )
 
-    client = chromadb.PersistentClient(path=settings.db_path)
-    print(client)
-    print(type(client))
+    def delete(self, ids):
+        self.collection.delete(ids=ids)    
 
-    # documents  = []
+# def store_documents(documents):
+#     """Load PDFs, generate embeddings, store in ChromaDB"""
 
-    # documents.convert_pdf_to_md(pdfs)
+#     client = chromadb.PersistentClient(path=settings.db_path)
+#     print(f"client : {client}")
+#     # print(client.heartbeat())
 
-    # all_embeddings = embed_texts(documents)
-    # print(type(all_embeddings))
-    # client = chromadb.PersistentClient(path="./chromadb/vector_db")
+#     data = get_meta_content_id(documents)
 
-    # collections = client.get_or_create_collection(name="my_docs")
+#     print(type(data))
+#     texts = data["documents"]
+#     embeddings = embed_texts(texts)
 
-    # ids = [f"doc_{i}" for i in range(len(documents))]
+#     print(embeddings)
+#     collection = client.create_collection(name="my_docuflow_collection")
 
-    # collections.add(embeddings=np.array(all_embeddings), documents=documents, ids=ids)
+#     collection.upsert(
+#         ids=data["ids"],
+#         documents=data["documents"],
+#         embeddings=embeddings,
+#         metadatas=data["metadatas"],
+#     )
 
-    # logger.info(f"Stored {collections.count()} documents")
+#     query = "what are my skills"
+#     embedding = embed_query(query)
+#     results = collection.query(query_embeddings=[query], n_results=3)
+#     print(results)
 
-    # return collections
+#     # print(client.get_collection(name="my_docuflow_collection"))
+
+#     return "Documents stored successfully"
 
 
-if __name__ == "__main__":
-    store_documents()
+# if __name__ == "__main__":
+#     pdf = "data/sample_test_document.pdf"
+#     print(pdf)
+#     documents = convert_pdf_to_md(pdf)
+#     print(documents)
+#     store_documents(documents)

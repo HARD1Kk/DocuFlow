@@ -2,23 +2,14 @@ import logging
 from typing import List
 
 import numpy as np
-from FlagEmbedding import FlagModel
 
-from docuflow.configs.settings import settings
+from docuflow.core.providers.embedding_provider import get_embedding_model
 
 logger = logging.getLogger(__name__)
 
 
-# Global model instance
-model = FlagModel(
-    settings.embedding_model,
-    query_instruction_for_retrieval="Represent this sentence for searching relevant passages:",
-    use_fp16=False,
-)
-
-
 class EmbeddingServices:
-    def __init__(self, model, batch_size: int = 64):
+    def __init__(self, model=get_embedding_model(), batch_size: int = 64):
         """
         Store the model and batch_size inside this service object.
         """
@@ -83,7 +74,11 @@ class EmbeddingServices:
             return embedding[0]
 
 
-# Example usage:
 # svc = EmbeddingServices(model, batch_size=64)
-# vectors = svc.embed_texts(["text1", "text2"])
-# query_vec = svc.embed_query("example query")
+# vectors = svc.embed_texts(
+#     [
+#         "skill: python , javascript , nodejs and c++",
+#         "Experience : internship at GetmyQuotation",
+#     ]
+# )
+# query_vec = svc.embed_query("whats my work experience")
