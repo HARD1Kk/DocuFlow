@@ -6,3 +6,6 @@ go:
 
 activate:
     source .venv/bin/activate
+
+test:
+    uv run pytest -s

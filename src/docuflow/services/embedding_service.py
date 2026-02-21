@@ -38,11 +38,17 @@ class EmbeddingServices:
                 embeddings = self.model.encode(batch)
                 # FlagModel.encode returns the embeddings directly as a numpy array
                 # Convert numpy array to list of lists for JSON serialization/storage compatibility
+
                 if isinstance(embeddings, np.ndarray):
                     all_embeddings.extend(embeddings.tolist())  # ← extend, not return
-                else:
+                elif isinstance(embeddings, list):
                     all_embeddings.extend(embeddings)
+                else:
+                    raise ValueError(
+                        "Embedding model output is in an unexpected format."
+                    )
             return all_embeddings
+
         except Exception as e:
             logger.error(f"Embedding failed for {len(texts)} texts: {e}")
             raise
@@ -61,24 +67,20 @@ class EmbeddingServices:
         # Encode returns a 2D array if we pass a list,
         # so we wrap the query in a list and take the first vector.
         if not query:
+            logger.warning("Empty query passed to embed_query.")
             return []
 
-        embedding = model.encode([query])
+        embedding = self.model.encode([query])
 
         # Convert numpy array to a list if needed
+        try:
+            if isinstance(embedding, np.ndarray):
+                return embedding[0].tolist()
+            elif isinstance(embedding, list):
+                return embedding[0]
+            else:
+                raise ValueError("Query embedding is in an unexpected format.")
 
-        if isinstance(embedding, np.ndarray):
-            return embedding[0].tolist()
-
-        else:
-            return embedding[0]
-
-
-# svc = EmbeddingServices(model, batch_size=64)
-# vectors = svc.embed_texts(
-#     [
-#         "skill: python , javascript , nodejs and c++",
-#         "Experience : internship at GetmyQuotation",
-#     ]
-# )
-# query_vec = svc.embed_query("whats my work experience")
+        except Exception as e:
+            logger.error(f"Embedding failed for query: {query}. Error: {e}")
+            raise  # Re-raise the exception after logging
