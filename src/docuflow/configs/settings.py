@@ -1,19 +1,16 @@
 from pathlib import Path
 
-from pydantic import BaseModel, Field, computed_field
+from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings
-
-
-class logs(BaseModel): ...
 
 
 class Settings(BaseSettings):
     # Path of Pdf
     pdf_dir: Path = Field(
-        default=Path("data/"), description="Directory containing PDF files"
+        default=Path("data/pdfs"), description="Directory containing PDF files"
     )
     output_dir: Path = Field(
-        default=Path("data/"), description="Output directory for markdown files"
+        default=Path("data/markdown"), description="Output directory for markdown files"
     )
 
     # Logging config
@@ -39,6 +36,7 @@ class Settings(BaseSettings):
     # Embedding model
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     chunk_size: int = 800
+    use_fp16: bool = False
 
 
 # INSTANTIATION
