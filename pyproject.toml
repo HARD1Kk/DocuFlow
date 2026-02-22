@@ -21,7 +21,6 @@ dependencies = [
 ]
 
 [tool.ruff]
-line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
@@ -40,8 +39,10 @@ mypy_path = ["src"]
 dev = [
     "langchain-community>=0.4.1",
     "llama-index>=0.14.13",
+    "pytest>=9.0.2",
     "ruff>=0.14.14",
     "ty>=0.0.15",
+    "vulture>=2.14",
 ]
 
 

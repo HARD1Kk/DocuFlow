@@ -31,3 +31,4 @@ htmlcov/
 #database
 db/
 /chroma
+/chroma_db
