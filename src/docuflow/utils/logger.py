@@ -5,17 +5,17 @@ from docuflow.configs.settings import settings
 
 
 def get_logger():
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger()
 
     # Prevent duplicate logs
     if logger.handlers:
-        return logger
+        return
 
     logger.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        datefmt="%Y-%m-%d %I:%M:%S %p",
     )
 
     console_handler = logging.StreamHandler()
