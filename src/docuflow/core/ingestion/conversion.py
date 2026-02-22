@@ -7,7 +7,7 @@ import pymupdf4llm
 logger = logging.getLogger(__name__)
 
 
-def convert_pdf_to_md(pdf_file: str) -> str:
+def convert_pdf_to_md(pdf_file: Path) -> str:
     """
      Convert the PDF at pdf_file path to Markdown text.
 
@@ -17,12 +17,16 @@ def convert_pdf_to_md(pdf_file: str) -> str:
     Returns:
         str: The document content in Markdown format.
     """
-    md_text = pymupdf4llm.to_markdown(pdf_file, use_ocr=False)
-    logger.info(f"Length of text for {pdf_file}: {len(md_text)}")
-    return str(md_text)
+    try:
+        md_text = pymupdf4llm.to_markdown(pdf_file, use_ocr=False)
+        logger.info(f"Length of text for {pdf_file}: {len(md_text)}")
+        return str(md_text)
+    except Exception as e:
+        logger.exception(f"Failed to convert {pdf_file}: {e}")
+        raise
 
 
-def save_markdown(md_text: str, output_path: str) -> str:
+def save_markdown(md_text: str, output_path: str) -> Path:
     """
     Save markdown text to a file.
 
@@ -35,6 +39,6 @@ def save_markdown(md_text: str, output_path: str) -> str:
     """
     output_file = Path(output_path)
 
-    output_file.write_bytes(md_text.encode())
+    output_file.write_text(md_text, encoding="utf-8")
     logger.info(f"Saved {output_file} file at {output_path} ")
-    return str(output_file)
+    return output_file
