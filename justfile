@@ -4,8 +4,8 @@ fmt:
 go:
     uv run python -m docuflow.main
 
-activate:
-    source .venv/bin/activate
+check:
+    uv run ty check    
 
 test:
     uv run pytest -s
