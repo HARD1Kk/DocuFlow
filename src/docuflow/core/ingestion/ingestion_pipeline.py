@@ -3,14 +3,14 @@ from pathlib import Path
 
 from docuflow.core.ingestion.chunking import get_sections
 from docuflow.core.ingestion.conversion import convert_pdf_to_md
-from docuflow.interfaces.text_embedder import TextEmbedder
-from docuflow.interfaces.vector_store import VectorStore
+from docuflow.interfaces.text_embedder import ITextEmbedder
+from docuflow.interfaces.vector_store import IVectorStore
 
 logger = logging.getLogger(__name__)
 
 
 class IngestionPipeline:
-    def __init__(self, embedder: TextEmbedder, vector_store: VectorStore):
+    def __init__(self, embedder: ITextEmbedder, vector_store: IVectorStore):
         self.embedder = embedder
         self.vector_store = vector_store
 

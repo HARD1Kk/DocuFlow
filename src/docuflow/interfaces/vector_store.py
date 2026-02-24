@@ -2,7 +2,13 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Mapping
 
 
-class VectorStore(ABC):
+class IVectorStore(ABC):
+    """
+
+    Interface for Vector Store
+
+    """
+
     @abstractmethod
     def add(
         self,

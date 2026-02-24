@@ -3,14 +3,14 @@ from typing import List, Sequence
 
 import numpy as np
 from FlagEmbedding import FlagModel
+from docuflow.interfaces.text_embedder import ITextEmbedder
 
 from docuflow.configs.settings import settings
-from docuflow.interfaces.text_embedder import TextEmbedder
 
 logger = logging.getLogger(__name__)
 
 
-class BGETextEmbedder(TextEmbedder):
+class BGETextEmbedder(ITextEmbedder):
     def __init__(self, batch_size: int = 64):
         self.batch_size = batch_size
         self.model = FlagModel(

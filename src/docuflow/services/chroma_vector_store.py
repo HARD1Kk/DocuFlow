@@ -5,12 +5,12 @@ from typing import Any, List, Mapping
 import chromadb
 import numpy as np
 
-from docuflow.interfaces.vector_store import VectorStore
+from docuflow.interfaces.vector_store import IVectorStore
 
 logger = logging.getLogger(__name__)
 
 
-class ChromaVectorStore(VectorStore):
+class ChromaVectorStore(IVectorStore):
     def __init__(self, db_path: Path, collection_name: str):
         self.client = chromadb.PersistentClient(path=db_path)
 
