@@ -5,7 +5,7 @@ from docuflow.services import BGETextEmbedder, ChromaVectorStore
 from docuflow.utils import get_logger, ensure_directories
 
 
-def main():
+def main() -> None:
     ensure_directories()
     get_logger()
 

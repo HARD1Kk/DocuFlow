@@ -4,7 +4,7 @@ from pathlib import Path
 from docuflow.services.chroma_vector_store import ChromaVectorStore
 
 
-def test_chroma_vector_store_add_and_query():
+def test_chroma_vector_store_add_and_query() -> None:
     db_path = Path("chroma_test")
 
     if db_path.exists():
