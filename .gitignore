@@ -32,3 +32,5 @@ htmlcov/
 db/
 /chroma
 /chroma_db
+/chroma_test
+*.sqlite3

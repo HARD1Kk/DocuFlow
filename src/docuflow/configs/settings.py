@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import Field, computed_field
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -9,9 +9,14 @@ class Settings(BaseSettings):
     pdf_dir: Path = Field(
         default=Path("data/pdfs"), description="Directory containing PDF files"
     )
-    output_dir: Path = Field(
+
+    # md dir
+    md_dir: Path = Field(
         default=Path("data/markdown"), description="Output directory for markdown files"
     )
+
+    # md_path
+    md_path: str = Field(default="markdown.md", description="MD file name")
 
     # Logging config
     log_dir: Path = Field(default=Path("logs"), description="Directory for log files")
@@ -22,10 +27,13 @@ class Settings(BaseSettings):
         default=Path("chroma"), description="Directory for chroma db vector storage"
     )
 
-    @computed_field
     @property
     def log_path(self) -> Path:
         return self.log_dir / self.log_file
+
+    @property
+    def output_path(self) -> Path:
+        return self.md_dir / self.md_path
 
     # Logging config
     class Config:

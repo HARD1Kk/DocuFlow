@@ -6,11 +6,16 @@ from docuflow.utils import get_logger, ensure_directories
 
 
 def main() -> None:
-    ensure_directories()
-    get_logger()
+    logger = get_logger(__name__)
+    logger.info("Starting Docuflow Pipeline")
+    logger.info("Ensuring Directories existence")
 
+    ensure_directories()
+
+    logger.info("Starting Embedding Phase")
     embedder = BGETextEmbedder()
 
+    logger.info("Starting Vectorising")
     vector_store = ChromaVectorStore(
         db_path=settings.db_path,
         collection_name="my_docuflow_collection",

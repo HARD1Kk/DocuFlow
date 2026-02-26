@@ -1,10 +1,11 @@
-import logging
 from pathlib import Path
 
 import pymupdf.layout  # noqa: F401
 import pymupdf4llm
 
-logger = logging.getLogger(__name__)
+from docuflow.utils import get_logger
+
+logger = get_logger(__name__)
 
 
 def convert_pdf_to_md(pdf_file: Path) -> str:
@@ -26,7 +27,7 @@ def convert_pdf_to_md(pdf_file: Path) -> str:
         raise
 
 
-def save_markdown(md_text: str, output_path: str) -> Path:
+def save_markdown(md_text: str, output_path: Path) -> Path:
     """
     Save markdown text to a file.
 
@@ -37,7 +38,9 @@ def save_markdown(md_text: str, output_path: str) -> Path:
     Returns:
         str:
     """
+    # Ensure parent folder exists
     output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
 
     output_file.write_text(md_text, encoding="utf-8")
     logger.info(f"Saved {output_file} file at {output_path} ")

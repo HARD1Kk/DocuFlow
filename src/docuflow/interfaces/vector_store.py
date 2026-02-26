@@ -16,7 +16,8 @@ class IVectorStore(ABC):
         documents: List[str],
         metadata: List[Mapping[str, Any]],
         embeddings: List[List[float]],
-    ):
+    ) -> None:
+        """Add documents, embeddings, and metadata to the vector store."""
         pass
 
     @abstractmethod
@@ -24,9 +25,10 @@ class IVectorStore(ABC):
         self,
         query_embedding: List[float],
         n_results: int = 5,
-    ):
+    ) -> dict[str, Any]:
+        """Return top `n_results` from the vector store matching `query_embedding`."""
         pass
 
     @abstractmethod
-    def delete(self, ids: List[str]):
+    def delete(self, ids: List[str]) -> None:
         pass
