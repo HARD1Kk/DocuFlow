@@ -12,7 +12,7 @@ class IngestionPipeline:
         self.embedder = embedder
         self.vector_store = vector_store
 
-    def ingest(self, file_path: Path):
+    def ingest(self, file_path: Path) -> None:
         # conversion of pdf to md
         self.logger.info("Starting conversion from pdf to md")
         markdown_text = convert_pdf_to_md(file_path)

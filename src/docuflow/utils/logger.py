@@ -3,15 +3,17 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 import pytz
 from docuflow.configs import settings
+from typing import Any
+import time
 
 
-def ist_timezone(*args):
+def ist_timezone(*args: Any) -> time.struct_time:
     """Return IST time for logging formatter."""
     tz = pytz.timezone("Asia/Kolkata")
     return datetime.now(tz).timetuple()
 
 
-def get_logger(name: str = __name__):
+def get_logger(name: str = __name__) -> logging.Logger:
     logger = logging.getLogger(name)
 
     # Prevent duplicate logs
