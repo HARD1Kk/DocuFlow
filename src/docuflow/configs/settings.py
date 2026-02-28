@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict, BaseSettings
 
 
 class Settings(BaseSettings):
@@ -34,12 +34,8 @@ class Settings(BaseSettings):
     @property
     def output_path(self) -> Path:
         return self.md_dir / self.md_path
-
-    # Logging config
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"  # Ignore extra fields from .env
+        
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # Embedding model
     embedding_model: str = "BAAI/bge-small-en-v1.5"
