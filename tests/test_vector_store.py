@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from docuflow.services.chroma_vector_store import ChromaVectorStore
+from docuflow.services import ChromaVectorStore
 
 
 def test_chroma_vector_store_add_and_query() -> None:

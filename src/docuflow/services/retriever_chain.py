@@ -15,18 +15,19 @@ class VectorRetriever(IRetriever):
 
         # Generate query embeddings
         query_embedding = self.embedder.embed([query])[0]
+        # print(query_embedding)
 
-        # Query vector store
-        raw_results = self.vector_store.query(
-            query_embedding=query_embedding,
-            n_results=top_k,
-        )
-        print(raw_results)
-        # # # Extract and flatten results
-        # documents = raw_results.get("documents", [[]])[0]
-        # distances = raw_results.get("distances", [[]])[0]
-        # metadatas = raw_results.get("metadatas", [[]])[0]
+    #     # Query vector store
+    #     raw_results = self.vector_store.query(
+    #         query_embedding=query_embedding,
+    #         n_results=top_k,
+    #     )
+    #     print(raw_results)
+    #     # # # Extract and flatten results
+    #     # documents = raw_results.get("documents", [[]])[0]
+    #     # distances = raw_results.get("distances", [[]])[0]
+    #     # metadatas = raw_results.get("metadatas", [[]])[0]
 
-        # # Build structured output
-        # retrieved_chunks: List[RetrievedChunk] = []
-        # return retrieved_chunks
+    #     # # Build structured output
+    #     # retrieved_chunks: List[RetrievedChunk] = []
+    #     # return retrieved_chunks

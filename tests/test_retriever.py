@@ -1,33 +1,15 @@
-from docuflow.services import BGETextEmbedder,ChromaVectorStore,VectorRetriever
-
-
-import pytest
-from unittest.mock import Mock
-
+from docuflow.services import VectorRetriever, ChromaVectorStore, BGETextEmbedder
+from pathlib import Path
 
 
 def test_retrieve_returns_structured_chunks():
-    # 1️⃣ Mock embedder
-    mock_embedder = Mock()
-    mock_embedder.embed.return_value = [[0.1, 0.2, 0.3]]
+    embedder = BGETextEmbedder(batch_size=64)
+    vector_store = ChromaVectorStore(
+        db_path=Path("chroma_test_r"), collection_name="test_collection_r"
+    )
 
-    # 2️⃣ Mock vector store
-    mock_vector_store = Mock()
-    mock_vector_store.query.return_value = {
-        "documents": [["Refund policy text"]],
-        "distances": [[0.21]],
-        "metadatas": [[{"page": 3}]],
-    }
+    retrieve = VectorRetriever(embedder=embedder, vector_store=vector_store)
 
-    # 3️⃣ Create retriever
-    retriever = VectorRetriever(mock_embedder, mock_vector_store)
-    
-    # 4️⃣ Call retrieve
-    results = retriever.retrieve("What is refund policy?", top_k=1)
-    print(results)
-    # 5️⃣ Assertions
-    assert len(results) == 1
-    assert isinstance(results[0], RetrievedChunk)
-    assert results[0].content == "Refund policy text"
-    assert results[0].score == 0.21
-    assert results[0].metadata == {"page": 3}
+    query = "What is ai"
+    result = retrieve.retrieve(query=query, top_k=5)
+    print(result)

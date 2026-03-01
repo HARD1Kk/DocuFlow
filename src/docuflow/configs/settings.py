@@ -34,8 +34,10 @@ class Settings(BaseSettings):
     @property
     def output_path(self) -> Path:
         return self.md_dir / self.md_path
-        
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     # Embedding model
     embedding_model: str = "BAAI/bge-small-en-v1.5"
