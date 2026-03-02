@@ -13,7 +13,7 @@ DocuFlow is a modular, production-grade **Retrieval-Augmented Generation (RAG)**
 - **Persistent Vector Storage**: Stores embeddings and rich metadata locally using **ChromaDB** with upsert support to avoid duplicate ingestion.
 - **Vector Querying**: Semantic similarity search over stored document chunks.
 - **Clean Abstraction Layer**: Pluggable `TextEmbedder` and `VectorStore` interfaces make it easy to swap embedding models or vector databases.
-- **Structured Configuration**: Fully typed settings via `pydantic-settings`, overridable from a `.env` file.
+- **Structured Configuration**: Fully typed settings via `pydantic-settings`, overridable from a `.env` file
 - **Modern Stack**: Python 3.11+ codebase managed with `uv`, linted with `ruff`.
 
 ---
