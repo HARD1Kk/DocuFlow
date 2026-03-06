@@ -4,8 +4,8 @@ from typing import Any, List, Mapping
 import chromadb
 import numpy as np
 
-from docuflow.utils import get_logger
 from docuflow.interfaces import IVectorStore
+from docuflow.utils import get_logger
 
 
 class ChromaVectorStore(IVectorStore):
@@ -16,9 +16,7 @@ class ChromaVectorStore(IVectorStore):
         self.client = chromadb.PersistentClient(path=db_path)
 
         self.logger.info(f"Creating or loading collection: {collection_name}")
-        self.collection = self.client.get_or_create_collection(
-            name=collection_name, embedding_function=None
-        )
+        self.collection = self.client.get_or_create_collection(name=collection_name, embedding_function=None)
 
     def add(
         self,

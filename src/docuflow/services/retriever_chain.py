@@ -1,7 +1,8 @@
-from docuflow.interfaces import IRetriever, ITextEmbedder, IVectorStore
-from docuflow.utils import get_logger
-from docuflow.schemas import RetrievedChunk
 from typing import List
+
+from docuflow.interfaces import IRetriever, ITextEmbedder, IVectorStore
+from docuflow.schemas import RetrievedChunk
+from docuflow.utils import get_logger
 
 
 class VectorRetriever(IRetriever):
@@ -15,7 +16,7 @@ class VectorRetriever(IRetriever):
 
         # Generate query embeddings
         query_embedding = self.embedder.embed([query])[0]
-        # print(query_embedding)
+        print(query_embedding)
 
     #     # Query vector store
     #     raw_results = self.vector_store.query(

@@ -1,8 +1,7 @@
 from docuflow.configs import settings
 from docuflow.core.ingestion.ingestion_pipeline import IngestionPipeline
 from docuflow.services import BGETextEmbedder, ChromaVectorStore
-
-from docuflow.utils import get_logger, ensure_directories
+from docuflow.utils import ensure_directories, get_logger
 
 
 def main() -> None:

@@ -1,10 +1,12 @@
 import logging
+import time
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
-import pytz
-from docuflow.configs import settings
 from typing import Any
-import time
+
+import pytz
+
+from docuflow.configs import settings
 
 
 def ist_timezone(*args: Any) -> time.struct_time:
@@ -35,9 +37,7 @@ def get_logger(name: str = __name__) -> logging.Logger:
     console_handler.setFormatter(formatter)
 
     # File handler (auto-creates file if missing)
-    file_handler = RotatingFileHandler(
-        settings.log_path, maxBytes=5_000_000, backupCount=3
-    )
+    file_handler = RotatingFileHandler(settings.log_path, maxBytes=5_000_000, backupCount=3)
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
 

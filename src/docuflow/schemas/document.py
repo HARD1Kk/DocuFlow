@@ -9,9 +9,7 @@ class Document(BaseModel):
 
     """
 
-    page_content: str = Field(
-        ..., description="The text content of the document or chunk"
-    )
+    page_content: str = Field(..., description="The text content of the document or chunk")
 
     metadata: Dict[str, str | int | float | bool] = Field(
         default_factory=dict,

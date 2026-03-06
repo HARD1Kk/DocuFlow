@@ -24,7 +24,13 @@ dependencies = [
 ]
 
 [tool.ruff]
+line-length = 120
+
 target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
 
 
 [tool.mypy]

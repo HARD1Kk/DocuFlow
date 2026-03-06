@@ -2,10 +2,10 @@ from typing import List, Sequence
 
 import numpy as np
 from FlagEmbedding import FlagModel
-from docuflow.interfaces import ITextEmbedder
 
-from docuflow.utils import get_logger
 from docuflow.configs import settings
+from docuflow.interfaces import ITextEmbedder
+from docuflow.utils import get_logger
 
 
 class BGETextEmbedder(ITextEmbedder):
@@ -18,9 +18,7 @@ class BGETextEmbedder(ITextEmbedder):
         self.logger.info(f"Using {settings.embedding_model} model")
         self.model = FlagModel(
             settings.embedding_model,
-            query_instruction_for_retrieval=(
-                "Represent this sentence for searching relevant passages:"
-            ),
+            query_instruction_for_retrieval=("Represent this sentence for searching relevant passages:"),
             use_fp16=settings.use_fp16,
         )
 
@@ -42,9 +40,7 @@ class BGETextEmbedder(ITextEmbedder):
                 elif isinstance(embeddings, list):
                     all_embeddings.extend(embeddings)
                 else:
-                    raise ValueError(
-                        "Embedding model output is in an unexpected format."
-                    )
+                    raise ValueError("Embedding model output is in an unexpected format.")
             self.logger.info("Embeddings created Successfully")
             return all_embeddings
 

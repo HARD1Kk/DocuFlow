@@ -1,8 +1,8 @@
-from docuflow.configs import settings, Settings
+from docuflow.configs import Settings, settings
 
+from .bootstrap import ensure_directories
 from .load_fie import get_all_pdfs
 from .logger import get_logger
-from .bootstrap import ensure_directories
 
 __all__ = [
     "settings",
