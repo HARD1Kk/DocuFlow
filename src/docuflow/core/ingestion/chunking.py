@@ -26,13 +26,9 @@ def get_sections(markdown_text: str) -> List[DocuFlowDocument]:
 
     # MD splits
 
-    markdown_text = re.sub(
-        r"^\*\*(.*?)\*\*", r"## \1", markdown_text, flags=re.MULTILINE
-    )
+    markdown_text = re.sub(r"^\*\*(.*?)\*\*", r"## \1", markdown_text, flags=re.MULTILINE)
 
-    header_splitter = MarkdownHeaderTextSplitter(
-        headers_to_split_on=headers_to_split_on
-    )
+    header_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
 
     header_splits = header_splitter.split_text(markdown_text)
 

@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 import pymupdf.layout  # noqa: F401
@@ -6,6 +7,17 @@ import pymupdf4llm
 from docuflow.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+def get_converter(file_path: str):
+    """Get appropriate converter for file type"""
+    suffix = Path(file_path).suffix.lower()
+    converter = CONVERTERS.get(suffix)
+
+    if not converter:
+        raise ValueError(f"No converter for {suffix}. Supported: {list(CONVERTERS.keys())}")
+
+    return converter
 
 
 def convert_pdf_to_md(pdf_file: Path) -> str:
@@ -25,6 +37,35 @@ def convert_pdf_to_md(pdf_file: Path) -> str:
     except Exception as e:
         logger.exception(f"Failed to convert {pdf_file}: {e}")
         raise
+
+
+def convert_docx_to_md(docx_file: Path) -> str:
+    result = subprocess.run(
+        ["pandoc", str(docx_file), "-t", "markdown", "--wrap=none"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=True,
+    )
+    return result.stdout
+
+
+def extract_txt_content(txt_file: Path) -> str:
+    """Add this - TXT extraction (simple)"""
+    return Path(txt_file).read_text(encoding="utf-8")
+
+
+def extract_md_content(md_file: Path) -> str:
+    """Add this - MD extraction (just read as-is)"""
+    return Path(md_file).read_text(encoding="utf-8")
+
+
+CONVERTERS = {
+    ".pdf": convert_pdf_to_md,
+    ".docx": convert_docx_to_md,
+    ".txt": extract_txt_content,
+    ".md": extract_md_content,
+}
 
 
 def save_markdown(md_text: str, output_path: Path) -> Path:

@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from docuflow.core.ingestion import get_sections, convert_pdf_to_md, save_markdown
-from docuflow.interfaces import ITextEmbedder, IVectorStore
 from docuflow.configs import settings
+from docuflow.core.ingestion import convert_pdf_to_md, get_sections, save_markdown
+from docuflow.interfaces import ITextEmbedder, IVectorStore
 from docuflow.utils import get_logger
 
 
