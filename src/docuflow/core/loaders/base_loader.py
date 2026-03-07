@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from typing import List
 
@@ -25,17 +24,17 @@ class BaseLoader(ILoader):
 
     def load(self, source_path: str) -> List[RawDocument]:
         """Load file as raw bytes - same for all formats"""
-        
+
         if not self.validate(source_path):
             self.logger.warning(f"Invalid file: {source_path}")
             return []
 
         try:
             path = Path(source_path)
-            
+
             # Load raw bytes
             raw_content = path.read_bytes()
-            
+
             return [
                 RawDocument(
                     content=raw_content,

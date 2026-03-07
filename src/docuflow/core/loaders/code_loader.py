@@ -1,12 +1,7 @@
-from typing import List
-
-from docuflow.interfaces import ILoader
-from docuflow.schemas import Chunk
+from .base_loader import BaseLoader
 
 
 class CodeLoader(BaseLoader):
     """Load code files: Python, JavaScript, Java, etc."""
-    SUPPORTED_EXTENSIONS = [
-        ".py", ".js", ".ts", ".java", ".cpp", ".c", 
-        ".go", ".rs", ".rb", ".php", ".swift", ".kt"
-    ]
+
+    SUPPORTED_EXTENSIONS = [".py", ".js", ".ts", ".java", ".cpp", ".c", ".go", ".rs", ".rb", ".php", ".swift", ".kt"]
