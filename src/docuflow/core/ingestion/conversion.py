@@ -39,32 +39,46 @@ def convert_pdf_to_md(pdf_file: Path) -> str:
         raise
 
 
+# def convert_docx_to_md(docx_file: Path) -> str:
+#     result = subprocess.run(
+#         ["pandoc", str(docx_file), "-t", "markdown", "--wrap=none"],
+#         capture_output=True,
+#         text=True,
+#         timeout=30,
+#         check=True,
+#     )
+#     print(result)
+#     return result.stdout
+
+
 def convert_docx_to_md(docx_file: Path) -> str:
-    result = subprocess.run(
-        ["pandoc", str(docx_file), "-t", "markdown", "--wrap=none"],
-        capture_output=True,
-        text=True,
-        timeout=30,
-        check=True,
-    )
-    return result.stdout
+    """Simple Pandoc conversion"""
+    try:
+        result = subprocess.run(
+            ["pandoc", str(docx_file), "-t", "markdown", "--wrap=none"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        )
+        logger.info(f"Converted: {len(result.stdout)} chars")
+        return result.stdout
+    except Exception as e:
+        logger.error(f"Pandoc failed: {e}")
+        raise
 
 
-def extract_txt_content(txt_file: Path) -> str:
-    """Add this - TXT extraction (simple)"""
-    return Path(txt_file).read_text(encoding="utf-8")
+def extract_text_content(file_path: Path) -> str:
+    """Extract text from .txt or .md files"""
 
-
-def extract_md_content(md_file: Path) -> str:
-    """Add this - MD extraction (just read as-is)"""
-    return Path(md_file).read_text(encoding="utf-8")
+    return file_path.read_text(encoding="utf-8")
 
 
 CONVERTERS = {
     ".pdf": convert_pdf_to_md,
     ".docx": convert_docx_to_md,
-    ".txt": extract_txt_content,
-    ".md": extract_md_content,
+    ".txt": extract_text_content,
+    ".md": extract_text_content,
 }
 
 

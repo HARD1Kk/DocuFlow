@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Dict, Type
 
+from docuflow.interfaces import ILoader
+
 from .code_loader import CodeLoader
 from .document_loader import DocumentLoader
 from .image_loader import ImageLoader

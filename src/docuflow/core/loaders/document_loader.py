@@ -1,4 +1,4 @@
-from .base_loader import BaseLoader
+from docuflow.core.loaders.base_loader import BaseLoader
 
 
 class DocumentLoader(BaseLoader):
@@ -10,10 +10,11 @@ class DocumentLoader(BaseLoader):
 if __name__ == "__main__":
     doc = DocumentLoader()
 
-    source_path = "/home/hardik/projects/DocuFlow/data/pdfs/report.pdf"
-
+    path = "/home/hardik/projects/DocuFlow/data/sample2.docx"
+    # path = "/home/hardik/projects/DocuFlow/data/doc.docx"
     # Load document
-    raw_documents = doc.load(source_path)
+    raw_documents = doc.load(path)
+    # print(raw_documents)
 
     # Check result
     if raw_documents:
@@ -22,4 +23,4 @@ if __name__ == "__main__":
         print(f"Content length: {len(raw_doc.content)}")
         print(f"Metadata: {raw_doc.metadata}")
     else:
-        print(f"❌ Failed to load: {source_path}")
+        print(f"❌ Failed to load: {path}")
