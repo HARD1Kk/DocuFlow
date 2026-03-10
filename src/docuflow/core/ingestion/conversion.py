@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 
+import easyocr
 import pymupdf.layout  # noqa: F401
 import pymupdf4llm
 
@@ -20,6 +21,9 @@ def get_converter(file_path: str):
     return converter
 
 
+# ===== DOCUMENT CONVERTERS =====
+
+
 def convert_pdf_to_md(pdf_file: Path) -> str:
     """
      Convert the PDF at pdf_file path to Markdown text.
@@ -37,18 +41,6 @@ def convert_pdf_to_md(pdf_file: Path) -> str:
     except Exception as e:
         logger.exception(f"Failed to convert {pdf_file}: {e}")
         raise
-
-
-# def convert_docx_to_md(docx_file: Path) -> str:
-#     result = subprocess.run(
-#         ["pandoc", str(docx_file), "-t", "markdown", "--wrap=none"],
-#         capture_output=True,
-#         text=True,
-#         timeout=30,
-#         check=True,
-#     )
-#     print(result)
-#     return result.stdout
 
 
 def convert_docx_to_md(docx_file: Path) -> str:
@@ -74,11 +66,45 @@ def extract_text_content(file_path: Path) -> str:
     return file_path.read_text(encoding="utf-8")
 
 
+# ===== IMAGE CONVERTER =====
+
+
+def convert_image_content(file_path: Path) -> str:
+    """Extract text from .png , .jpg , .jpeg , .svg , .webp files"""
+    try:
+        reader = easyocr.Reader(["en"])
+        logger.info(f"Extracting text from: {file_path}")
+
+        # Extract text
+        results = reader.readtext(str(file_path))
+
+        # Combine all text
+        text = "\n".join([result[1] for result in results])
+
+        if not text.strip():
+            logger.warning(f"No text detected in: {file_path}")
+
+        logger.info(f"Extracted {len(text)} chars from image")
+        return text
+
+    except Exception as e:
+        logger.error(f"Failed to convert image: {e}")
+        raise
+
+
+# ===== CONVERTERS MAPPING =====
+
 CONVERTERS = {
+    # Documents
     ".pdf": convert_pdf_to_md,
     ".docx": convert_docx_to_md,
     ".txt": extract_text_content,
     ".md": extract_text_content,
+    # Images
+    ".png": convert_image_content,
+    ".jpg": convert_image_content,
+    ".jpeg": convert_image_content,
+    ".webp": convert_image_content,
 }
 
 

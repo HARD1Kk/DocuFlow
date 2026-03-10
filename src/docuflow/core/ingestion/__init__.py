@@ -6,6 +6,7 @@ from docuflow.core.ingestion.conversion import (
     extract_text_content,
     get_converter,
     save_markdown,
+    convert_image_content,
 )
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "save_markdown",
     "convert_docx_to_md",
     "extract_text_content",
+    "convert_image_content"
     "get_converter",
     "CONVERTERS",
 ]
