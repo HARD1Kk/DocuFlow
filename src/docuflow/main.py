@@ -1,4 +1,5 @@
 from docuflow.configs import settings
+from docuflow.configs.sentry_config import init_sentry
 from docuflow.core.ingestion.ingestion_pipeline import IngestionPipeline
 from docuflow.services import BGETextEmbedder, ChromaVectorStore
 from docuflow.utils import ensure_directories, get_logger
@@ -6,6 +7,9 @@ from docuflow.utils import ensure_directories, get_logger
 
 def main() -> None:
     logger = get_logger(__name__)
+
+    init_sentry()
+
     logger.info("Starting Docuflow Pipeline")
     logger.info("Ensuring Directories existence")
 

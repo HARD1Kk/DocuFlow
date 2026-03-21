@@ -1,4 +1,4 @@
-from .base_loader import BaseLoader
+from docuflow.core.loaders import BaseLoader
 
 
 class ImageLoader(BaseLoader):

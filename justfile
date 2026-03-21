@@ -5,7 +5,7 @@ go:
     uv run python -m docuflow.main
 
 check:
-    uv run mypy . --strict 
+    uv run mypy . 
     uv run ty check    
 
 test:

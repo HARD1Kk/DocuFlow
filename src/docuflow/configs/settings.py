@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -21,6 +22,13 @@ class Settings(BaseSettings):
     # chroma db path
     db_path: Path = Field(default=Path("chroma"), description="Directory for chroma db vector storage")
 
+    # ✅ Add Sentry
+    SENTRY_DSN: Optional[str] = None
+    SENTRY_TRACES_SAMPLE_RATE: float = 1.0
+
+    ENV: str = "development"
+    LOG_LEVEL: str = "INFO"
+
     @property
     def log_path(self) -> Path:
         return self.log_dir / self.log_file
@@ -29,7 +37,7 @@ class Settings(BaseSettings):
     def output_path(self) -> Path:
         return self.md_dir / self.md_path
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", case_sensitive=True)
 
     # Embedding model
     embedding_model: str = "BAAI/bge-small-en-v1.5"

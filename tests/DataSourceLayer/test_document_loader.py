@@ -2,6 +2,8 @@
 Tests for DocumentLoader - Data Source Layer
 """
 
+from pathlib import Path
+
 import pytest
 from docx import Document
 
@@ -10,13 +12,13 @@ from docuflow.schemas import RawDocument
 
 
 @pytest.fixture
-def loader():
+def loader() -> DocumentLoader:
     """Create a DocumentLoader instance"""
     return DocumentLoader()
 
 
 @pytest.fixture
-def txt_file(tmp_path):
+def txt_file(tmp_path: Path) -> Path:
     """Create a temporary TXT file"""
     file = tmp_path / "sample_test.txt"
     file.write_text("IntroduCtioN to TXT\n\nThis is a text file.\n\nDetails\n\nSome content.")
@@ -25,7 +27,7 @@ def txt_file(tmp_path):
 
 
 @pytest.fixture
-def md_file(tmp_path):
+def md_file(tmp_path: Path) -> Path:
     """Create a temporary Markdown file"""
     file = tmp_path / "sample_test.md"
     file.write_text("# Introduction to MD\n\nThis is markdown.\n\n## Details\n\nMore content.")
@@ -33,7 +35,7 @@ def md_file(tmp_path):
 
 
 @pytest.fixture
-def docx_file(tmp_path):
+def docx_file(tmp_path: Path) -> Path:
     """Create a temporary DOCX file"""
     file = tmp_path / "sample.docx"
     doc = Document()
@@ -48,26 +50,26 @@ def docx_file(tmp_path):
 class TestDocumentLoaderValidation:
     """Tests for file validation"""
 
-    def test_validation_existing_files(self, loader, txt_file):
+    def test_validation_existing_files(self, loader: DocumentLoader, txt_file: Path) -> None:
         """Test validation passes for existing TXT file"""
         assert loader.validate(str(txt_file)) is True
 
-    def test_validate_existing_md_file(self, loader, md_file):
+    def test_validate_existing_md_file(self, loader: DocumentLoader, md_file: Path) -> None:
         """Test validation passes for existing MD file"""
         assert loader.validate(str(md_file)) is True
 
-    def test_validate_nonexistent_file(self, loader):
+    def test_validate_nonexistent_file(self, loader: DocumentLoader) -> None:
         """Test validation fails for missing files"""
         assert loader.validate("/nonexistent/file.txt") is False
 
-    def test_validate_unsupported_format(self, loader, tmp_path):
+    def test_validate_unsupported_format(self, loader: DocumentLoader, tmp_path: Path) -> None:
         """Test validation fails for unsupported formats"""
         unsupported = tmp_path / "file.xyz"
         unsupported.write_text("test")
 
         assert loader.validate(str(unsupported)) is False
 
-    def test_supported_extensions(self, loader):
+    def test_supported_extensions(self, loader: DocumentLoader) -> None:
         """Test loader declares all supported formats"""
         assert ".pdf" in loader.SUPPORTED_EXTENSIONS
         assert ".docx" in loader.SUPPORTED_EXTENSIONS
@@ -78,7 +80,7 @@ class TestDocumentLoaderValidation:
 class TestDocumentLoaderLoading:
     """Test document loading"""
 
-    def test_load_txt_file(self, loader, txt_file):
+    def test_load_txt_file(self, loader: DocumentLoader, txt_file: Path) -> None:
         """Test loading a TXT file returns RawDocument"""
         result = loader.load(str(txt_file))
         # Check result is list with one item
@@ -94,9 +96,9 @@ class TestDocumentLoaderLoading:
         # Check content
         assert raw_doc.content is not None
         assert len(raw_doc.content) > 0
-        assert "introduction" in raw_doc.content.lower()
+        assert "introduction" in raw_doc.content.decode("utf-8").lower()
 
-    def test_load_md_file(self, loader, md_file):
+    def test_load_md_file(self, loader: DocumentLoader, md_file: Path) -> None:
         """Test loading a MD file returns RawDocument"""
         result = loader.load(str(md_file))
 
@@ -106,9 +108,9 @@ class TestDocumentLoaderLoading:
         raw_doc = result[0]
 
         assert isinstance(raw_doc, RawDocument)
-        assert "# introduction to md" in raw_doc.content.lower()
+        assert "# introduction to md" in raw_doc.content.decode("utf-8").lower()
 
-    def test_load_docx_file(self, loader, docx_file):
+    def test_load_docx_file(self, loader: DocumentLoader, docx_file: Path) -> None:
         """Test loading a DOCX file (converts to markdown)"""
 
         result = loader.load(str(docx_file))

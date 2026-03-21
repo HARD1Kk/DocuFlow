@@ -1,11 +1,9 @@
 from pathlib import Path
 from typing import Dict, Type
 
+from docuflow.core.loaders.document_loader import DocumentLoader
+from docuflow.core.loaders.image_loader import ImageLoader
 from docuflow.interfaces import ILoader
-
-from .code_loader import CodeLoader
-from .document_loader import DocumentLoader
-from .image_loader import ImageLoader
 
 
 class LoaderFactory:
@@ -34,4 +32,3 @@ class LoaderFactory:
 # Register all loaders
 LoaderFactory.register(DocumentLoader)
 LoaderFactory.register(ImageLoader)
-LoaderFactory.register(CodeLoader)

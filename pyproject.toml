@@ -3,7 +3,7 @@ name = "rag-system"
 version = "0.1.0"
 description = "A Rag system"
 readme = "README.md"
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.10,<3.11"
 
 dependencies = [
   "langchain-community>=0.4.1",
@@ -22,7 +22,12 @@ dependencies = [
   "transformers==4.44.2",
   "types-pytz>=2025.2.0.20251108",
   "python-docx>=1.2.0",
-  "easyocr==1.1.4",
+  "easyocr==1.7.1",
+  "sentry-sdk>=2.55.0",
+    "paddleocr==2.7.3",
+    "numpy<2.0",
+  "paddlepaddle>=2.6.1",
+  "pillow>=12.1.0",
 ]
 
 [tool.ruff]

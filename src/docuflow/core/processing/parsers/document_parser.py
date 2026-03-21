@@ -6,7 +6,7 @@ from docuflow.utils import get_logger
 
 
 class DocumentParser:
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = get_logger(__name__)
 
     def parse(self, raw_document: RawDocument) -> str:

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any, Dict
 
 
 @dataclass
@@ -9,6 +10,6 @@ class RawDocument:
     Input to data processing layer.
     """
 
-    content: str  # Raw extracted text
+    content: bytes  # Raw extracted text
     source: str  # File path
-    metadata: dict  # File metadata
+    metadata: Dict[str, Any]  # File metadata

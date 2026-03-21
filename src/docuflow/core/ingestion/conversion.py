@@ -1,16 +1,17 @@
 import subprocess
 from pathlib import Path
+from typing import Callable, Optional
 
-import easyocr
 import pymupdf.layout  # noqa: F401
 import pymupdf4llm
+from paddleocr import PaddleOCR
 
 from docuflow.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-def get_converter(file_path: str):
+def get_converter(file_path: str) -> Callable[[Path], str]:
     """Get appropriate converter for file type"""
     suffix = Path(file_path).suffix.lower()
     converter = CONVERTERS.get(suffix)
@@ -69,18 +70,41 @@ def extract_text_content(file_path: Path) -> str:
 # ===== IMAGE CONVERTER =====
 
 
+# ✅ Lazy load reader once
+_ocr_reader: Optional[PaddleOCR] = None
+
+
+def _get_ocr_reader() -> PaddleOCR:
+    """Lazy load PaddleOCR reader - CPU only"""
+    global _ocr_reader
+    if _ocr_reader is None:
+        logger.info("Loading PaddleOCR (CPU mode)...")
+        _ocr_reader = PaddleOCR(
+            use_angle_cls=True,  # handles rotated text
+            lang="en",
+            use_gpu=False,  # CPU mode
+            show_log=False,  # suppress paddle logs
+        )
+    return _ocr_reader
+
+
 def convert_image_content(file_path: Path) -> str:
     """Extract text from .png , .jpg , .jpeg , .svg , .webp files"""
     try:
-        reader = easyocr.Reader(["en"])
-        logger.info(f"Extracting text from: {file_path}")
+        reader = _get_ocr_reader()
 
         # Extract text
-        results = reader.readtext(str(file_path))
+        results = reader.ocr(str(file_path), cls=True)
+
+        if not results or not results[0]:
+            logger.warning(f"No text detected in: {file_path}")
+            return ""
+
+        logger.info(f"Extracting text from: {file_path}")
 
         # Combine all text
-        text = "\n".join([result[1] for result in results])
-
+        text = "\n".join([line[1][0] for line in results[0]])
+        print(text)
         if not text.strip():
             logger.warning(f"No text detected in: {file_path}")
 

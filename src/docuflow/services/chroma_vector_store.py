@@ -67,5 +67,5 @@ class ChromaVectorStore(IVectorStore):
             self.collection.delete(ids=ids)
             self.logger.info(f"Deleted {len(ids)} documents")
         except Exception:
-            self.logger.error("Delete operation failed", exec_info=True)
+            self.logger.error("Delete operation failed", exc_info=True)
             raise

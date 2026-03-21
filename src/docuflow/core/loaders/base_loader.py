@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import List
 
+import sentry_sdk
+
 from docuflow.interfaces import ILoader
 from docuflow.schemas import RawDocument
 from docuflow.utils import get_logger
@@ -14,7 +16,7 @@ class BaseLoader(ILoader):
 
     SUPPORTED_EXTENSIONS: List[str] = []
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = get_logger(__name__)
 
     def validate(self, source_path: str) -> bool:
@@ -48,4 +50,5 @@ class BaseLoader(ILoader):
             ]
         except Exception as e:
             self.logger.error(f"Error loading {source_path}: {e}")
+            sentry_sdk.capture_exception(e)
             return []
