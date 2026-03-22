@@ -16,9 +16,9 @@ class DocumentParser:
         try:
             self.logger.info(f"Parsing {raw_document.source} ({format})")
 
-            if format == ".pdf":
+            if format in [".pdf"]:
                 result = convert_pdf_to_md(Path(raw_document.source))
-            elif format == ".docx":
+            elif format in [".docx"]:
                 result = convert_docx_to_md(Path(raw_document.source))
             elif format in [".txt", ".md"]:
                 result = extract_text_content(Path(raw_document.source))
