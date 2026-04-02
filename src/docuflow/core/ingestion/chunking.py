@@ -7,6 +7,7 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
+from docuflow.configs import settings
 from docuflow.schemas.document import Document as DocuFlowDocument
 
 logger = logging.getLogger(__name__)
@@ -35,7 +36,9 @@ def get_sections(markdown_text: str) -> List[DocuFlowDocument]:
     # 2. Second pass: Split large chunks recursively (Size limit)
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500, chunk_overlap=100, separators=["\n\n", "\n", ". ", " ", ""]
+        chunk_size=settings.chunk_size,
+        chunk_overlap=100,
+        separators=["\n\n", "\n", ". ", " ", ""],
     )
 
     # Split

@@ -104,7 +104,8 @@ def convert_image_content(file_path: Path) -> str:
 
         # Combine all text
         text = "\n".join([line[1][0] for line in results[0]])
-        print(text)
+        logger.debug(f"Extracted text: {text[:200]}...")
+
         if not text.strip():
             logger.warning(f"No text detected in: {file_path}")
 

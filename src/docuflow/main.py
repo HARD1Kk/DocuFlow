@@ -35,7 +35,11 @@ def main() -> None:
         return
 
     for pdf in pdf_files:
-        pipeline.ingest(pdf)
+        try:
+            pipeline.ingest(pdf)
+        except Exception as e:
+            logger.error(f"Failed to ingest {pdf}: {e}", exc_info=True)
+            continue
 
 
 if __name__ == "__main__":
