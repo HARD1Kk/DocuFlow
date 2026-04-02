@@ -4,7 +4,7 @@
 from typing import Dict, List
 
 from docuflow.core.chunking.base_chunker import BaseChunker
-from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
+from docuflow.schemas.chunk import Chunk, ChunkBatch, ContentType, DocumentType
 
 
 class ImageChunker(BaseChunker):

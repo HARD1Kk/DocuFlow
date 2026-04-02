@@ -36,9 +36,7 @@ class CodeChunker(BaseChunker):
             "import": re.compile(r"^(import\s+|export\s+)", re.MULTILINE),
         },
         "java": {
-            "method": re.compile(
-                r"^\s*(public|private|protected)?\s*(static)?\s*\w+\s+\w+\s*\(", re.MULTILINE
-            ),
+            "method": re.compile(r"^\s*(public|private|protected)?\s*(static)?\s*\w+\s+\w+\s*\(", re.MULTILINE),
             "class": re.compile(r"^\s*(public|private)?\s*class\s+(\w+)", re.MULTILINE),
             "import": re.compile(r"^(import\s+|package\s+)", re.MULTILINE),
         },
@@ -139,7 +137,7 @@ class CodeChunker(BaseChunker):
             if current_indent <= initial_indent and line.strip():
                 break
 
-            end = start + sum(len(l) + 1 for l in lines[: i + 1])
+            end = start + sum(len(li) + 1 for li in lines[: i + 1])
 
         return end
 
@@ -256,9 +254,7 @@ class CodeChunker(BaseChunker):
         # Extract content from merged blocks
         return "\n\n".join(content[b["start"] : b["end"]] for b in merged)
 
-    def _is_covered(
-        self, start: int, end: int, ranges: List[tuple[int, int]]
-    ) -> bool:
+    def _is_covered(self, start: int, end: int, ranges: List[tuple[int, int]]) -> bool:
         """Check if a range is already covered by existing ranges."""
         for range_start, range_end in ranges:
             if start >= range_start and end <= range_end:
@@ -320,9 +316,7 @@ class CodeChunker(BaseChunker):
 
         return chunks
 
-    def _get_remaining_content(
-        self, content: str, covered_ranges: List[tuple[int, int]]
-    ) -> str:
+    def _get_remaining_content(self, content: str, covered_ranges: List[tuple[int, int]]) -> str:
         """Get content not covered by any range."""
         if not covered_ranges:
             return content

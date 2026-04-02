@@ -9,7 +9,7 @@ Per rag.md Section 6.3:
 """
 
 import re
-from typing import Dict, List, Optional
+from typing import List
 
 from docuflow.schemas.chunk import Chunk, ChunkingConfig
 from docuflow.utils import get_logger
@@ -144,11 +144,7 @@ class MetadataEnricher:
         filtered = set()
         for kw in keywords:
             kw_lower = kw.lower()
-            if (
-                kw_lower not in stopwords
-                and len(kw_lower) > 3
-                and not kw_lower.isdigit()
-            ):
+            if kw_lower not in stopwords and len(kw_lower) > 3 and not kw_lower.isdigit():
                 filtered.add(kw_lower)
 
         # Return top keywords (limit to 10)

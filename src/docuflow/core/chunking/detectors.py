@@ -7,7 +7,7 @@ Each detector follows Single Responsibility Principle - one detector per element
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from docuflow.utils import get_logger
 
