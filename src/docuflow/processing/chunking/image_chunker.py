@@ -1,9 +1,9 @@
-# src/docuflow/core/chunking/image_chunker.py
+# src/docuflow/processing/chunking/image_chunker.py
 """Chunker for OCR-extracted text from images."""
 
 from typing import Dict, List
 
-from docuflow.core.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.base_chunker import BaseChunker
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ContentType, DocumentType
 
 

@@ -1,4 +1,4 @@
-# src/docuflow/core/chunking/base_chunker.py
+# src/docuflow/processing/chunking/base_chunker.py
 """Abstract base class for all chunkers - follows Open/Closed Principle."""
 
 from abc import ABC, abstractmethod

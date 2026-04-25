@@ -1,4 +1,4 @@
-# src/docuflow/core/chunking/__init__.py
+# src/docuflow/processing/chunking/__init__.py
 """
 Chunking module - Structure-aware chunking for all document types.
 
@@ -10,10 +10,10 @@ Provides:
 - Structure detectors: Heading, Table, List, Code block detection
 """
 
-from docuflow.core.chunking.base_chunker import BaseChunker
-from docuflow.core.chunking.chunking_engine import ChunkingEngine
-from docuflow.core.chunking.code_chunker import CodeChunker
-from docuflow.core.chunking.detectors import (
+from docuflow.processing.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.chunking_engine import ChunkingEngine
+from docuflow.processing.chunking.code_chunker import CodeChunker
+from docuflow.processing.chunking.detectors import (
     CodeBlockDetector,
     DetectedElement,
     Heading,
@@ -24,10 +24,10 @@ from docuflow.core.chunking.detectors import (
     Table,
     TableDetector,
 )
-from docuflow.core.chunking.image_chunker import ImageChunker
-from docuflow.core.chunking.markdown_chunker import MarkdownChunker
-from docuflow.core.chunking.metadata_enricher import MetadataEnricher
-from docuflow.core.chunking.spreadsheet_chunker import SpreadsheetChunker
+from docuflow.processing.chunking.image_chunker import ImageChunker
+from docuflow.processing.chunking.markdown_chunker import MarkdownChunker
+from docuflow.processing.chunking.metadata_enricher import MetadataEnricher
+from docuflow.processing.chunking.spreadsheet_chunker import SpreadsheetChunker
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 
 __all__ = [

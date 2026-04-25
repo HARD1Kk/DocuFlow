@@ -1,4 +1,4 @@
-# src/docuflow/core/chunking/metadata_enricher.py
+# src/docuflow/processing/chunking/metadata_enricher.py
 """Metadata enricher for chunks - adds summaries, keywords, and hypothetical questions.
 
 Per rag.md Section 6.3:

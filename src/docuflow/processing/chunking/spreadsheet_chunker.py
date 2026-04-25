@@ -1,11 +1,11 @@
-# src/docuflow/core/chunking/spreadsheet_chunker.py
+# src/docuflow/processing/chunking/spreadsheet_chunker.py
 """Chunker for spreadsheet data (XLSX, CSV, TSV)."""
 
 import csv
 import io
 from typing import Dict, List
 
-from docuflow.core.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.base_chunker import BaseChunker
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 
 

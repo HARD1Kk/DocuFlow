@@ -6,7 +6,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # Path of Pdf
+    # Generic input directory for documents (PDFs, DOCX, images, etc.)
+    # New: prefer `input_dir` for general processing; `pdf_dir` is kept for backward compatibility.
+    input_dir: Path = Field(
+        default=Path("data/input"), description="Generic input directory containing documents to process"
+    )
+
+    # Path of Pdf (legacy - kept for backward compatibility)
     pdf_dir: Path = Field(default=Path("data/pdfs"), description="Directory containing PDF files")
 
     # md dir

@@ -1,4 +1,4 @@
-# src/docuflow/core/chunking/detectors.py
+# src/docuflow/processing/chunking/detectors.py
 """Structure detectors for identifying document elements.
 
 Each detector follows Single Responsibility Principle - one detector per element type.

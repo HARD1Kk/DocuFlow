@@ -4,11 +4,14 @@ fmt:
 go:
     @uv run python -m docuflow.main
 
+install:
+    @uv pip install -e .
+
 check:
     @uv run mypy .
-    @uv run ty check    
+    @uv run ty check
 
 test:
     @uv run pytest -s
 dead:
-    @uv run vulture . --exclude .venv 
+    @uv run vulture . --exclude .venv

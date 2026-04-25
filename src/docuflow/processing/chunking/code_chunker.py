@@ -1,10 +1,10 @@
-# src/docuflow/core/chunking/code_chunker.py
+# src/docuflow/processing/chunking/code_chunker.py
 """Chunker for source code files."""
 
 import re
 from typing import Dict, List
 
-from docuflow.core.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.base_chunker import BaseChunker
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 
 

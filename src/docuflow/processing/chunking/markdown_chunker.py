@@ -1,11 +1,11 @@
-# src/docuflow/core/chunking/markdown_chunker.py
+# src/docuflow/processing/chunking/markdown_chunker.py
 """Structure-aware chunker for markdown content (PDF, DOCX, TXT, MD)."""
 
 import re
 from typing import Dict, List
 
-from docuflow.core.chunking.base_chunker import BaseChunker
-from docuflow.core.chunking.detectors import (
+from docuflow.processing.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.detectors import (
     CodeBlockDetector,
     DetectedElement,
     Heading,

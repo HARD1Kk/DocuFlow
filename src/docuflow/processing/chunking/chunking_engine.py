@@ -1,4 +1,4 @@
-# src/docuflow/core/chunking/chunking_engine.py
+# src/docuflow/processing/chunking/chunking_engine.py
 """
 Unified Chunking Engine - Main orchestrator for all document types.
 
@@ -12,12 +12,12 @@ Design Principles (SOLID):
 
 from typing import Dict, List, Optional
 
-from docuflow.core.chunking.base_chunker import BaseChunker
-from docuflow.core.chunking.code_chunker import CodeChunker
-from docuflow.core.chunking.image_chunker import ImageChunker
-from docuflow.core.chunking.markdown_chunker import MarkdownChunker
-from docuflow.core.chunking.metadata_enricher import MetadataEnricher
-from docuflow.core.chunking.spreadsheet_chunker import SpreadsheetChunker
+from docuflow.processing.chunking.base_chunker import BaseChunker
+from docuflow.processing.chunking.code_chunker import CodeChunker
+from docuflow.processing.chunking.image_chunker import ImageChunker
+from docuflow.processing.chunking.markdown_chunker import MarkdownChunker
+from docuflow.processing.chunking.metadata_enricher import MetadataEnricher
+from docuflow.processing.chunking.spreadsheet_chunker import SpreadsheetChunker
 from docuflow.schemas.chunk import ChunkBatch, ChunkingConfig, DocumentType
 from docuflow.utils import get_logger
 
