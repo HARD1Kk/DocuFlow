@@ -4,7 +4,7 @@ from pathlib import Path
 import pymupdf.layout  # noqa: F401
 import pymupdf4llm
 
-from docuflow.processing.converters.base_converter import BaseConverter
+from docuflow.interfaces import BaseConverter
 from docuflow.schemas import RawDocument
 from docuflow.utils import get_logger
 

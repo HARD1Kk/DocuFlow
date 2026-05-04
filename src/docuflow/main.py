@@ -40,7 +40,7 @@ def main() -> None:
     # Initialize processing components
     parser = DocumentParser()
     chunking_config = ChunkingConfig()
-    chunking_engine = ChunkingEngine(config=chunking_config, enable_enrichment=False)
+    chunking_engine = ChunkingEngine(config=chunking_config, enable_enrichment=True)
     # Run lightweight optional-dependency checks (logs availability) and set a flag
     deps = check_optional_dependencies()
     paddle_available = is_paddleocr_available()

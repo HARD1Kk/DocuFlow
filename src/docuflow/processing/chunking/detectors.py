@@ -35,10 +35,10 @@ class Heading(DetectedElement):
     title: str = ""
     level: int = 0
     line_number: int = 0
+    element_type: str = "heading"
 
     def __post_init__(self):
         super().__post_init__()
-        self.element_type = "heading"
 
 
 @dataclass
@@ -48,10 +48,10 @@ class Table(DetectedElement):
     rows: int = 0
     columns: int = 0
     has_header: bool = True
+    element_type: str = "table"
 
     def __post_init__(self):
         super().__post_init__()
-        self.element_type = "table"
 
 
 @dataclass
@@ -61,10 +61,10 @@ class ListBlock(DetectedElement):
     items: int = 0
     list_type: str = "unordered"  # or "ordered"
     max_depth: int = 1
+    element_type: str = "list"
 
     def __post_init__(self):
         super().__post_init__()
-        self.element_type = "list"
 
 
 @dataclass
@@ -73,10 +73,10 @@ class CodeBlock(DetectedElement):
 
     language: str = ""
     lines: int = 0
+    element_type: str = "code"
 
     def __post_init__(self):
         super().__post_init__()
-        self.element_type = "code"
 
 
 class StructureDetector(ABC):

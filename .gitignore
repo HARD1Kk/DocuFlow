@@ -15,7 +15,28 @@ data/
 .vscode/
 .idea/
 
+# Cache directories
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.claude/
+.graphify-out/
 
+# Markdown files
+*.md
+
+# Runtime outputs
+logs/
+output/
+chroma/
+chroma_test/
+chroma_test_r/
+
+# Windows metadata
+*.Zone.Identifier
+
+# Development notes (optional)
+notes/
 # OS files
 .DS_Store
 Thumbs.db

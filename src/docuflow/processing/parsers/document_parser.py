@@ -42,7 +42,7 @@ if __name__ == "__main__":
     from docuflow.core.loaders import LoaderFactory
 
     # Use your actual file
-    document_path = "/home/hardik/projects/DocuFlow/data/sample2.docx"
+    document_path = "data/images/resume.png"
 
     print(f"Loading: {document_path}")
 

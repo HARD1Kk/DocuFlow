@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import List
 
-import sentry_sdk
-
 from docuflow.interfaces import IDatasource
 from docuflow.schemas import RawDocument
 from docuflow.utils import get_logger
@@ -50,5 +48,4 @@ class BaseLoader(IDatasource):
             ]
         except Exception as e:
             self.logger.error(f"Error loading {source_path}: {e}")
-            sentry_sdk.capture_exception(e)
             return []

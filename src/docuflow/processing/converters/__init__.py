@@ -1,4 +1,3 @@
-from .base_converter import BaseConverter
 from .convert_image_text import convert_image_to_markdown
 from .converter_factory import ConverterFactory
 from .document_converter import (
@@ -10,7 +9,6 @@ from .document_converter import (
 from .image_converter import ImageConverter
 
 __all__ = [
-    "BaseConverter",
     "ConverterFactory",
     "DocumentConverter",
     "ImageConverter",

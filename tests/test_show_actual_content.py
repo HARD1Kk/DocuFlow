@@ -6,6 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from docuflow.core.chunking import StructureDetector
+
 from docuflow.core.loaders import LoaderFactory
 from docuflow.core.processing.parsers import DocumentParser, StructureAnalyzer
 

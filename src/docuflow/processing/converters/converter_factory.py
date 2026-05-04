@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Type
 
-from docuflow.processing.converters.base_converter import BaseConverter
+from docuflow.interfaces import BaseConverter
 from docuflow.processing.converters.document_converter import DocumentConverter
 from docuflow.processing.converters.image_converter import ImageConverter
 

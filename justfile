@@ -15,3 +15,6 @@ test:
     @uv run pytest -s
 dead:
     @uv run vulture . --exclude .venv
+
+clean:
+	rm -f *.md
