@@ -20,8 +20,7 @@ data/
 .mypy_cache/
 .ruff_cache/
 .claude/
-.graphify-out/
-graphify-out/*.json
+graphify-out/
 .cache/
 
 # Markdown files
