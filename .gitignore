@@ -21,6 +21,8 @@ data/
 .ruff_cache/
 .claude/
 .graphify-out/
+graphify-out/*.json
+.cache/
 
 # Markdown files
 *.md
