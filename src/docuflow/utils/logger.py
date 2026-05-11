@@ -22,7 +22,7 @@ def get_logger(name: str = __name__) -> logging.Logger:
     if logger.handlers:
         return logger
 
-    logger.setLevel(logging.INFO)
+    logger.setLevel(getattr(logging, settings.LOG_LEVEL))
 
     formatter = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(name)-40s | %(message)s",
@@ -33,7 +33,7 @@ def get_logger(name: str = __name__) -> logging.Logger:
 
     # Console handler
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
+    console_handler.setLevel(getattr(logging, settings.LOG_LEVEL))
     console_handler.setFormatter(formatter)
 
     # File handler (auto-creates file if missing)
