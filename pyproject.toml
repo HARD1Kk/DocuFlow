@@ -26,6 +26,7 @@ dependencies = [
   "opencv-python>=4.11.0.86",
   "easyocr>=1.7.1",
   "docling>=2.92.0",
+  "socksio>=1.0.0",
 ]
 
 [tool.ruff]

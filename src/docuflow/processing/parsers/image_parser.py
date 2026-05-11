@@ -1,4 +1,4 @@
-from docuflow.core.converters import ConverterFactory
+from docuflow.processing.converters import ConverterFactory
 from docuflow.schemas import RawDocument
 from docuflow.utils import get_logger
 

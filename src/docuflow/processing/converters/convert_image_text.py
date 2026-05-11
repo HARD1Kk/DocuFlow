@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict
 
+import easyocr
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions, TableStructureOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -58,16 +59,61 @@ class DoclingModel(IOCRModel):
             raise
 
 
-def convert_image_to_markdown(image_path: Path) -> str:
+class EasyOCRModel(IOCRModel):
     """
-    Convert an image file to markdown using Docling.
+    Offline OCR Model using EasyOCR - no network required.
+    """
+
+    def __init__(self, languages: list[str] | None = None):
+        self.languages = languages or ["en"]
+        self._reader: easyocr.Reader | None = None
+
+    def _get_reader(self) -> easyocr.Reader:
+        if self._reader is None:
+            self._reader = easyocr.Reader(self.languages, gpu=False, verbose=False)
+        return self._reader
+
+    def extract(self, file_path: str | Path) -> Dict[str, Any]:
+        try:
+            reader = self._get_reader()
+            results = reader.readtext(str(file_path))
+
+            text_lines = []
+            for _, text, confidence in results:
+                if confidence > 0.3:
+                    text_lines.append(text)
+
+            markdown = "\n".join(text_lines)
+
+            return {
+                "markdown": markdown,
+                "structured": {"text": text_lines},
+                "metadata": {
+                    "source": str(file_path),
+                    "num_lines": len(text_lines),
+                    "model": "easyocr",
+                },
+            }
+        except Exception as e:
+            logger.error(f"EasyOCR failed for {file_path}: {e}", exc_info=True)
+            raise
+
+
+def convert_image_to_markdown(image_path: Path, use_docling: bool = True) -> str:
+    """
+    Convert an image file to markdown.
 
     Args:
         image_path: Path to the image file.
+        use_docling: If True, use Docling (requires network). If False, use EasyOCR (offline).
 
     Returns:
         Markdown text extracted from the image.
     """
-    model = DoclingModel()
+    if use_docling:
+        model = DoclingModel()
+    else:
+        model = EasyOCRModel()
+
     result = model.extract(image_path)
     return result["markdown"]
