@@ -2,13 +2,12 @@
 
 import sys
 from pathlib import Path
+from typing import Any, Dict
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from docuflow.core.chunking import StructureDetector
-
-from docuflow.core.loaders import LoaderFactory
-from docuflow.core.processing.parsers import DocumentParser, StructureAnalyzer
+from docuflow.data_source import LoaderFactory
+from docuflow.processing.parsers import DocumentParser, StructureAnalyzer
 
 
 class UniversalDocumentTester:
@@ -209,12 +208,21 @@ class UniversalDocumentTester:
         except Exception as e:
             raise Exception(f"Failed to clean document: {e}")
 
-    def _detect_structure(self, content: str) -> dict:
+    def _detect_structure(self, content: str) -> Dict[str, Any]:
         """Detect structure in document"""
 
         try:
-            detector = StructureDetector()
-            return detector.detect(content)
+            from docuflow.processing.chunking.detectors import (
+                HeadingDetector,
+                TableDetector,
+                ListDetector,
+            )
+
+            headings = HeadingDetector().detect(content)
+            tables = TableDetector().detect(content)
+            lists = ListDetector().detect(content)
+
+            return {"headings": headings, "tables": tables, "lists": lists}
         except Exception as e:
             raise Exception(f"Failed to detect structure: {e}")
 
@@ -230,8 +238,8 @@ class UniversalDocumentTester:
         print(f"{'─' * 80}")
 
         for i, h in enumerate(headings[:10], 1):  # Show first 10
-            indent = "  " * (h["level"] - 1)
-            print(f"{i:2d}. {indent}{'#' * h['level']} {h['title']}")
+            indent = "  " * (h.level - 1)
+            print(f"{i:2d}. {indent}{'#' * h.level} {h.title}")
 
         if len(headings) > 10:
             print(f"... and {len(headings) - 10} more headings")
@@ -248,14 +256,14 @@ class UniversalDocumentTester:
         print(f"{'─' * 80}")
 
         for i, t in enumerate(tables[:5], 1):  # Show first 5
-            print(f"\n{i}. Table at position {t['position']}")
-            print(f"   ├─ Type: {t.get('type', 'unknown')}")
-            print(f"   ├─ Rows: {t['rows']}")
-            print(f"   ├─ Columns: {t.get('columns', 'N/A')}")
-            print(f"   ├─ Size: {t['end'] - t['start']} characters")
+            print(f"\n{i}. Table at position {t.start}")
+            print(f"   ├─ Type: {t.metadata.get('style', 'unknown')}")
+            print(f"   ├─ Rows: {t.rows}")
+            print(f"   ├─ Columns: {t.columns}")
+            print(f"   ├─ Size: {t.end - t.start} characters")
 
             # Show preview
-            table_content = content[t["start"] : t["end"]]
+            table_content = content[t.start : t.end]
             preview = table_content[:150].replace("\n", " ")
             print(f"   └─ Preview: {preview}...")
 
@@ -274,12 +282,12 @@ class UniversalDocumentTester:
         print(f"{'─' * 80}")
 
         for i, li in enumerate(lists[:5], 1):  # Show first 5
-            print(f"\n{i}. List at position {li['position']}")
-            print(f"   ├─ Items: {li['items']}")
-            print(f"   ├─ Size: {li['end'] - li['start']} characters")
+            print(f"\n{i}. List at position {li.start}")
+            print(f"   ├─ Items: {li.items}")
+            print(f"   ├─ Size: {li.end - li.start} characters")
 
             # Show preview
-            list_content = content[li["start"] : li["end"]]
+            list_content = content[li.start : li.end]
             lines = list_content.split("\n")[:3]
             for line in lines:
                 if line.strip():
@@ -292,7 +300,7 @@ class UniversalDocumentTester:
 # ============ MAIN TEST FUNCTION ============
 
 
-def test_document(document_path: str, verbose: bool = True) -> dict:
+def _test_document(document_path: str, verbose: bool = True) -> dict:
     """
     Test any document
 
@@ -322,7 +330,7 @@ def test_document(document_path: str, verbose: bool = True) -> dict:
 
 def test_sample_docx():
     """Test sample DOCX file"""
-    results = test_document("/home/hardik/projects/DocuFlow/data/sample2.docx")
+    results = _test_document("/home/hardik/projects/DocuFlow/data/sample2.docx")
     assert results["status"] == "SUCCESS"
 
 
@@ -336,7 +344,7 @@ def test_document_from_env():
         print("Set TEST_DOCUMENT environment variable to test a specific document")
         return
 
-    results = test_document(doc_path)
+    results = _test_document(doc_path)
     assert results["status"] == "SUCCESS"
 
 
@@ -363,7 +371,7 @@ if __name__ == "__main__":
     print("║" + " " * 78 + "║")
     print("╚" + "=" * 78 + "╝")
 
-    results = test_document(args.document, verbose=args.verbose)
+    results = _test_document(args.document, verbose=args.verbose)
 
     # Exit code based on results
     sys.exit(0 if results["status"] == "SUCCESS" else 1)
