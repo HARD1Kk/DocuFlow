@@ -1,6 +1,6 @@
 # DocuFlow
 
-Production-ready document processing pipeline for RAG systems with structure-aware chunking.
+DocuFlow is a modern Retrieval-Augmented Generation (RAG) system designed to process complex PDF documents with precision. By converting PDFs to structured Markdown before ingestion, DocuFlow preserves document layout, tables, and headers, ensuring higher-quality context for Large Language Models.
 
 ---
 
@@ -229,9 +229,9 @@ DocuFlow/
 - [x] Header-based smart chunking
 - [x] Structure detection (headings, tables, lists, code blocks)
 - [x] Dual OCR support (Docling + EasyOCR)
-- [x] Local embedding pipeline with batch processing
-- [x] Persistent vector storage (ChromaDB)
-- [x] Pluggable TextEmbedder / VectorStore interfaces
+- [ ] Local embedding pipeline with batch processing
+- [ ] Persistent vector storage (ChromaDB)
+- [ ] Pluggable TextEmbedder / VectorStore interfaces
 - [ ] RAG retrieval chain
 - [ ] LLM integration (Gemini / GPT-4 / Llama 3)
 - [ ] CLI interface for querying documents
