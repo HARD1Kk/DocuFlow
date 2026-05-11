@@ -3,6 +3,7 @@ from typing import Dict, Type
 
 from docuflow.data_source.document_loader import DocumentLoader
 from docuflow.data_source.image_loader import ImageLoader
+from docuflow.data_source.spreadsheet_loader import SpreadsheetLoader
 from docuflow.interfaces import IDatasource
 
 
@@ -32,3 +33,4 @@ class LoaderFactory:
 # Register all loaders
 LoaderFactory.register(DocumentLoader)
 LoaderFactory.register(ImageLoader)
+LoaderFactory.register(SpreadsheetLoader)

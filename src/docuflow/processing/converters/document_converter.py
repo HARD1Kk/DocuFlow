@@ -1,6 +1,8 @@
+import io
 import subprocess
 from pathlib import Path
 
+import pandas as pd
 import pymupdf.layout  # noqa: F401
 import pymupdf4llm
 
@@ -46,10 +48,35 @@ def extract_text_content(file_path: Path) -> str:
     return file_path.expanduser().resolve().read_text(encoding="utf-8")
 
 
+def convert_spreadsheet_to_markdown(file_path: Path) -> str:
+    """Convert spreadsheet (XLS, XLSX, CSV, TSV) to markdown table."""
+    file_path = file_path.expanduser().resolve()
+    try:
+        # Try reading with xlrd for .xls, openpyxl for .xlsx
+        if file_path.suffix.lower() == ".xls":
+            df = pd.read_excel(file_path, engine="xlrd")
+        elif file_path.suffix.lower() == ".xlsx":
+            df = pd.read_excel(file_path, engine="openpyxl")
+        elif file_path.suffix.lower() in {".csv", ".tsv"}:
+            sep = "\t" if file_path.suffix.lower() == ".tsv" else ","
+            df = pd.read_csv(file_path, sep=sep)
+        else:
+            raise ValueError(f"Unsupported spreadsheet format: {file_path.suffix}")
+
+        # Convert to markdown table
+        markdown = df.to_markdown(index=False)
+        logger.info("Converted spreadsheet %s into %s characters of markdown", file_path, len(markdown))
+        return markdown
+
+    except Exception as exc:
+        logger.exception("Failed to convert spreadsheet %s", file_path)
+        raise RuntimeError(f"Spreadsheet conversion failed for {file_path}") from exc
+
+
 class DocumentConverter(BaseConverter):
     """Convert document files into normalized markdown or text."""
 
-    SUPPORTED_EXTENSIONS = (".pdf", ".docx", ".txt", ".md")
+    SUPPORTED_EXTENSIONS = (".pdf", ".docx", ".txt", ".md", ".xls", ".xlsx", ".csv", ".tsv")
 
     def convert(self, raw_document: RawDocument) -> str:
         source_path = Path(raw_document.source)
@@ -61,5 +88,7 @@ class DocumentConverter(BaseConverter):
             return convert_docx_to_markdown(source_path)
         if file_format in {".txt", ".md"}:
             return extract_text_content(source_path)
+        if file_format in {".xls", ".xlsx", ".csv", ".tsv"}:
+            return convert_spreadsheet_to_markdown(source_path)
 
         raise ValueError(f"Unsupported document format: {file_format}")

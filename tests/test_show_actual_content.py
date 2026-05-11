@@ -182,11 +182,11 @@ class UniversalDocumentTester:
                 )
 
                 # Use appropriate parser
-                if self.format in [".pdf", ".docx", ".txt", ".md"]:
+                if self.format in [".pdf", ".docx", ".txt", ".md", ".xls", ".xlsx", ".csv", ".tsv"]:
                     parser = DocumentParser()
                     return parser.parse(raw_doc)
                 elif self.format in [".png", ".jpg", ".jpeg", ".gif", ".webp"]:
-                    from docuflow.core.processing.parsers.image_parser import ImageParser
+                    from docuflow.processing.parsers.image_parser import ImageParser
 
                     parser = ImageParser()
                     return parser.parse(raw_doc)
