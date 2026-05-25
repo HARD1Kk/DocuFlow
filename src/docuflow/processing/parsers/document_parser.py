@@ -4,9 +4,16 @@ from docuflow.utils import TextCleaner, get_logger
 
 
 class DocumentParser:
-    def __init__(self) -> None:
+    def __init__(self, converter_provider: object | None = None) -> None:
+        """Parser that extracts text using a converter provider.
+
+        Args:
+            converter_provider: object with `get_converter(source_path)` method.
+                Defaults to `ConverterFactory`.
+        """
         self.logger = get_logger(__name__)
         self.cleaner = TextCleaner()
+        self.converter_provider = converter_provider or ConverterFactory
 
     def parse(self, raw_document: RawDocument) -> str:
         """Extract text from document formats using the converter layer."""
@@ -14,7 +21,8 @@ class DocumentParser:
 
         try:
             self.logger.info(f"Parsing {raw_document.source} ({file_format})")
-            result = ConverterFactory.get_converter(raw_document.source).convert(raw_document)
+            converter = self.converter_provider.get_converter(raw_document.source)
+            result = converter.convert(raw_document)
 
             if result is None:
                 self.logger.error(f"Conversion returned None for {file_format}")

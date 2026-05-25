@@ -6,6 +6,7 @@ from docuflow.data_source import LoaderFactory
 from docuflow.processing.chunking import ChunkingEngine
 from docuflow.processing.ingestion import save_markdown
 from docuflow.processing.parsers import DocumentParser
+from docuflow.processing.converters import ConverterFactory
 from docuflow.schemas.chunk import ChunkingConfig, DocumentType
 from docuflow.utils import ensure_directories, get_logger
 from docuflow.utils.dependency_checks import check_optional_dependencies, is_paddleocr_available
@@ -30,6 +31,23 @@ def get_document_type(file_path: Path) -> DocumentType:
     return type_map.get(ext, DocumentType.UNKNOWN)
 
 
+def create_app() -> dict:
+    """Composition root: create and wire concrete implementations.
+
+    Returns a mapping with commonly used components.
+    """
+    parser = DocumentParser(converter_provider=ConverterFactory)
+    chunking_config = ChunkingConfig()
+    chunking_engine = ChunkingEngine(config=chunking_config, enable_enrichment=True)
+    loader_factory = LoaderFactory
+
+    return {
+        "parser": parser,
+        "chunking_engine": chunking_engine,
+        "loader_factory": loader_factory,
+    }
+
+
 def main() -> None:
     logger = get_logger(__name__)
     logger.info("Starting Docuflow Pipeline")
@@ -37,10 +55,12 @@ def main() -> None:
     # Ensure directories exist
     ensure_directories()
 
-    # Initialize processing components
-    parser = DocumentParser()
-    chunking_config = ChunkingConfig()
-    chunking_engine = ChunkingEngine(config=chunking_config, enable_enrichment=True)
+    # Build app components
+    app = create_app()
+    parser = app["parser"]
+    chunking_engine = app["chunking_engine"]
+    loader_factory = app["loader_factory"]
+
     # Run lightweight optional-dependency checks (logs availability) and set a flag
     deps = check_optional_dependencies()
     paddle_available = is_paddleocr_available()
@@ -67,7 +87,7 @@ def main() -> None:
 
             # Load document
             try:
-                loader = LoaderFactory.get_loader(str(file_path))
+                loader = loader_factory.get_loader(str(file_path))
             except ValueError:
                 logger.warning(f"No loader for {file_path.suffix}; skipping")
                 continue
