@@ -214,8 +214,8 @@ class UniversalDocumentTester:
         try:
             from docuflow.processing.chunking.detectors import (
                 HeadingDetector,
-                TableDetector,
                 ListDetector,
+                TableDetector,
             )
 
             headings = HeadingDetector().detect(content)

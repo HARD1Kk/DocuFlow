@@ -22,6 +22,7 @@ class DocumentParser:
         try:
             self.logger.info(f"Parsing {raw_document.source} ({file_format})")
             converter = self.converter_provider.get_converter(raw_document.source)
+            self.logger.info(f"Using converter: {converter.__class__.__name__}")
             result = converter.convert(raw_document)
 
             if result is None:
@@ -33,7 +34,7 @@ class DocumentParser:
             return cleaned_result
 
         except Exception as e:
-            self.logger.error(f"Error parsing {raw_document.source}: {e}")
+            self.logger.error(f"Error parsing {raw_document.source}: {e}", exc_info=True)
             raise
 
     def _clean_text(self, text: str, source: str) -> str:

@@ -25,47 +25,93 @@ class ChromaVectorStore(IVectorStore):
         metadata: List[Mapping[str, Any]],
         embeddings: List[List[float]],
     ) -> None:
-        self.logger.debug(f"Adding {len(ids)} documents to collection")
-        # # Get the text and metadata from documents
-        # doc_data = get_meta_content_id(documents)
+        import time
+        from docuflow.utils import log_context
 
-        # # Generate embeddings using the embed_text method
-        # embeddings = self.embedding_service.embed_texts(doc_data["documents"])
+        with log_context(stage="Indexing"):
+            self.logger.info(f"Adding/Upserting {len(ids)} documents to collection")
+            
+            # Size before
+            try:
+                count_before = self.collection.count()
+            except Exception as e:
+                self.logger.warning(f"Could not read index size before indexing: {e}")
+                count_before = 0
 
-        # embeddings = np.array(embeddings)
-        try:
-            self.collection.upsert(
-                ids=ids,
-                documents=documents,
-                embeddings=np.array(embeddings),
-                metadatas=metadata,
-            )
-            self.logger.info(f"Successfully upserted {len(ids)} documents")
-        except Exception:
-            self.logger.error("Failed to add documents", exc_info=True)
-            raise
+            # Duplicate chunk_id detection (silent overwrite risk)
+            try:
+                existing = self.collection.get(ids=ids)
+                existing_ids = existing.get("ids", [])
+                if existing_ids:
+                    self.logger.warning(
+                        f"Duplicate chunk IDs detected. Overwrite risk for IDs: {existing_ids}"
+                    )
+            except Exception as e:
+                self.logger.warning(f"Failed to check for duplicate IDs in vector store: {e}")
+
+            start_time = time.perf_counter()
+            try:
+                self.collection.upsert(
+                    ids=ids,
+                    documents=documents,
+                    embeddings=np.array(embeddings),
+                    metadatas=metadata,
+                )
+                latency_ms = (time.perf_counter() - start_time) * 1000
+                
+                # Size after
+                try:
+                    count_after = self.collection.count()
+                except Exception as e:
+                    self.logger.warning(f"Could not read index size after indexing: {e}")
+                    count_after = count_before + len(ids)
+
+                self.logger.info(
+                    f"Successfully indexed/upserted {len(ids)} documents. "
+                    f"Index count: before={count_before}, after={count_after} (latency={latency_ms:.2f}ms)",
+                    extra={"latency_ms": latency_ms}
+                )
+            except Exception as e:
+                latency_ms = (time.perf_counter() - start_time) * 1000
+                self.logger.error(
+                    f"Failed to add/upsert documents: {e}",
+                    exc_info=True,
+                    extra={"latency_ms": latency_ms}
+                )
+                raise
 
     def query(self, query_embedding: List[float], n_results: int = 5):
-        self.logger.debug(f"Querying collection with top {n_results} results")
+        from docuflow.utils import log_context
 
-        try:
-            results = self.collection.query(
-                query_embeddings=[query_embedding],
-                n_results=n_results,
-            )
-            self.logger.info("Query executed successfully")
-            return results
+        with log_context(stage="Indexing"):
+            self.logger.debug(f"Querying collection with top {n_results} results")
 
-        except Exception:
-            self.logger.error("Query failed", exc_info=True)
-            raise
+            try:
+                results = self.collection.query(
+                    query_embeddings=[query_embedding],
+                    n_results=n_results,
+                )
+                self.logger.info("Query executed successfully")
+                return results
+
+            except Exception as e:
+                self.logger.error(f"Query failed: {e}", exc_info=True)
+                raise
 
     def delete(self, ids: List[str]):
-        self.logger.debug(f"Deleting {len(ids)} documents")
+        from docuflow.utils import log_context
 
-        try:
-            self.collection.delete(ids=ids)
-            self.logger.info(f"Deleted {len(ids)} documents")
-        except Exception:
-            self.logger.error("Delete operation failed", exc_info=True)
-            raise
+        with log_context(stage="Indexing"):
+            self.logger.info(f"Deleting {len(ids)} documents from collection")
+
+            try:
+                count_before = self.collection.count()
+                self.collection.delete(ids=ids)
+                count_after = self.collection.count()
+                
+                self.logger.info(
+                    f"Deleted {len(ids)} documents. Index count: before={count_before}, after={count_after}"
+                )
+            except Exception as e:
+                self.logger.error(f"Delete operation failed: {e}", exc_info=True)
+                raise

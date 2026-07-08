@@ -4,11 +4,11 @@ from pathlib import Path
 from docuflow.configs import settings
 from docuflow.data_source import LoaderFactory
 from docuflow.processing.chunking import ChunkingEngine
+from docuflow.processing.converters import ConverterFactory
 from docuflow.processing.ingestion import save_markdown
 from docuflow.processing.parsers import DocumentParser
-from docuflow.processing.converters import ConverterFactory
 from docuflow.schemas.chunk import ChunkingConfig, DocumentType
-from docuflow.utils import ensure_directories, get_logger
+from docuflow.utils import ensure_directories, get_logger, log_context
 from docuflow.utils.dependency_checks import check_optional_dependencies, is_paddleocr_available
 
 
@@ -83,44 +83,45 @@ def main() -> None:
                 logger.warning(f"Skipping image {file_path.name} because PaddleOCR/PPStructureV3 is not available.")
                 continue
 
-            logger.info(f"Processing file: {file_path}")
+            with log_context(document_id=file_path.name, stage="Ingestion"):
+                logger.info(f"Document received: source={file_path}, type={file_path.suffix}, size={file_path.stat().st_size} bytes")
 
-            # Load document
-            try:
-                loader = loader_factory.get_loader(str(file_path))
-            except ValueError:
-                logger.warning(f"No loader for {file_path.suffix}; skipping")
-                continue
+                # Load document
+                try:
+                    loader = loader_factory.get_loader(str(file_path))
+                except ValueError:
+                    logger.warning(f"No loader for {file_path.suffix}; skipping file")
+                    continue
 
-            raw_documents = loader.load(str(file_path))
-            if not raw_documents:
-                logger.warning(f"No content loaded for {file_path}, skipping.")
-                continue
+                raw_documents = loader.load(str(file_path))
+                if not raw_documents:
+                    logger.warning(f"No content loaded for {file_path}, skipping file.")
+                    continue
 
-            raw_doc = raw_documents[0]
+                raw_doc = raw_documents[0]
 
-            # Parse / convert & clean document to text
-            parsed_text = parser.parse(raw_doc)
+                # Parse / convert & clean document to text
+                parsed_text = parser.parse(raw_doc)
 
-            # Save markdown output
-            md_out = settings.md_dir / f"{file_path.stem}.md"
-            save_markdown(parsed_text, md_out)
-            logger.info(f"Saved markdown: {md_out}")
+                # Save markdown output
+                md_out = settings.md_dir / f"{file_path.stem}.md"
+                save_markdown(parsed_text, md_out)
+                logger.info(f"Saved markdown: {md_out}")
 
-            # Chunk with advanced ChunkingEngine
-            doc_type = get_document_type(file_path)
-            chunk_batch = chunking_engine.chunk(
-                content=parsed_text,
-                document_type=doc_type,
-                metadata={"source": str(file_path), "filename": file_path.name},
-            )
+                # Chunk with advanced ChunkingEngine
+                doc_type = get_document_type(file_path)
+                chunk_batch = chunking_engine.chunk(
+                    content=parsed_text,
+                    document_type=doc_type,
+                    metadata={"source": str(file_path), "filename": file_path.name},
+                )
 
-            logger.info(
-                f"Produced {len(chunk_batch.chunks)} chunks ({chunk_batch.total_tokens} tokens) for {file_path}"
-            )
+                logger.info(
+                    f"Produced {len(chunk_batch.chunks)} chunks ({chunk_batch.total_tokens} tokens) for {file_path}"
+                )
 
-            if chunk_batch.processing_errors:
-                logger.warning(f"Chunking errors: {chunk_batch.processing_errors}")
+                if chunk_batch.processing_errors:
+                    logger.warning(f"Chunking errors: {chunk_batch.processing_errors}")
 
         except Exception as e:
             logger.error(f"Failed to process {file_path}: {e}", exc_info=True)

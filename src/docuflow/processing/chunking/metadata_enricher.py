@@ -12,7 +12,7 @@ import re
 from typing import List
 
 from docuflow.schemas.chunk import Chunk, ChunkingConfig
-from docuflow.utils import get_logger
+from docuflow.utils import get_logger, log_context
 
 logger = get_logger(__name__)
 
@@ -44,32 +44,44 @@ class MetadataEnricher:
             self.logger.debug("Metadata enrichment disabled")
             return chunks
 
-        self.logger.info(f"Enriching {len(chunks)} chunks with metadata")
+        with log_context(stage="Metadata Enrichment"):
+            self.logger.info(f"Enriching {len(chunks)} chunks with metadata")
 
-        for chunk in chunks:
-            self._enrich_chunk(chunk)
+            for chunk in chunks:
+                self._enrich_chunk(chunk)
 
-        return chunks
+            return chunks
 
     def _enrich_chunk(self, chunk: Chunk) -> None:
         """Enrich a single chunk with all metadata types."""
         if not chunk.content:
             return
 
-        # Extract keywords (always done - rule-based)
-        chunk.keywords = self._extract_keywords(chunk.content)
+        self.logger.info(f"Attempting metadata enrichment for chunk {chunk.chunk_id}")
 
-        # Generate summary (LLM if available, else rule-based)
-        if self.llm_service:
-            chunk.summary = self._generate_summary_llm(chunk.content)
-        else:
-            chunk.summary = self._generate_summary_rule_based(chunk.content)
+        try:
+            # Extract keywords (always done - rule-based)
+            chunk.keywords = self._extract_keywords(chunk.content)
 
-        # Generate hypothetical questions (LLM if available, else rule-based)
-        if self.llm_service:
-            chunk.hypothetical_questions = self._generate_questions_llm(chunk.content)
-        else:
-            chunk.hypothetical_questions = self._generate_questions_rule_based(chunk.content)
+            # Generate summary (LLM if available, else rule-based)
+            if self.llm_service:
+                chunk.summary = self._generate_summary_llm(chunk.content)
+            else:
+                chunk.summary = self._generate_summary_rule_based(chunk.content)
+
+            # Generate hypothetical questions (LLM if available, else rule-based)
+            if self.llm_service:
+                chunk.hypothetical_questions = self._generate_questions_llm(chunk.content)
+            else:
+                chunk.hypothetical_questions = self._generate_questions_rule_based(chunk.content)
+
+            self.logger.info(
+                f"Successfully enriched chunk {chunk.chunk_id}: "
+                f"keywords={len(chunk.keywords)}, summary_len={len(chunk.summary) if chunk.summary else 0}, "
+                f"questions={len(chunk.hypothetical_questions)}"
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to enrich chunk {chunk.chunk_id}: {e}", exc_info=True)
 
     def _extract_keywords(self, content: str) -> List[str]:
         """
@@ -186,12 +198,34 @@ class MetadataEnricher:
         if not self.llm_service:
             return self._generate_summary_rule_based(content)
 
+        import time
+        start_time = time.perf_counter()
         try:
             prompt = f"Summarize this text in one sentence (max 100 words):\n\n{content[:2000]}"
             response = self.llm_service.generate(prompt)
+            latency_ms = (time.perf_counter() - start_time) * 1000
+
+            # Extract tokens and cost if returned by LLM service
+            input_tokens = getattr(self.llm_service, "last_input_tokens", len(prompt) // 4)
+            output_tokens = getattr(self.llm_service, "last_output_tokens", len(response) // 4)
+            cost_usd = getattr(self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002))
+
+            self.logger.info(
+                f"LLM call for summary succeeded (latency={latency_ms:.2f}ms)",
+                extra={
+                    "latency_ms": latency_ms,
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                    "cost_usd": cost_usd
+                }
+            )
             return response.strip()
         except Exception as e:
-            self.logger.warning(f"LLM summary failed, falling back to rule-based: {e}")
+            latency_ms = (time.perf_counter() - start_time) * 1000
+            self.logger.warning(
+                f"LLM summary failed, falling back to rule-based: {e}",
+                extra={"latency_ms": latency_ms}
+            )
             return self._generate_summary_rule_based(content)
 
     def _generate_questions_rule_based(self, content: str) -> List[str]:
@@ -257,6 +291,8 @@ class MetadataEnricher:
         if not self.llm_service:
             return self._generate_questions_rule_based(content)
 
+        import time
+        start_time = time.perf_counter()
         try:
             prompt = f"""Generate 3-5 questions that this text could answer.
 Format as a JSON array of strings.
@@ -265,9 +301,29 @@ Text:
 {content[:2000]}
 """
             response = self.llm_service.generate(prompt)
+            latency_ms = (time.perf_counter() - start_time) * 1000
+
+            # Extract tokens and cost if returned by LLM service
+            input_tokens = getattr(self.llm_service, "last_input_tokens", len(prompt) // 4)
+            output_tokens = getattr(self.llm_service, "last_output_tokens", len(response) // 4)
+            cost_usd = getattr(self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002))
+
+            self.logger.info(
+                f"LLM call for question generation succeeded (latency={latency_ms:.2f}ms)",
+                extra={
+                    "latency_ms": latency_ms,
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                    "cost_usd": cost_usd
+                }
+            )
             # Parse JSON response (simplified - should use proper JSON parser)
             questions = re.findall(r'"([^"]+)"', response)
             return questions if questions else self._generate_questions_rule_based(content)
         except Exception as e:
-            self.logger.warning(f"LLM question generation failed: {e}")
+            latency_ms = (time.perf_counter() - start_time) * 1000
+            self.logger.warning(
+                f"LLM question generation failed, falling back to rule-based: {e}",
+                extra={"latency_ms": latency_ms}
+            )
             return self._generate_questions_rule_based(content)

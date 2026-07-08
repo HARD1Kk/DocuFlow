@@ -19,7 +19,8 @@ from docuflow.processing.chunking.markdown_chunker import MarkdownChunker
 from docuflow.processing.chunking.metadata_enricher import MetadataEnricher
 from docuflow.processing.chunking.spreadsheet_chunker import SpreadsheetChunker
 from docuflow.schemas.chunk import ChunkBatch, ChunkingConfig, DocumentType
-from docuflow.utils import get_logger
+import time
+from docuflow.utils import get_logger, log_context
 
 logger = get_logger(__name__)
 
@@ -115,61 +116,81 @@ class ChunkingEngine:
         metadata = metadata or {}
         source = metadata.get("source", "unknown")
 
-        self.logger.info(f"Starting chunking for {source} ({document_type.value})")
+        with log_context(stage="Chunking"):
+            self.logger.info(f"Starting chunking for {source} ({document_type.value})")
 
-        # Validate input
-        if not content or not content.strip():
-            self.logger.warning("Empty content provided")
-            return ChunkBatch(
-                source=source,
-                format=document_type,
-                total_pages=metadata.get("total_pages", 0),
-                total_tokens=0,
-                chunks=[],
-                processing_errors=["Empty content provided"],
+            # Validate input
+            if not content or not content.strip():
+                self.logger.warning("Empty content provided")
+                return ChunkBatch(
+                    source=source,
+                    format=document_type,
+                    total_pages=metadata.get("total_pages", 0),
+                    total_tokens=0,
+                    chunks=[],
+                    processing_errors=["Empty content provided"],
+                )
+
+            # Get appropriate chunker
+            chunker = self._get_chunker(document_type)
+
+            if not chunker:
+                self.logger.error(f"No chunker registered for {document_type.value}")
+                return ChunkBatch(
+                    source=source,
+                    format=document_type,
+                    total_pages=metadata.get("total_pages", 0),
+                    total_tokens=0,
+                    chunks=[],
+                    processing_errors=[f"No chunker available for document type: {document_type.value}"],
+                )
+
+            # Chunk the content
+            start_time = time.perf_counter()
+            try:
+                batch = chunker.chunk(content, metadata)
+            except Exception as e:
+                self.logger.error(f"Chunking failed for {source}: {e}", exc_info=True)
+                return ChunkBatch(
+                    source=source,
+                    format=document_type,
+                    total_pages=metadata.get("total_pages", 0),
+                    total_tokens=0,
+                    chunks=[],
+                    processing_errors=[f"Chunking error: {str(e)}"],
+                )
+
+            chunking_latency = (time.perf_counter() - start_time) * 1000
+
+            # Enrich chunks with metadata
+            if self.enable_enrichment and batch.chunks:
+                self.logger.info(f"Enriching {len(batch.chunks)} chunks with metadata")
+                batch.chunks = self.enricher.enrich(batch.chunks)
+
+            # Calculate chunk size stats (tokens)
+            if batch.chunks:
+                sizes = [c.token_count for c in batch.chunks]
+                min_size = min(sizes)
+                max_size = max(sizes)
+                avg_size = sum(sizes) / len(sizes)
+                self.logger.info(
+                    f"Chunk statistics: min_size={min_size} tokens, max_size={max_size} tokens, avg_size={avg_size:.1f} tokens",
+                    extra={"chunk_count": len(batch.chunks)}
+                )
+
+            # Log summary
+            self.logger.info(
+                f"Chunking complete: {len(batch.chunks)} chunks, "
+                f"{batch.total_tokens} tokens, "
+                f"{len(batch.processing_errors)} errors",
+                extra={
+                    "latency_ms": chunking_latency,
+                    "chunk_count": len(batch.chunks),
+                    "output_tokens": batch.total_tokens,
+                }
             )
 
-        # Get appropriate chunker
-        chunker = self._get_chunker(document_type)
-
-        if not chunker:
-            self.logger.error(f"No chunker registered for {document_type.value}")
-            return ChunkBatch(
-                source=source,
-                format=document_type,
-                total_pages=metadata.get("total_pages", 0),
-                total_tokens=0,
-                chunks=[],
-                processing_errors=[f"No chunker available for document type: {document_type.value}"],
-            )
-
-        # Chunk the content
-        try:
-            batch = chunker.chunk(content, metadata)
-        except Exception as e:
-            self.logger.error(f"Chunking failed for {source}: {e}", exc_info=True)
-            return ChunkBatch(
-                source=source,
-                format=document_type,
-                total_pages=metadata.get("total_pages", 0),
-                total_tokens=0,
-                chunks=[],
-                processing_errors=[f"Chunking error: {str(e)}"],
-            )
-
-        # Enrich chunks with metadata
-        if self.enable_enrichment and batch.chunks:
-            self.logger.info(f"Enriching {len(batch.chunks)} chunks with metadata")
-            batch.chunks = self.enricher.enrich(batch.chunks)
-
-        # Log summary
-        self.logger.info(
-            f"Chunking complete: {len(batch.chunks)} chunks, "
-            f"{batch.total_tokens} tokens, "
-            f"{len(batch.processing_errors)} errors"
-        )
-
-        return batch
+            return batch
 
     def _get_chunker(self, document_type: DocumentType) -> Optional[BaseChunker]:
         """Get appropriate chunker for document type."""
