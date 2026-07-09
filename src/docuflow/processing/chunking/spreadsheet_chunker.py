@@ -98,7 +98,6 @@ class SpreadsheetChunker(BaseChunker):
         """Create chunks from data rows."""
         chunks = []
         sheet_name = metadata.get("sheet_name", "Sheet1")
-        source = metadata.get("source", "unknown")
 
         for row_index, row in enumerate(rows, start=2):  # Start at 2 (1-indexed, after header)
             # Convert row to markdown table format

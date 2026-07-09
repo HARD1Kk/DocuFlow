@@ -1,0 +1,916 @@
+{
+  "communities": {
+    "0": [
+      "chunking_detectors_codeblock",
+      "chunking_detectors_codeblock_post_init",
+      "chunking_detectors_codeblockdetector",
+      "chunking_detectors_codeblockdetector_detect",
+      "chunking_detectors_codeblockdetector_detect_fenced_blocks",
+      "chunking_detectors_codeblockdetector_detect_indented_blocks",
+      "chunking_detectors_codeblockdetector_init",
+      "chunking_detectors_detect",
+      "chunking_detectors_detectedelement",
+      "chunking_detectors_detectedelement_post_init",
+      "chunking_detectors_heading",
+      "chunking_detectors_heading_post_init",
+      "chunking_detectors_headingdetector",
+      "chunking_detectors_headingdetector_deduplicate_headings",
+      "chunking_detectors_headingdetector_detect",
+      "chunking_detectors_headingdetector_detect_cap_headings",
+      "chunking_detectors_headingdetector_detect_markdown_headings",
+      "chunking_detectors_headingdetector_detect_underlined_headings",
+      "chunking_detectors_headingdetector_init",
+      "chunking_detectors_listblock",
+      "chunking_detectors_listblock_post_init",
+      "chunking_detectors_listdetector",
+      "chunking_detectors_listdetector_detect",
+      "chunking_detectors_listdetector_get_list_type",
+      "chunking_detectors_listdetector_init",
+      "chunking_detectors_listdetector_is_list_item",
+      "chunking_detectors_rationale_107",
+      "chunking_detectors_rationale_132",
+      "chunking_detectors_rationale_159",
+      "chunking_detectors_rationale_179",
+      "chunking_detectors_rationale_19",
+      "chunking_detectors_rationale_200",
+      "chunking_detectors_rationale_216",
+      "chunking_detectors_rationale_226",
+      "chunking_detectors_rationale_245",
+      "chunking_detectors_rationale_287",
+      "chunking_detectors_rationale_327",
+      "chunking_detectors_rationale_33",
+      "chunking_detectors_rationale_338",
+      "chunking_detectors_rationale_394",
+      "chunking_detectors_rationale_405",
+      "chunking_detectors_rationale_410",
+      "chunking_detectors_rationale_418",
+      "chunking_detectors_rationale_438",
+      "chunking_detectors_rationale_46",
+      "chunking_detectors_rationale_472",
+      "chunking_detectors_rationale_83",
+      "chunking_detectors_rationale_95",
+      "chunking_detectors_structuredetector",
+      "chunking_detectors_table",
+      "chunking_detectors_table_post_init",
+      "chunking_detectors_tabledetector",
+      "chunking_detectors_tabledetector_detect",
+      "chunking_detectors_tabledetector_detect_ascii_tables",
+      "chunking_detectors_tabledetector_detect_markdown_tables",
+      "chunking_detectors_tabledetector_init",
+      "chunking_markdown_chunker_markdownchunker_init",
+      "src_docuflow_processing_chunking_detectors_py"
+    ],
+    "1": [
+      "baseconverter",
+      "chunking_spreadsheet_chunker_rationale_13",
+      "chunking_spreadsheet_chunker_rationale_133",
+      "chunking_spreadsheet_chunker_rationale_157",
+      "chunking_spreadsheet_chunker_rationale_204",
+      "chunking_spreadsheet_chunker_rationale_32",
+      "chunking_spreadsheet_chunker_rationale_98",
+      "chunking_spreadsheet_chunker_spreadsheetchunker",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_chunk",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_create_column_group_chunk",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_create_row_chunks",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_init",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_parse_csv",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_parse_tsv",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_row_to_markdown",
+      "chunking_spreadsheet_chunker_spreadsheetchunker_split_large_row",
+      "chunking_spreadsheet_chunker_supported_document_types",
+      "converters_convert_image_text_convert_image_to_markdown",
+      "converters_convert_image_text_doclingmodel",
+      "converters_convert_image_text_doclingmodel_extract",
+      "converters_convert_image_text_doclingmodel_init",
+      "converters_convert_image_text_easyocrmodel",
+      "converters_convert_image_text_easyocrmodel_extract",
+      "converters_convert_image_text_easyocrmodel_get_reader",
+      "converters_convert_image_text_easyocrmodel_init",
+      "converters_convert_image_text_rationale_103",
+      "converters_convert_image_text_rationale_18",
+      "converters_convert_image_text_rationale_33",
+      "converters_convert_image_text_rationale_63",
+      "converters_converter_factory_converterfactory",
+      "converters_converter_factory_get_converter",
+      "converters_converter_factory_rationale_10",
+      "converters_converter_factory_register",
+      "converters_document_converter_convert_docx_to_markdown",
+      "converters_document_converter_convert_pdf_to_markdown",
+      "converters_document_converter_documentconverter",
+      "converters_document_converter_documentconverter_convert",
+      "converters_document_converter_extract_text_content",
+      "converters_document_converter_rationale_15",
+      "converters_document_converter_rationale_27",
+      "converters_document_converter_rationale_45",
+      "converters_document_converter_rationale_50",
+      "converters_image_converter_imageconverter",
+      "converters_image_converter_imageconverter_convert",
+      "converters_image_converter_rationale_12",
+      "iocrmodel",
+      "src_docuflow_processing_chunking_spreadsheet_chunker_py",
+      "src_docuflow_processing_converters_convert_image_text_py",
+      "src_docuflow_processing_converters_converter_factory_py",
+      "src_docuflow_processing_converters_document_converter_py",
+      "src_docuflow_processing_converters_image_converter_py",
+      "src_docuflow_processing_converters_init_py",
+      "str"
+    ],
+    "2": [
+      "iretriever",
+      "itextembedder",
+      "ivectorstore",
+      "parsers_document_parser_documentparser",
+      "parsers_document_parser_documentparser_clean_text",
+      "parsers_document_parser_documentparser_init",
+      "parsers_document_parser_documentparser_parse",
+      "parsers_document_parser_rationale_12",
+      "parsers_structure_analyzer_rationale_13",
+      "parsers_structure_analyzer_rationale_7",
+      "parsers_structure_analyzer_structureanalyzer",
+      "parsers_structure_analyzer_structureanalyzer_analyze",
+      "parsers_structure_analyzer_structureanalyzer_init",
+      "processing_pipeline_pipeline",
+      "processing_pipeline_pipeline_init",
+      "processing_pipeline_pipeline_run",
+      "services_bge_text_embedder_bgetextembedder",
+      "services_bge_text_embedder_bgetextembedder_embed",
+      "services_bge_text_embedder_bgetextembedder_init",
+      "services_chroma_vector_store_chromavectorstore",
+      "services_chroma_vector_store_chromavectorstore_add",
+      "services_chroma_vector_store_chromavectorstore_delete",
+      "services_chroma_vector_store_chromavectorstore_init",
+      "services_chroma_vector_store_chromavectorstore_query",
+      "services_retriever_chain_vectorretriever",
+      "services_retriever_chain_vectorretriever_init",
+      "src_docuflow_processing_parsers_document_parser_py",
+      "src_docuflow_processing_parsers_init_py",
+      "src_docuflow_processing_parsers_structure_analyzer_py",
+      "src_docuflow_processing_pipeline_py",
+      "src_docuflow_services_bge_text_embedder_py",
+      "src_docuflow_services_chroma_vector_store_py",
+      "src_docuflow_services_init_py",
+      "src_docuflow_services_retriever_chain_py",
+      "src_docuflow_utils_logger_py",
+      "src_docuflow_utils_text_cleaner_py",
+      "utils_logger_get_logger",
+      "utils_logger_ist_timezone",
+      "utils_logger_rationale_13",
+      "utils_text_cleaner_textcleaner",
+      "utils_text_cleaner_textcleaner_clean",
+      "utils_text_cleaner_textcleaner_clean_line",
+      "utils_text_cleaner_textcleaner_get_tool",
+      "utils_text_cleaner_textcleaner_init",
+      "utils_text_cleaner_textcleaner_restore_indentation",
+      "utils_text_cleaner_textcleaner_should_skip_line"
+    ],
+    "3": [
+      "abc",
+      "chunking_base_chunker_basechunker_count_tokens",
+      "chunking_base_chunker_basechunker_create_chunk",
+      "chunking_base_chunker_chunk",
+      "chunking_base_chunker_rationale_49",
+      "chunking_base_chunker_rationale_62",
+      "chunking_base_chunker_supported_document_types",
+      "interfaces_converter_baseconverter",
+      "interfaces_converter_convert",
+      "interfaces_converter_rationale_7",
+      "interfaces_data_source_idatasource",
+      "interfaces_data_source_load",
+      "interfaces_data_source_rationale_8",
+      "interfaces_data_source_validate",
+      "interfaces_loader_iloader",
+      "interfaces_loader_load",
+      "interfaces_loader_rationale_8",
+      "interfaces_loader_validate",
+      "interfaces_ocr_extract",
+      "interfaces_ocr_iocrmodel",
+      "interfaces_ocr_rationale_1",
+      "interfaces_ocr_rationale_9",
+      "interfaces_parser_iparser",
+      "interfaces_parser_parse",
+      "interfaces_parser_rationale_8",
+      "interfaces_retriever_iretriever",
+      "interfaces_retriever_retrieve",
+      "interfaces_text_embedder_embed",
+      "interfaces_text_embedder_itextembedder",
+      "interfaces_text_embedder_rationale_6",
+      "interfaces_vector_store_add",
+      "interfaces_vector_store_delete",
+      "interfaces_vector_store_ivectorstore",
+      "interfaces_vector_store_query",
+      "interfaces_vector_store_rationale_6",
+      "src_docuflow_interfaces_converter_py",
+      "src_docuflow_interfaces_data_source_py",
+      "src_docuflow_interfaces_loader_py",
+      "src_docuflow_interfaces_ocr_py",
+      "src_docuflow_interfaces_parser_py",
+      "src_docuflow_interfaces_retriever_py",
+      "src_docuflow_interfaces_text_embedder_py",
+      "src_docuflow_interfaces_vector_store_py",
+      "src_docuflow_processing_chunking_base_chunker_py"
+    ],
+    "4": [
+      "tests_test_chunking_quality_rationale_155",
+      "tests_test_chunking_quality_rationale_178",
+      "tests_test_chunking_quality_rationale_186",
+      "tests_test_chunking_quality_rationale_219",
+      "tests_test_chunking_quality_rationale_242",
+      "tests_test_chunking_quality_rationale_267",
+      "tests_test_chunking_quality_rationale_290",
+      "tests_test_chunking_quality_rationale_331",
+      "tests_test_chunking_quality_rationale_361",
+      "tests_test_chunking_quality_rationale_380",
+      "tests_test_chunking_quality_rationale_406",
+      "tests_test_chunking_quality_rationale_420",
+      "tests_test_chunking_quality_rationale_435",
+      "tests_test_chunking_quality_rationale_456",
+      "tests_test_chunking_quality_rationale_554",
+      "tests_test_chunking_quality_rationale_580",
+      "tests_test_chunking_quality_testchunkingquality",
+      "tests_test_chunking_quality_testchunkingquality_test_chunk_size_constraints",
+      "tests_test_chunking_quality_testchunkingquality_test_chunking_consistency",
+      "tests_test_chunking_quality_testchunkingquality_test_chunking_engine_initialization",
+      "tests_test_chunking_quality_testchunkingquality_test_chunks_have_metadata",
+      "tests_test_chunking_quality_testchunkingquality_test_chunks_have_required_fields",
+      "tests_test_chunking_quality_testchunkingquality_test_code_document_chunking",
+      "tests_test_chunking_quality_testchunkingquality_test_content_type_classification",
+      "tests_test_chunking_quality_testchunkingquality_test_empty_document",
+      "tests_test_chunking_quality_testchunkingquality_test_markdown_chunking_creates_chunks",
+      "tests_test_chunking_quality_testchunkingquality_test_minimum_chunk_size",
+      "tests_test_chunking_quality_testchunkingquality_test_multiple_documents_processing",
+      "tests_test_chunking_quality_testchunkingquality_test_no_content_loss",
+      "tests_test_chunking_quality_testchunkingquality_test_token_count_consistency",
+      "tests_test_chunking_quality_testchunkingquality_test_very_large_document",
+      "tests_test_chunking_quality_testchunkingquality_test_very_small_document"
+    ],
+    "5": [
+      "parsers_image_parser_imageparser",
+      "parsers_image_parser_imageparser_init",
+      "parsers_image_parser_imageparser_parse",
+      "parsers_image_parser_rationale_11",
+      "src_docuflow_processing_parsers_image_parser_py",
+      "tests_test_show_actual_content_py",
+      "tests_test_show_actual_content_rationale_14",
+      "tests_test_show_actual_content_rationale_151",
+      "tests_test_show_actual_content_rationale_170",
+      "tests_test_show_actual_content_rationale_203",
+      "tests_test_show_actual_content_rationale_212",
+      "tests_test_show_actual_content_rationale_230",
+      "tests_test_show_actual_content_rationale_248",
+      "tests_test_show_actual_content_rationale_274",
+      "tests_test_show_actual_content_rationale_304",
+      "tests_test_show_actual_content_rationale_32",
+      "tests_test_show_actual_content_rationale_332",
+      "tests_test_show_actual_content_rationale_338",
+      "tests_test_show_actual_content_test_document",
+      "tests_test_show_actual_content_test_document_from_env",
+      "tests_test_show_actual_content_test_sample_docx",
+      "tests_test_show_actual_content_universaldocumenttester",
+      "tests_test_show_actual_content_universaldocumenttester_clean_document",
+      "tests_test_show_actual_content_universaldocumenttester_detect_structure",
+      "tests_test_show_actual_content_universaldocumenttester_init",
+      "tests_test_show_actual_content_universaldocumenttester_load_document",
+      "tests_test_show_actual_content_universaldocumenttester_parse_document",
+      "tests_test_show_actual_content_universaldocumenttester_process",
+      "tests_test_show_actual_content_universaldocumenttester_show_headings",
+      "tests_test_show_actual_content_universaldocumenttester_show_lists",
+      "tests_test_show_actual_content_universaldocumenttester_show_tables"
+    ],
+    "6": [
+      "baseloader",
+      "data_source_base_loader_baseloader",
+      "data_source_base_loader_baseloader_init",
+      "data_source_base_loader_baseloader_load",
+      "data_source_base_loader_baseloader_validate",
+      "data_source_base_loader_rationale_10",
+      "data_source_base_loader_rationale_21",
+      "data_source_base_loader_rationale_26",
+      "data_source_document_loader_documentloader",
+      "data_source_document_loader_rationale_5",
+      "data_source_image_loader_imageloader",
+      "data_source_image_loader_rationale_5",
+      "data_source_loader_factory_get_loader",
+      "data_source_loader_factory_loaderfactory",
+      "data_source_loader_factory_rationale_10",
+      "data_source_loader_factory_register",
+      "data_source_spreadsheet_loader_rationale_5",
+      "data_source_spreadsheet_loader_spreadsheetloader",
+      "idatasource",
+      "schemas_raw_document_rationale_7",
+      "schemas_raw_document_rawdocument",
+      "src_docuflow_data_source_base_loader_py",
+      "src_docuflow_data_source_document_loader_py",
+      "src_docuflow_data_source_image_loader_py",
+      "src_docuflow_data_source_init_py",
+      "src_docuflow_data_source_loader_factory_py",
+      "src_docuflow_data_source_spreadsheet_loader_py",
+      "src_docuflow_schemas_raw_document_py"
+    ],
+    "7": [
+      "src_docuflow_utils_chunking_quality_evaluator_py",
+      "utils_chunking_quality_evaluator_chunkinganalysis",
+      "utils_chunking_quality_evaluator_chunkinganalysis_get_score_label",
+      "utils_chunking_quality_evaluator_chunkinganalysis_print_summary",
+      "utils_chunking_quality_evaluator_chunkinganalysis_to_json",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_calculate_quality_score",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_evaluate_directory",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_evaluate_file",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_generate_recommendations",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_infer_document_type",
+      "utils_chunking_quality_evaluator_main",
+      "utils_chunking_quality_evaluator_rationale_1",
+      "utils_chunking_quality_evaluator_rationale_107",
+      "utils_chunking_quality_evaluator_rationale_115",
+      "utils_chunking_quality_evaluator_rationale_129",
+      "utils_chunking_quality_evaluator_rationale_220",
+      "utils_chunking_quality_evaluator_rationale_24",
+      "utils_chunking_quality_evaluator_rationale_264",
+      "utils_chunking_quality_evaluator_rationale_305",
+      "utils_chunking_quality_evaluator_rationale_44",
+      "utils_chunking_quality_evaluator_rationale_48",
+      "utils_chunking_quality_evaluator_rationale_93"
+    ],
+    "8": [
+      "chunking_base_chunker_basechunker",
+      "chunking_base_chunker_basechunker_generate_chunk_id",
+      "chunking_base_chunker_basechunker_init",
+      "chunking_base_chunker_rationale_11",
+      "chunking_base_chunker_rationale_68",
+      "chunking_chunking_engine_chunkingengine",
+      "chunking_chunking_engine_chunkingengine_get_supported_types",
+      "chunking_chunking_engine_chunkingengine_init",
+      "chunking_chunking_engine_chunkingengine_register_builtin_chunkers",
+      "chunking_chunking_engine_chunkingengine_register_chunker",
+      "chunking_chunking_engine_rationale_179",
+      "chunking_chunking_engine_rationale_28",
+      "chunking_chunking_engine_rationale_44",
+      "chunking_chunking_engine_rationale_69",
+      "chunking_chunking_engine_rationale_83",
+      "schemas_chunk_chunkingconfig",
+      "schemas_chunk_rationale_102",
+      "src_docuflow_processing_chunking_chunking_engine_py",
+      "tests_test_chunking_quality_chunking_engine",
+      "tests_test_chunking_quality_rationale_659",
+      "tests_test_chunking_quality_testchunkingintegration_test_chunking_preserves_document_type_info",
+      "utils_chunking_quality_evaluator_chunkingqualityevaluator_init"
+    ],
+    "9": [
+      "chunking_markdown_chunker_markdownchunker",
+      "chunking_markdown_chunker_markdownchunker_chunk",
+      "chunking_markdown_chunker_markdownchunker_chunk_regular_text",
+      "chunking_markdown_chunker_markdownchunker_chunk_section",
+      "chunking_markdown_chunker_markdownchunker_chunk_with_protected_elements",
+      "chunking_markdown_chunker_markdownchunker_create_sections",
+      "chunking_markdown_chunker_markdownchunker_find_protected_elements",
+      "chunking_markdown_chunker_markdownchunker_find_split_points",
+      "chunking_markdown_chunker_markdownchunker_force_split",
+      "chunking_markdown_chunker_rationale_134",
+      "chunking_markdown_chunker_rationale_170",
+      "chunking_markdown_chunker_rationale_198",
+      "chunking_markdown_chunker_rationale_22",
+      "chunking_markdown_chunker_rationale_250",
+      "chunking_markdown_chunker_rationale_298",
+      "chunking_markdown_chunker_rationale_331",
+      "chunking_markdown_chunker_rationale_44",
+      "chunking_markdown_chunker_rationale_90",
+      "chunking_markdown_chunker_supported_document_types",
+      "src_docuflow_processing_chunking_markdown_chunker_py",
+      "tests_test_chunking_quality_markdown_chunker"
+    ],
+    "10": [
+      "chunking_code_chunker_codechunker_chunk",
+      "chunking_code_chunker_codechunker_chunk_remaining",
+      "chunking_code_chunker_codechunker_create_code_chunks",
+      "chunking_code_chunker_codechunker_detect_language",
+      "chunking_code_chunker_codechunker_find_block_end",
+      "chunking_code_chunker_codechunker_find_code_blocks",
+      "chunking_code_chunker_codechunker_get_remaining_content",
+      "chunking_code_chunker_codechunker_is_covered",
+      "chunking_code_chunker_codechunker_merge_overlapping",
+      "chunking_code_chunker_codechunker_split_class_by_methods",
+      "chunking_code_chunker_rationale_121",
+      "chunking_code_chunker_rationale_152",
+      "chunking_code_chunker_rationale_239",
+      "chunking_code_chunker_rationale_258",
+      "chunking_code_chunker_rationale_270",
+      "chunking_code_chunker_rationale_320",
+      "chunking_code_chunker_rationale_341",
+      "chunking_code_chunker_rationale_50",
+      "chunking_code_chunker_rationale_82",
+      "chunking_code_chunker_rationale_95"
+    ],
+    "11": [
+      "chunking_metadata_enricher_metadataenricher",
+      "chunking_metadata_enricher_metadataenricher_enrich",
+      "chunking_metadata_enricher_metadataenricher_enrich_chunk",
+      "chunking_metadata_enricher_metadataenricher_extract_keywords",
+      "chunking_metadata_enricher_metadataenricher_generate_questions_llm",
+      "chunking_metadata_enricher_metadataenricher_generate_questions_rule_based",
+      "chunking_metadata_enricher_metadataenricher_generate_summary_llm",
+      "chunking_metadata_enricher_metadataenricher_generate_summary_rule_based",
+      "chunking_metadata_enricher_metadataenricher_init",
+      "chunking_metadata_enricher_rationale_154",
+      "chunking_metadata_enricher_rationale_185",
+      "chunking_metadata_enricher_rationale_198",
+      "chunking_metadata_enricher_rationale_21",
+      "chunking_metadata_enricher_rationale_256",
+      "chunking_metadata_enricher_rationale_34",
+      "chunking_metadata_enricher_rationale_55",
+      "chunking_metadata_enricher_rationale_75",
+      "src_docuflow_processing_chunking_metadata_enricher_py"
+    ],
+    "12": [
+      "docuflow_main_get_document_type",
+      "docuflow_main_main",
+      "docuflow_main_rationale_15",
+      "ingestion_init_rationale_7",
+      "ingestion_init_save_markdown",
+      "src_docuflow_main_py",
+      "src_docuflow_processing_ingestion_init_py",
+      "src_docuflow_utils_bootstrap_py",
+      "src_docuflow_utils_dependency_checks_py",
+      "utils_bootstrap_ensure_directories",
+      "utils_bootstrap_log_path",
+      "utils_dependency_checks_check_optional_dependencies",
+      "utils_dependency_checks_check_paddleocr",
+      "utils_dependency_checks_is_paddleocr_available",
+      "utils_dependency_checks_rationale_27",
+      "utils_dependency_checks_rationale_66",
+      "utils_dependency_checks_rationale_94"
+    ],
+    "13": [
+      "src_docuflow_tests_test_chunking_accuracy_py",
+      "tests_test_chunking_accuracy_chunkingtestresult",
+      "tests_test_chunking_accuracy_chunkingtestresult_add_chunk",
+      "tests_test_chunking_accuracy_chunkingtestresult_finalize",
+      "tests_test_chunking_accuracy_chunkingtestresult_get_score",
+      "tests_test_chunking_accuracy_chunkingtestresult_init",
+      "tests_test_chunking_accuracy_chunkingtestresult_str",
+      "tests_test_chunking_accuracy_main",
+      "tests_test_chunking_accuracy_rationale_14",
+      "tests_test_chunking_accuracy_rationale_190",
+      "tests_test_chunking_accuracy_rationale_215",
+      "tests_test_chunking_accuracy_rationale_28",
+      "tests_test_chunking_accuracy_rationale_39",
+      "tests_test_chunking_accuracy_rationale_46",
+      "tests_test_chunking_accuracy_rationale_73",
+      "tests_test_chunking_accuracy_run_chunking_test"
+    ],
+    "14": [
+      "chunking_code_chunker_codechunker",
+      "chunking_code_chunker_codechunker_init",
+      "chunking_code_chunker_rationale_12",
+      "chunking_code_chunker_supported_document_types",
+      "enum",
+      "schemas_chunk_chunk",
+      "schemas_chunk_contenttype",
+      "schemas_chunk_documenttype",
+      "schemas_chunk_rationale_10",
+      "schemas_chunk_rationale_22",
+      "schemas_chunk_rationale_36",
+      "src_docuflow_processing_chunking_code_chunker_py",
+      "src_docuflow_schemas_chunk_py",
+      "tests_test_chunking_quality_code_chunker",
+      "tests_test_chunking_quality_rationale_611",
+      "tests_test_chunking_quality_testchunkingintegration"
+    ],
+    "15": [
+      "basechunker",
+      "chunking_image_chunker_imagechunker",
+      "chunking_image_chunker_imagechunker_build_metadata",
+      "chunking_image_chunker_imagechunker_chunk",
+      "chunking_image_chunker_imagechunker_chunk_by_lines",
+      "chunking_image_chunker_rationale_106",
+      "chunking_image_chunker_rationale_11",
+      "chunking_image_chunker_rationale_26",
+      "chunking_image_chunker_rationale_64",
+      "chunking_image_chunker_supported_document_types",
+      "schemas_chunk_chunkbatch",
+      "schemas_chunk_chunkbatch_add_chunk",
+      "schemas_chunk_rationale_81",
+      "schemas_chunk_rationale_91",
+      "src_docuflow_processing_chunking_image_chunker_py"
+    ],
+    "16": [
+      "tests_test_chunking_quality_avg_chunk_size",
+      "tests_test_chunking_quality_avg_metadata_quality",
+      "tests_test_chunking_quality_avg_token_count",
+      "tests_test_chunking_quality_chunk_count",
+      "tests_test_chunking_quality_content_loss_percentage",
+      "tests_test_chunking_quality_content_type_distribution",
+      "tests_test_chunking_quality_max_chunk_size",
+      "tests_test_chunking_quality_min_chunk_size",
+      "tests_test_chunking_quality_py",
+      "tests_test_chunking_quality_rationale_1",
+      "tests_test_chunking_quality_total_tokens"
+    ],
+    "17": [
+      "tests_test_chunking_quality_chunkingqualitymetrics",
+      "tests_test_chunking_quality_chunkingqualitymetrics_init",
+      "tests_test_chunking_quality_chunkingqualitymetrics_print_report",
+      "tests_test_chunking_quality_rationale_101",
+      "tests_test_chunking_quality_rationale_25",
+      "tests_test_chunking_quality_rationale_487",
+      "tests_test_chunking_quality_rationale_526",
+      "tests_test_chunking_quality_rationale_614",
+      "tests_test_chunking_quality_testchunkingintegration_test_end_to_end_chunking_workflow",
+      "tests_test_chunking_quality_testchunkingquality_test_chunking_quality_assertion_checks",
+      "tests_test_chunking_quality_testchunkingquality_test_chunking_quality_report_markdown"
+    ],
+    "18": [
+      "schemas_ocr_paddleconfig",
+      "src_docuflow_schemas_ocr_py",
+      "src_docuflow_utils_paddle_utils_py",
+      "utils_paddle_utils_get_model_path",
+      "utils_paddle_utils_get_paddle_ocr",
+      "utils_paddle_utils_rationale_1",
+      "utils_paddle_utils_rationale_12",
+      "utils_paddle_utils_rationale_31"
+    ],
+    "19": [
+      "chunking_chunking_engine_chunkingengine_chunk",
+      "chunking_chunking_engine_chunkingengine_chunk_multiple",
+      "chunking_chunking_engine_chunkingengine_get_chunker",
+      "chunking_chunking_engine_rationale_101",
+      "chunking_chunking_engine_rationale_175",
+      "chunking_chunking_engine_rationale_186"
+    ],
+    "20": [
+      "basesettings",
+      "configs_settings_log_path",
+      "configs_settings_output_path",
+      "configs_settings_settings",
+      "src_docuflow_configs_init_py",
+      "src_docuflow_configs_settings_py"
+    ],
+    "21": [
+      "schemas_chunk_chunk_to_dict",
+      "schemas_chunk_chunkbatch_to_dicts",
+      "schemas_chunk_rationale_65",
+      "schemas_chunk_rationale_96"
+    ],
+    "22": [
+      "basemodel",
+      "schemas_document_document",
+      "schemas_document_rationale_7",
+      "src_docuflow_schemas_document_py"
+    ],
+    "23": [
+      "src_docuflow_utils_load_file_py",
+      "utils_load_file_get_all_pdfs",
+      "utils_load_file_rationale_9"
+    ],
+    "24": [
+      "configs_sentry_config_init_sentry",
+      "configs_sentry_config_rationale_12",
+      "src_docuflow_configs_sentry_config_py"
+    ],
+    "25": [
+      "schemas_retrieved_chunk_retrievedchunk",
+      "src_docuflow_schemas_retrieved_chunk_py"
+    ],
+    "26": [
+      "tests_test_retriever_py"
+    ],
+    "27": [
+      "tests_test_vector_store_py"
+    ],
+    "28": [
+      "tests_test_similarity_py"
+    ],
+    "29": [
+      "tests_test_chunking_quality_rationale_33"
+    ],
+    "30": [
+      "tests_test_chunking_quality_rationale_38"
+    ],
+    "31": [
+      "tests_test_chunking_quality_rationale_55"
+    ],
+    "32": [
+      "tests_test_chunking_quality_rationale_62"
+    ],
+    "33": [
+      "tests_test_chunking_quality_rationale_67"
+    ],
+    "34": [
+      "tests_test_chunking_quality_rationale_74"
+    ],
+    "35": [
+      "tests_test_chunking_quality_rationale_91"
+    ],
+    "36": [
+      "tests_test_chunking_quality_rationale_159"
+    ],
+    "37": [
+      "tests_test_chunking_quality_rationale_165"
+    ],
+    "38": [
+      "tests_test_chunking_quality_rationale_171"
+    ],
+    "39": [
+      "tests_test_embedding_service_py"
+    ],
+    "40": [
+      "tests_datasourcelayer_test_document_loader_py"
+    ],
+    "41": [
+      "src_docuflow_init_py"
+    ],
+    "42": [
+      "data_source_loader_factory_rationale_16"
+    ],
+    "43": [
+      "data_source_loader_factory_rationale_22"
+    ],
+    "44": [
+      "src_docuflow_processing_init_py"
+    ],
+    "45": [
+      "src_docuflow_processing_rag_rag_py"
+    ],
+    "46": [
+      "src_docuflow_processing_chunking_chunk_builder_py"
+    ],
+    "47": [
+      "chunking_base_chunker_rationale_24"
+    ],
+    "48": [
+      "chunking_base_chunker_rationale_29"
+    ],
+    "49": [
+      "chunking_detectors_rationale_90"
+    ],
+    "50": [
+      "src_docuflow_processing_chunking_init_py"
+    ],
+    "51": [
+      "src_docuflow_schemas_rag_py"
+    ],
+    "52": [
+      "src_docuflow_schemas_init_py"
+    ],
+    "53": [
+      "interfaces_loader_rationale_18"
+    ],
+    "54": [
+      "interfaces_loader_rationale_31"
+    ],
+    "55": [
+      "src_docuflow_interfaces_chunker_py"
+    ],
+    "56": [
+      "interfaces_parser_rationale_14"
+    ],
+    "57": [
+      "interfaces_converter_rationale_13"
+    ],
+    "58": [
+      "interfaces_vector_store_rationale_20"
+    ],
+    "59": [
+      "interfaces_vector_store_rationale_29"
+    ],
+    "60": [
+      "interfaces_retriever_rationale_10"
+    ],
+    "61": [
+      "interfaces_ocr_rationale_15"
+    ],
+    "62": [
+      "src_docuflow_interfaces_init_py"
+    ],
+    "63": [
+      "interfaces_data_source_rationale_18"
+    ],
+    "64": [
+      "interfaces_data_source_rationale_31"
+    ],
+    "65": [
+      "src_docuflow_utils_init_py"
+    ],
+    "66": [
+      "src_docuflow_services_llm_service_py"
+    ],
+    "67": [
+      "src_docuflow_services_embedding_service_py"
+    ]
+  },
+  "cohesion": {
+    "0": 0.05,
+    "1": 0.06,
+    "2": 0.05,
+    "3": 0.05,
+    "4": 0.06,
+    "5": 0.09,
+    "6": 0.09,
+    "7": 0.13,
+    "8": 0.12,
+    "9": 0.13,
+    "10": 0.1,
+    "11": 0.16,
+    "12": 0.15,
+    "13": 0.17,
+    "14": 0.17,
+    "15": 0.17,
+    "16": 0.18,
+    "17": 0.22,
+    "18": 0.25,
+    "19": 0.33,
+    "20": 0.33,
+    "21": 0.5,
+    "22": 0.5,
+    "23": 0.67,
+    "24": 0.67,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0,
+    "38": 1.0,
+    "39": 1.0,
+    "40": 1.0,
+    "41": 1.0,
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0,
+    "45": 1.0,
+    "46": 1.0,
+    "47": 1.0,
+    "48": 1.0,
+    "49": 1.0,
+    "50": 1.0,
+    "51": 1.0,
+    "52": 1.0,
+    "53": 1.0,
+    "54": 1.0,
+    "55": 1.0,
+    "56": 1.0,
+    "57": 1.0,
+    "58": 1.0,
+    "59": 1.0,
+    "60": 1.0,
+    "61": 1.0,
+    "62": 1.0,
+    "63": 1.0,
+    "64": 1.0,
+    "65": 1.0,
+    "66": 1.0,
+    "67": 1.0
+  },
+  "gods": [
+    {
+      "id": "chunking_markdown_chunker_markdownchunker",
+      "label": "MarkdownChunker",
+      "degree": 32
+    },
+    {
+      "id": "chunking_chunking_engine_chunkingengine",
+      "label": "ChunkingEngine",
+      "degree": 29
+    },
+    {
+      "id": "tests_test_chunking_quality_testchunkingquality",
+      "label": "TestChunkingQuality",
+      "degree": 26
+    },
+    {
+      "id": "chunking_code_chunker_codechunker",
+      "label": "CodeChunker",
+      "degree": 26
+    },
+    {
+      "id": "schemas_chunk_chunkingconfig",
+      "label": "ChunkingConfig",
+      "degree": 25
+    },
+    {
+      "id": "chunking_spreadsheet_chunker_spreadsheetchunker",
+      "label": "SpreadsheetChunker",
+      "degree": 19
+    },
+    {
+      "id": "schemas_chunk_chunkbatch",
+      "label": "ChunkBatch",
+      "degree": 18
+    },
+    {
+      "id": "tests_test_show_actual_content_universaldocumenttester",
+      "label": "UniversalDocumentTester",
+      "degree": 16
+    },
+    {
+      "id": "chunking_base_chunker_basechunker",
+      "label": "BaseChunker",
+      "degree": 16
+    },
+    {
+      "id": "schemas_chunk_documenttype",
+      "label": "DocumentType",
+      "degree": 16
+    }
+  ],
+  "surprises": [
+    {
+      "source": "UniversalDocumentTester",
+      "target": "HeadingDetector",
+      "source_files": [
+        "tests/test_show_actual_content.py",
+        "src/docuflow/processing/chunking/detectors.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "UniversalDocumentTester",
+      "target": "TableDetector",
+      "source_files": [
+        "tests/test_show_actual_content.py",
+        "src/docuflow/processing/chunking/detectors.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "UniversalDocumentTester",
+      "target": "ListDetector",
+      "source_files": [
+        "tests/test_show_actual_content.py",
+        "src/docuflow/processing/chunking/detectors.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "ChunkingQualityMetrics",
+      "target": "ChunkingEngine",
+      "source_files": [
+        "tests/test_chunking_quality.py",
+        "src/docuflow/processing/chunking/chunking_engine.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "ChunkingQualityMetrics",
+      "target": "CodeChunker",
+      "source_files": [
+        "tests/test_chunking_quality.py",
+        "src/docuflow/processing/chunking/code_chunker.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `MarkdownChunker` connect `Community 9` to `Community 0`, `Community 4`, `Community 8`, `Community 14`, `Community 15`, `Community 17`?",
+      "why": "High betweenness centrality (0.170) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `get_logger()` connect `Community 2` to `Community 0`, `Community 5`, `Community 6`, `Community 8`, `Community 11`, `Community 12`?",
+      "why": "High betweenness centrality (0.144) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `ChunkingEngine` connect `Community 8` to `Community 1`, `Community 4`, `Community 7`, `Community 9`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 17`, `Community 19`?",
+      "why": "High betweenness centrality (0.130) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 20 inferred relationships involving `MarkdownChunker` (e.g. with `ChunkingQualityMetrics` and `TestChunkingQuality`) actually correct?",
+      "why": "`MarkdownChunker` has 20 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 20 inferred relationships involving `ChunkingEngine` (e.g. with `ChunkingQualityMetrics` and `TestChunkingQuality`) actually correct?",
+      "why": "`ChunkingEngine` has 20 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 7 inferred relationships involving `TestChunkingQuality` (e.g. with `ChunkingEngine` and `CodeChunker`) actually correct?",
+      "why": "`TestChunkingQuality` has 7 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 12 inferred relationships involving `CodeChunker` (e.g. with `ChunkingQualityMetrics` and `TestChunkingQuality`) actually correct?",
+      "why": "`CodeChunker` has 12 INFERRED edges - model-reasoned connections that need verification."
+    }
+  ]
+}

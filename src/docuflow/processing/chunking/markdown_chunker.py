@@ -16,6 +16,7 @@ from docuflow.processing.chunking.detectors import (
     TableDetector,
 )
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
+from docuflow.utils import get_logger
 
 
 class MarkdownChunker(BaseChunker):
@@ -35,6 +36,7 @@ class MarkdownChunker(BaseChunker):
 
     def __init__(self, config: ChunkingConfig | None = None):
         super().__init__(config)
+        self.logger = get_logger(__name__)
         self.heading_detector = HeadingDetector()
         self.table_detector = TableDetector()
         self.list_detector = ListDetector()
@@ -264,6 +266,11 @@ class MarkdownChunker(BaseChunker):
             )
             if chunk.token_count >= self.config.min_chunk_size:
                 chunks.append(chunk)
+            else:
+                self.logger.warning(
+                    f"Chunk dropped below min_chunk_size ({chunk.token_count} < {self.config.min_chunk_size}). "
+                    f"Section/Heading: '{section['title']}'. Content preview: {repr(content.strip()[:60])}"
+                )
             return chunks
 
         # Need to split - find natural boundaries
@@ -291,6 +298,11 @@ class MarkdownChunker(BaseChunker):
 
             if chunk.token_count >= self.config.min_chunk_size:
                 chunks.append(chunk)
+            else:
+                self.logger.warning(
+                    f"Chunk dropped below min_chunk_size ({chunk.token_count} < {self.config.min_chunk_size}). "
+                    f"Section/Heading: '{section['title']}'. Content preview: {repr(chunk_content[:60])}"
+                )
 
         return chunks
 
@@ -324,6 +336,11 @@ class MarkdownChunker(BaseChunker):
         # Add final chunk
         if current_tokens >= self.config.min_chunk_size:
             split_points.append((current_start, len(content)))
+        else:
+            self.logger.warning(
+                f"Accumulated paragraph segment dropped below min_chunk_size ({current_tokens} < {self.config.min_chunk_size}). "
+                f"Content preview: {repr(content[current_start : len(content)].strip()[:60])}"
+            )
 
         return split_points if split_points else [(0, len(content))]
 

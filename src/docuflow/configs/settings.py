@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     chunk_size: int = 800
     use_fp16: bool = False
 
+    # LLM Settings
+    LLM_PROVIDER: str = "groq"
+    LLM_MODEL: str = "llama-3.3-70b-versatile"
+    LLM_BASE_URL: str = "https://api.groq.com/openai/v1"
+    GROQ_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
+
 
 # INSTANTIATION
 settings = Settings()

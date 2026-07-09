@@ -23,27 +23,53 @@ class BGETextEmbedder(ITextEmbedder):
         )
 
     def embed(self, texts: Sequence[str]) -> List[List[float]]:
-        self.logger.info("Retrieving text")
-        if not texts:
-            self.logger.error("No texts provided, returning empty list.")
-            return []
+        import time
 
-        try:
-            all_embeddings = []
-            self.logger.info("Started creating Embeddings")
-            for i in range(0, len(texts), self.batch_size):
-                batch = texts[i : i + self.batch_size]
-                embeddings = self.model.encode(list(batch))
+        from docuflow.utils import log_context
 
-                if isinstance(embeddings, np.ndarray):
-                    all_embeddings.extend(embeddings.tolist())
-                elif isinstance(embeddings, list):
-                    all_embeddings.extend(embeddings)
-                else:
-                    raise ValueError("Embedding model output is in an unexpected format.")
-            self.logger.info("Embeddings created Successfully")
-            return all_embeddings
+        with log_context(stage="Embedding"):
+            if not texts:
+                self.logger.warning("No texts provided to embed, returning empty list.")
+                return []
 
-        except Exception as e:
-            self.logger.error(f"Embedding failed for {len(texts)} texts: {e}")
-            raise
+            self.logger.info(
+                f"Embedding started: count={len(texts)}, batch_size={self.batch_size}, model={settings.embedding_model}"
+            )
+
+            start_time = time.perf_counter()
+            try:
+                all_embeddings = []
+                for i in range(0, len(texts), self.batch_size):
+                    batch_start = time.perf_counter()
+                    batch = list(texts[i : i + self.batch_size])
+                    embeddings = self.model.encode(batch)
+
+                    batch_latency = (time.perf_counter() - batch_start) * 1000
+                    self.logger.info(
+                        f"Embedded batch: size={len(batch)} (latency={batch_latency:.2f}ms)",
+                        extra={"latency_ms": batch_latency},
+                    )
+
+                    if isinstance(embeddings, np.ndarray):
+                        all_embeddings.extend(embeddings.tolist())
+                    elif isinstance(embeddings, list):
+                        all_embeddings.extend(embeddings)
+                    else:
+                        raise ValueError("Embedding model output is in an unexpected format.")
+
+                total_latency = (time.perf_counter() - start_time) * 1000
+                approx_tokens = sum(len(t) // 4 for t in texts)
+                self.logger.info(
+                    f"Embedding finished: embedded {len(texts)} texts successfully (total_latency={total_latency:.2f}ms)",
+                    extra={
+                        "latency_ms": total_latency,
+                        "input_tokens": approx_tokens,
+                        "output_tokens": approx_tokens,
+                    },
+                )
+                return all_embeddings
+
+            except Exception as e:
+                total_latency = (time.perf_counter() - start_time) * 1000
+                self.logger.error(f"Embedding failed: {e}", exc_info=True, extra={"latency_ms": total_latency})
+                raise

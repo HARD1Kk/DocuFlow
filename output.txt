@@ -1,0 +1,7 @@
+# Introduction to RAG
+
+This is a test DOCX document used for automated system validation.
+
+## Section 1: Details
+
+Here are some details about the layout extraction process.

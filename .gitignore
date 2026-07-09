@@ -20,13 +20,17 @@ data/
 .mypy_cache/
 .ruff_cache/
 .claude/
-graphify-out/
 .cache/
 
 # Markdown files
 *.md
 
+# text files 
+*.txt
+
+
 # Runtime outputs
+*.log
 logs/
 output/
 chroma/

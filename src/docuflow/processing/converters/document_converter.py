@@ -1,4 +1,3 @@
-import io
 import subprocess
 from pathlib import Path
 
@@ -17,7 +16,7 @@ def convert_pdf_to_markdown(pdf_file: Path) -> str:
     """Convert a PDF file into markdown using PyMuPDF4LLM."""
     pdf_file = pdf_file.expanduser().resolve()
     try:
-        markdown_text = pymupdf4llm.to_markdown(pdf_file, use_ocr=False)
+        markdown_text = pymupdf4llm.to_markdown(pdf_file, use_ocr=True)
         logger.info("Converted PDF %s into %s characters of markdown", pdf_file, len(markdown_text))
         return str(markdown_text)
     except Exception as exc:

@@ -97,7 +97,6 @@ class CodeChunker(BaseChunker):
             return []
 
         blocks = []
-        lines = content.split("\n")
 
         for match in pattern.finditer(content):
             start = match.start()

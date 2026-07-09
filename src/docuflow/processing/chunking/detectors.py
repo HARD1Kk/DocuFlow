@@ -352,7 +352,6 @@ class ListDetector(StructureDetector):
                 list_start = char_pos
                 list_items = 0
                 max_depth = 1
-                current_depth = 0
 
                 # Count list items and track depth
                 j = i
