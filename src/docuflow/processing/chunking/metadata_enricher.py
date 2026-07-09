@@ -57,7 +57,7 @@ class MetadataEnricher:
         if not chunk.content:
             return
 
-        self.logger.info(f"Attempting metadata enrichment for chunk {chunk.chunk_id}")
+        self.logger.debug(f"Attempting metadata enrichment for chunk {chunk.chunk_id}")
 
         try:
             # Extract keywords (always done - rule-based)
@@ -75,11 +75,7 @@ class MetadataEnricher:
             else:
                 chunk.hypothetical_questions = self._generate_questions_rule_based(chunk.content)
 
-            self.logger.info(
-                f"Successfully enriched chunk {chunk.chunk_id}: "
-                f"keywords={len(chunk.keywords)}, summary_len={len(chunk.summary) if chunk.summary else 0}, "
-                f"questions={len(chunk.hypothetical_questions)}"
-            )
+            self.logger.info(f"Chunk {chunk.chunk_id} enriched successfully.")
         except Exception as e:
             self.logger.error(f"Failed to enrich chunk {chunk.chunk_id}: {e}", exc_info=True)
 
@@ -199,6 +195,7 @@ class MetadataEnricher:
             return self._generate_summary_rule_based(content)
 
         import time
+
         start_time = time.perf_counter()
         try:
             prompt = f"Summarize this text in one sentence (max 100 words):\n\n{content[:2000]}"
@@ -208,7 +205,9 @@ class MetadataEnricher:
             # Extract tokens and cost if returned by LLM service
             input_tokens = getattr(self.llm_service, "last_input_tokens", len(prompt) // 4)
             output_tokens = getattr(self.llm_service, "last_output_tokens", len(response) // 4)
-            cost_usd = getattr(self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002))
+            cost_usd = getattr(
+                self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002)
+            )
 
             self.logger.info(
                 f"LLM call for summary succeeded (latency={latency_ms:.2f}ms)",
@@ -216,15 +215,14 @@ class MetadataEnricher:
                     "latency_ms": latency_ms,
                     "input_tokens": input_tokens,
                     "output_tokens": output_tokens,
-                    "cost_usd": cost_usd
-                }
+                    "cost_usd": cost_usd,
+                },
             )
             return response.strip()
         except Exception as e:
             latency_ms = (time.perf_counter() - start_time) * 1000
             self.logger.warning(
-                f"LLM summary failed, falling back to rule-based: {e}",
-                extra={"latency_ms": latency_ms}
+                f"LLM summary failed, falling back to rule-based: {e}", extra={"latency_ms": latency_ms}
             )
             return self._generate_summary_rule_based(content)
 
@@ -292,6 +290,7 @@ class MetadataEnricher:
             return self._generate_questions_rule_based(content)
 
         import time
+
         start_time = time.perf_counter()
         try:
             prompt = f"""Generate 3-5 questions that this text could answer.
@@ -306,7 +305,9 @@ Text:
             # Extract tokens and cost if returned by LLM service
             input_tokens = getattr(self.llm_service, "last_input_tokens", len(prompt) // 4)
             output_tokens = getattr(self.llm_service, "last_output_tokens", len(response) // 4)
-            cost_usd = getattr(self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002))
+            cost_usd = getattr(
+                self.llm_service, "last_cost_usd", (input_tokens * 0.0000015) + (output_tokens * 0.000002)
+            )
 
             self.logger.info(
                 f"LLM call for question generation succeeded (latency={latency_ms:.2f}ms)",
@@ -314,8 +315,8 @@ Text:
                     "latency_ms": latency_ms,
                     "input_tokens": input_tokens,
                     "output_tokens": output_tokens,
-                    "cost_usd": cost_usd
-                }
+                    "cost_usd": cost_usd,
+                },
             )
             # Parse JSON response (simplified - should use proper JSON parser)
             questions = re.findall(r'"([^"]+)"', response)
@@ -323,7 +324,6 @@ Text:
         except Exception as e:
             latency_ms = (time.perf_counter() - start_time) * 1000
             self.logger.warning(
-                f"LLM question generation failed, falling back to rule-based: {e}",
-                extra={"latency_ms": latency_ms}
+                f"LLM question generation failed, falling back to rule-based: {e}", extra={"latency_ms": latency_ms}
             )
             return self._generate_questions_rule_based(content)

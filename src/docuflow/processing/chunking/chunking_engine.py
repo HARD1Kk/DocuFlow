@@ -10,6 +10,7 @@ Design Principles (SOLID):
 - Dependency Inversion: Depends on abstractions, not concrete implementations
 """
 
+import time
 from typing import Dict, List, Optional
 
 from docuflow.processing.chunking.base_chunker import BaseChunker
@@ -19,7 +20,6 @@ from docuflow.processing.chunking.markdown_chunker import MarkdownChunker
 from docuflow.processing.chunking.metadata_enricher import MetadataEnricher
 from docuflow.processing.chunking.spreadsheet_chunker import SpreadsheetChunker
 from docuflow.schemas.chunk import ChunkBatch, ChunkingConfig, DocumentType
-import time
 from docuflow.utils import get_logger, log_context
 
 logger = get_logger(__name__)
@@ -175,7 +175,7 @@ class ChunkingEngine:
                 avg_size = sum(sizes) / len(sizes)
                 self.logger.info(
                     f"Chunk statistics: min_size={min_size} tokens, max_size={max_size} tokens, avg_size={avg_size:.1f} tokens",
-                    extra={"chunk_count": len(batch.chunks)}
+                    extra={"chunk_count": len(batch.chunks)},
                 )
 
             # Log summary
@@ -187,7 +187,7 @@ class ChunkingEngine:
                     "latency_ms": chunking_latency,
                     "chunk_count": len(batch.chunks),
                     "output_tokens": batch.total_tokens,
-                }
+                },
             )
 
             return batch

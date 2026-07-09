@@ -65,7 +65,7 @@ class Chunk:
         """Convert to dictionary for vector store."""
         content_type_val = self.content_type.value if hasattr(self.content_type, "value") else self.content_type
         document_type_val = self.document_type.value if hasattr(self.document_type, "value") else self.document_type
-        
+
         return {
             "chunk_id": self.chunk_id,
             "content": self.content,

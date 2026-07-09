@@ -1,0 +1,470 @@
+{
+  "/home/hardik/projects/DocuFlow/tests/test_retriever.py": {
+    "mtime": 1774191522.5655704,
+    "hash": "8789a4a3b0813e6ec3bb6b7aa1cc167e"
+  },
+  "/home/hardik/projects/DocuFlow/tests/test_show_actual_content.py": {
+    "mtime": 1778514490.313739,
+    "hash": "b753110f12d64eb7330b877c2a066812"
+  },
+  "/home/hardik/projects/DocuFlow/tests/test_vector_store.py": {
+    "mtime": 1774192563.8711402,
+    "hash": "470fec3cd4ff3ec892460482949ee5a8"
+  },
+  "/home/hardik/projects/DocuFlow/tests/test_similarity.py": {
+    "mtime": 1771767972.8234084,
+    "hash": "ca248b8d0e26ea7a595a77c7d86b3176"
+  },
+  "/home/hardik/projects/DocuFlow/tests/test_chunking_quality.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "b8dfd29d5860f8859262e1dac7f9fb19"
+  },
+  "/home/hardik/projects/DocuFlow/tests/test_embedding_service.py": {
+    "mtime": 1774192557.635361,
+    "hash": "df362b356062d0ba46a49a1286b987b8"
+  },
+  "/home/hardik/projects/DocuFlow/tests/DataSourceLayer/test_document_loader.py": {
+    "mtime": 1774192587.3161125,
+    "hash": "601bdcd1fbecc6569e50aada502e9bb8"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/main.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "0a2c62ea3c7ec2fc66945bdb5b24f989"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/__init__.py": {
+    "mtime": 1771157996.2845402,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/tests/test_chunking_accuracy.py": {
+    "mtime": 1777704074.0588188,
+    "hash": "9436f50fe2601398628632241c24d697"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/image_loader.py": {
+    "mtime": 1774681607.2722898,
+    "hash": "f8d8028bc09bc30c48d9f4d961f54cfb"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/spreadsheet_loader.py": {
+    "mtime": 1772989545.237965,
+    "hash": "092f04c5f2204b8594fdf452b8817b5b"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/loader_factory.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "58792479285b6fbff6810b6769b6f2d7"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/__init__.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "c8af02ddc8be599f717b6f83557197ab"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/document_loader.py": {
+    "mtime": 1774683121.2297058,
+    "hash": "71c371c9ef8aa6fb7069d95124b2c837"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/data_source/base_loader.py": {
+    "mtime": 1777704074.0505314,
+    "hash": "99286c847b60f0d980b71f905052beab"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/pipeline.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "5c010059c48a170928c8609944fbe835"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/__init__.py": {
+    "mtime": 1774681756.0885737,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/rag/rag.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/converters/convert_image_text.py": {
+    "mtime": 1778514122.3432727,
+    "hash": "75f0d4e7339343c4760e027100e9b785"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/converters/document_converter.py": {
+    "mtime": 1777126430.59858,
+    "hash": "bac8353b58dde403fb8a02cd3fba48fc"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/converters/image_converter.py": {
+    "mtime": 1777126520.7006235,
+    "hash": "640b44ba4ad292888d104286de902a62"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/converters/__init__.py": {
+    "mtime": 1777618249.1374674,
+    "hash": "435c047d10322d6b648b4e632e3be224"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/converters/converter_factory.py": {
+    "mtime": 1777126412.94144,
+    "hash": "c80e1e3bb65bc4af7e322d956ea2bcdf"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/ingestion/__init__.py": {
+    "mtime": 1777104257.019428,
+    "hash": "98260d9f2de030c9b88d9078982a8829"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/spreadsheet_chunker.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "68e1e363266aa95c744346d8bac876c5"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/code_chunker.py": {
+    "mtime": 1778514053.081627,
+    "hash": "918085aa6a2b4a3007c15d5f102e5324"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/image_chunker.py": {
+    "mtime": 1778514053.081627,
+    "hash": "acdf6b2cb7f6776be252045cee82f4ce"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/chunk_builder.py": {
+    "mtime": 1776497998.201588,
+    "hash": "3e952f203c8e3c54d526fb6d6f7946ad"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/chunking_engine.py": {
+    "mtime": 1778514053.081627,
+    "hash": "85e57f6694ba299d57dcc040f7195545"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/metadata_enricher.py": {
+    "mtime": 1777104407.0780127,
+    "hash": "3826c8a84ab0d618654d563ef523d366"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/base_chunker.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "dcf2938a164fba152e5c30ec2e1400ec"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/markdown_chunker.py": {
+    "mtime": 1778514053.081627,
+    "hash": "e430e688628d92e28e7363b4de10358e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/detectors.py": {
+    "mtime": 1778514053.081627,
+    "hash": "7876ef646eeb640b7971e723e55f98d2"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/chunking/__init__.py": {
+    "mtime": 1777104205.5309887,
+    "hash": "1261addc5733adc4efbc7d12a36f9ffd"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/parsers/document_parser.py": {
+    "mtime": 1777706872.2582836,
+    "hash": "3d44a44d8d315d448561d5d8959ed019"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/parsers/image_parser.py": {
+    "mtime": 1778514142.2765248,
+    "hash": "b029fba804e8d8daa0c569ebfa5eeb13"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/parsers/__init__.py": {
+    "mtime": 1774190638.6508098,
+    "hash": "0541b6503e3720a5d9c9050b80f7a815"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/processing/parsers/structure_analyzer.py": {
+    "mtime": 1774107953.323827,
+    "hash": "8f306cee7845fd271af6d9f9195dda65"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/raw_document.py": {
+    "mtime": 1774107720.0214827,
+    "hash": "6ce7393a2bef9255bf74e086ccedacbe"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/chunk.py": {
+    "mtime": 1776498009.9350476,
+    "hash": "4ef93f7a88072a60e18a415079de4cbb"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/rag.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/retrieved_chunk.py": {
+    "mtime": 1772790649.6860428,
+    "hash": "06e8ea522538f921876ec193f4cffbda"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/ocr.py": {
+    "mtime": 1777476946.808329,
+    "hash": "a9c9ba5ba82d2ff86b14a461b2afb536"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/__init__.py": {
+    "mtime": 1774187810.2822874,
+    "hash": "305726d6611349dd4c9383de66f9a307"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/schemas/document.py": {
+    "mtime": 1772790754.9001899,
+    "hash": "aacb7ed00d7f51bd82ec9fd2d77c9e7c"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/loader.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "72c018cce595aa00522303d34c11c3a8"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/chunker.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/parser.py": {
+    "mtime": 1777107529.359534,
+    "hash": "dfbdfccb2416108dff79f3c2f2deab02"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/text_embedder.py": {
+    "mtime": 1771949117.0210783,
+    "hash": "6b30811ed7723ed868ef4e4062328e35"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/converter.py": {
+    "mtime": 1777126214.1682127,
+    "hash": "e4956c555c17f1ac7571ad1d7fc292be"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/vector_store.py": {
+    "mtime": 1777103641.0321798,
+    "hash": "83cfcf3b6ce2a2dba11950a5ea2a9dde"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/retriever.py": {
+    "mtime": 1772790649.6860428,
+    "hash": "5206256ed1cb0542cbfff65e71502292"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/ocr.py": {
+    "mtime": 1777477210.7490268,
+    "hash": "69b0e3aab9a081d4a85427990cd4783f"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/__init__.py": {
+    "mtime": 1778514053.0774443,
+    "hash": "f9828e9afc9dc38f71607d33c1dd92e0"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/interfaces/data_source.py": {
+    "mtime": 1776596567.7187674,
+    "hash": "5f6698044f2665b3698a85ff1b9adadc"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/text_cleaner.py": {
+    "mtime": 1776597386.6535044,
+    "hash": "650c0dedc7ce7696b4db9443a835eeca"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/dependency_checks.py": {
+    "mtime": 1777105438.3621113,
+    "hash": "c20589ae8b25902fabeb8caba69b402d"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/bootstrap.py": {
+    "mtime": 1777104520.8997016,
+    "hash": "740eba9d8cb391381eebfb642dd3c6c1"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/paddle_utils.py": {
+    "mtime": 1777477012.4706619,
+    "hash": "d245becd8224039cce1c5d6abadb9daf"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/logger.py": {
+    "mtime": 1776498009.9350476,
+    "hash": "970fce754dcdb3a134496d17b6e9a01a"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/chunking_quality_evaluator.py": {
+    "mtime": 1777909681.6474755,
+    "hash": "7c922a836217921338acdfd8e2ce2751"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/__init__.py": {
+    "mtime": 1776597389.4974988,
+    "hash": "81220a4a46824a2945d3f0a8c7740153"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/utils/load_file.py": {
+    "mtime": 1776498009.9350476,
+    "hash": "00f7b7a93dc4d2c5944bf50a38ab5cb6"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/configs/settings.py": {
+    "mtime": 1777103526.9212987,
+    "hash": "8da844eaa7f81a777c03437663055349"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/configs/sentry_config.py": {
+    "mtime": 1774108181.546866,
+    "hash": "3a163026ccbec38c0fe5b42d735d7a69"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/configs/__init__.py": {
+    "mtime": 1771947634.4230623,
+    "hash": "583691ec42fb5305902ec6d7de5af7c8"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/bge_text_embedder.py": {
+    "mtime": 1772790754.9001899,
+    "hash": "bd1ea6a27b453568dbcd6afd9a47f6d6"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/chroma_vector_store.py": {
+    "mtime": 1777103645.6255116,
+    "hash": "f9beb4383bf6e59d3c33e52e4b0a9304"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/llm_service.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/embedding_service.py": {
+    "mtime": 1771770695.389225,
+    "hash": "d803c0820b410e540b08ddbff8fc8318"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/__init__.py": {
+    "mtime": 1772790649.6860428,
+    "hash": "713de6c13633d24bc80054246530d2cb"
+  },
+  "/home/hardik/projects/DocuFlow/src/docuflow/services/retriever_chain.py": {
+    "mtime": 1778514053.0858095,
+    "hash": "7873cb21b48f2e34a3b8961e11ceee2c"
+  },
+  "/home/hardik/projects/DocuFlow/output.txt": {
+    "mtime": 1778514522.5442927,
+    "hash": "7f0f4707763b34f786d82d532c25f76b"
+  },
+  "/home/hardik/projects/DocuFlow/graphify-out/converted/doc_e5d202f5.md": {
+    "mtime": 1778514758.6755478,
+    "hash": "96452277f40fbbb845d62a3c5ee37edf"
+  },
+  "/home/hardik/projects/DocuFlow/graphify-out/converted/sample3_85fe85fd.md": {
+    "mtime": 1778514758.7299385,
+    "hash": "1d920576505d59be47d9d6efa3c8f1c5"
+  },
+  "/home/hardik/projects/DocuFlow/graphify-out/converted/sample2_b86aabcb.md": {
+    "mtime": 1778514758.8136168,
+    "hash": "1913ae45d71bd227c9d6c40054ef5634"
+  },
+  "/home/hardik/projects/DocuFlow/graphify-out/converted/doc_file_cbb88dbe.md": {
+    "mtime": 1778514758.8596396,
+    "hash": "3e29a5daff0115bb7239db113fc69b9c"
+  },
+  "/home/hardik/projects/DocuFlow/data/markdown/report.md": {
+    "mtime": 1777103037.823454,
+    "hash": "8f467845d67a91ef4b9b01363ed9dc93"
+  },
+  "/home/hardik/projects/DocuFlow/data/markdown/doc.md": {
+    "mtime": 1777103710.79013,
+    "hash": "38a7ffcdf24d2516080f2b89c1f51c87"
+  },
+  "/home/hardik/projects/DocuFlow/data/markdown/sample.md": {
+    "mtime": 1777103036.6724248,
+    "hash": "0885673423b9676d240cf87ab309dc0b"
+  },
+  "/home/hardik/projects/DocuFlow/data/markdown/image.md": {
+    "mtime": 1777619537.213507,
+    "hash": "98855df59a6395fa44cb8fd6d465a3b6"
+  },
+  "/home/hardik/projects/DocuFlow/data/markdown/markdown.md": {
+    "mtime": 1777102126.9656029,
+    "hash": "8f467845d67a91ef4b9b01363ed9dc93"
+  },
+  "/home/hardik/projects/DocuFlow/data/input/image.md": {
+    "mtime": 1777189357.7602623,
+    "hash": "f7c6fca2d0a0c771f6c8e95fe7dad947"
+  },
+  "/home/hardik/projects/DocuFlow/notes/pydantic.md": {
+    "mtime": 1771091312.7037995,
+    "hash": "ac500b9283574777f8b51c329f25aa52"
+  },
+  "/home/hardik/projects/DocuFlow/notes/batch_size.md": {
+    "mtime": 1774196121.352077,
+    "hash": "8760bb6f293e4c9c0992ad5ac67e8214"
+  },
+  "/home/hardik/projects/DocuFlow/notes/rag.md": {
+    "mtime": 1772728004.1876388,
+    "hash": "b13a0f17de15cd3d38354110bdd37918"
+  },
+  "/home/hardik/projects/DocuFlow/notes/text_embeddings.md": {
+    "mtime": 1771090998.9632888,
+    "hash": "18bcf56cd0da472358c8611b5bc0f960"
+  },
+  "/home/hardik/projects/DocuFlow/notes/query-processing/qp.md": {
+    "mtime": 1772733464.0420277,
+    "hash": "cd93da6acc4cb1fc6b0c6c511a33d067"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-procesing/dp.md": {
+    "mtime": 1772732649.4538815,
+    "hash": "3552ce4535668025ecaa08667cfb6bf7"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-sources/soure.md": {
+    "mtime": 1772727915.4658744,
+    "hash": "66fdd84106450d088eb74ceeb7edd447"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-storage/db.md": {
+    "mtime": 1772732682.8618884,
+    "hash": "5f646b126ac1adb53d429dc1d84785da"
+  },
+  "/home/hardik/projects/DocuFlow/notes/validation/vldt.md": {
+    "mtime": 1772733870.9060366,
+    "hash": "c07cfe0ae1a85374ac74fd25a4a2a064"
+  },
+  "/home/hardik/projects/DocuFlow/data/pdfs/sample.pdf": {
+    "mtime": 1771348756.3281817,
+    "hash": "c9ec5f616a9e9e2aa2138e56465f4700"
+  },
+  "/home/hardik/projects/DocuFlow/data/pdfs/report.pdf": {
+    "mtime": 1749557621.5903134,
+    "hash": "32a806065bf1ee508e2987170c53e0a1"
+  },
+  "/home/hardik/projects/DocuFlow/data/resume.jpg": {
+    "mtime": 1774624513.7730637,
+    "hash": "426568f5d90295356ef4c33f1b497377"
+  },
+  "/home/hardik/projects/DocuFlow/data/input/image.png": {
+    "mtime": 1774104587.9275835,
+    "hash": "cfa091cf2b0bc0456ada295e9f85ac83"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/guide.png": {
+    "mtime": 1774280030.8964252,
+    "hash": "27c06612cc0265e07033c7b336ab0893"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/swagger-endpoints.png": {
+    "mtime": 1778512500.4118102,
+    "hash": "5f3e53b7abeb6601c430d5e5f84db967"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/swagger-tess-ocr-text-by-image.png": {
+    "mtime": 1778512511.0818312,
+    "hash": "bd09634503562a5457169709412c0e12"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/resume.png": {
+    "mtime": 1774624359.7251067,
+    "hash": "1755f789a79beaa1affad98e36900f05"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/stock_gs200.jpg": {
+    "mtime": 1778512432.5497172,
+    "hash": "fef6766ab02f60df1e212597454f591e"
+  },
+  "/home/hardik/projects/DocuFlow/data/images/plaid_c150.jpg": {
+    "mtime": 1778512439.909453,
+    "hash": "795c003a6512f3fbf0d4aeca72b2941d"
+  },
+  "/home/hardik/projects/DocuFlow/notes/dataSources_to_dataProcessing_to_DbLayer.png": {
+    "mtime": 1772727749.7093987,
+    "hash": "9333622414277abd528ff25287233d35"
+  },
+  "/home/hardik/projects/DocuFlow/notes/whole_WF.png": {
+    "mtime": 1772732804.2739012,
+    "hash": "a7d356f8b57b491a0b7c1cd3fafe30c6"
+  },
+  "/home/hardik/projects/DocuFlow/notes/query-processing/reasoning_engine.png": {
+    "mtime": 1772733285.4499917,
+    "hash": "8ceb7062b7c69aa9ebde565cb7f3c807"
+  },
+  "/home/hardik/projects/DocuFlow/notes/query-processing/hybrid_search.png": {
+    "mtime": 1772732940.2219732,
+    "hash": "a8150beaa6f2572174ff680a7f05e502"
+  },
+  "/home/hardik/projects/DocuFlow/notes/query-processing/multi_agent.png": {
+    "mtime": 1772733387.189994,
+    "hash": "123f81c95baa9c508db40257bc9a0fe6"
+  },
+  "/home/hardik/projects/DocuFlow/notes/query-processing/cpmplex_problem.png": {
+    "mtime": 1772733147.1140003,
+    "hash": "946164a36588377cf6fca3bc17b04ead"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-procesing/parse-structure.png": {
+    "mtime": 1772727021.5828202,
+    "hash": "d2c7f174b0053f68e193b24f9ab4ecd5"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-procesing/raw-dataprocess.png": {
+    "mtime": 1772727144.1418934,
+    "hash": "94241e80070ad75ad6d2a7e4ec565e65"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-procesing/data-processing.png": {
+    "mtime": 1772726980.6635742,
+    "hash": "c86e07226f3028206791e9467483ab5c"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-storage/how.png": {
+    "mtime": 1772728149.4345293,
+    "hash": "3bb2e395e3b72b822e3618d058f42843"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-storage/why.png": {
+    "mtime": 1772728070.5344353,
+    "hash": "7e1ac2f3a685701e6d0a72ec85298f25"
+  },
+  "/home/hardik/projects/DocuFlow/notes/data-storage/db.png": {
+    "mtime": 1772727878.9597826,
+    "hash": "444e03e4ecd808d64f48b5ca8642009c"
+  },
+  "/home/hardik/projects/DocuFlow/notes/validation/validation.png": {
+    "mtime": 1772734026.8580492,
+    "hash": "dae98476473a42c90d192e4c53915daf"
+  },
+  "/home/hardik/projects/DocuFlow/notes/validation/validate.png": {
+    "mtime": 1772733743.0700197,
+    "hash": "3f8e0ed6a123819698d32147f8ea7039"
+  }
+}

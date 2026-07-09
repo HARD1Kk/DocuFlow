@@ -53,35 +53,47 @@ cd DocuFlow
 # Install dependencies
 uv sync
 
-# Configure settings (optional)
-# Create .env file in project root:
+# Create .env file in the project root:
 LOG_LEVEL=INFO
 EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
-CHUNK_SIZE=800
 DB_PATH=chroma
+
+# Add LLM Keys (required for live metadata enrichment and generation)
+GROQ_API_KEY="your_groq_api_key"
 ```
 
 ---
 
 ## Quick Start
 
-```bash
-# Process a single document
-uv run python -m docuflow.main path/to/document.pdf
+### 1. Document Ingestion
+Place files (PDF, Word, Images, etc.) in the `data/input` directory and run:
 
-# Process with custom chunk size
-uv run python -m docuflow.main path/to/document.pdf --chunk-size 512 --overlap 50
+```bash
+# Run ingestion (parses documents, generates summaries/questions, writes JSON audits, indexes vectors)
+just go
 ```
+
+#### Ingestion Outputs:
+* **Markdown Text:** Saved to `data/markdown/{filename}.md`
+* **Local Audit JSON:** Saved to `data/markdown/{filename}_chunks.json` (contains the exact list of chunks, summaries, keywords, and hypothetical questions)
+* **Vector Index:** Indexed into ChromaDB persistent storage under path `chroma/`
 
 ---
 
-## Supported Formats
+## Retrieval & Querying
 
-| Category | Formats |
-|----------|---------|
-| Documents | PDF, DOCX, TXT, MD |
-| Images | PNG, JPG, JPEG (via OCR) |
-| Spreadsheets | XLS, XLSX, CSV, TSV |
+To query the database and test the retrieval/LLM generation quality:
+
+```bash
+# Test retrieval with a natural query
+uv run python scripts/test_retrieval.py --query "What is the B.Tech qualification and CGPA of the developer?"
+```
+
+This runs the complete pipeline:
+1. **Retrieve:** Queries ChromaDB for the semantically closest chunk.
+2. **Rerank:** Sorts retrieved matches through the reranking processor.
+3. **Generate:** Prompts Groq's live Llama-3.3-70b-versatile LLM using the retrieved context to answer your question.
 
 ---
 
@@ -109,60 +121,19 @@ src/docuflow/
 │   │   ├── image_converter.py
 │   │   └── convert_image_text.py  # OCR (Docling + EasyOCR)
 │   │
-│   └── parsers/          # Text extraction
-│       ├── document_parser.py
-│       ├── image_parser.py
-│       └── structure_analyzer.py
+│   ├── parsers/          # Text extraction
+│   │   ├── document_parser.py
+│   │   ├── image_parser.py
+│   │   └── structure_analyzer.py
+│   │
+│   └── rag/              # RAG Chain orchestration
+│       ├── validation.py     # RAG validation (Gatekeeper, Auditor, Strategist)
+│       └── rag.py            # Context assembly and LLM querying
 │
 ├── interfaces/           # Abstract interfaces
 ├── schemas/              # Pydantic models
-└── utils/               # Helpers
-```
-
----
-
-## Usage
-
-### Python API
-
-```python
-from docuflow.processing.chunking import ChunkingEngine
-from docuflow.schemas.chunk import ChunkingConfig
-
-config = ChunkingConfig(
-    max_chunk_size=512,
-    min_chunk_size=100
-)
-
-engine = ChunkingEngine(config)
-result = engine.chunk("path/to/document.pdf")
-
-for chunk in result.chunks:
-    print(f"Content: {chunk.content[:100]}...")
-    print(f"Tokens: {chunk.token_count}")
-```
-
-### CLI
-
-```bash
-# Process and save to output directory
-uv run python -m docuflow.main input.pdf --output ./output
-
-# Process multiple files
-uv run python -m docuflow.main ./documents/ --glob "*.pdf"
-```
-
-### Using justfile
-
-```bash
-# Run the pipeline
-just go
-
-# Run tests
-just test
-
-# Format & lint
-just fmt
+├── services/             # Concrete services (Chroma, BGE, LLM, Reranker)
+└── utils/                # Helpers & diagnostics
 ```
 
 ---
@@ -170,55 +141,9 @@ just fmt
 ## Testing
 
 ```bash
-# Run all tests
-uv run pytest tests/ -v
-
-# Run with coverage
-uv run pytest tests/ --cov=src/docuflow --cov-report=html
+# Run the complete test suite (executes mock offline validations)
+just test
 ```
-
----
-
-## Configuration Reference
-
-| Setting | Default | Description |
-|---------|----------|-------------|
-| `LOG_LEVEL` | INFO | Logging level |
-| `EMBEDDING_MODEL` | BAAI/bge-small-en-v1.5 | HuggingFace embedding model |
-| `CHUNK_SIZE` | 800 | Maximum characters per chunk |
-| `DB_PATH` | chroma | ChromaDB persistence directory |
-
----
-
-## Project Structure
-
-```
-DocuFlow/
-├── src/docuflow/          # Main package
-│   ├── configs/           # Settings
-│   ├── data_source/      # Loaders
-│   ├── processing/       # Core pipeline
-│   ├── interfaces/       # Abstract interfaces
-│   ├── schemas/          # Pydantic models
-│   ├── services/         # Implementations
-│   └── utils/            # Helpers
-├── tests/                 # Test suite
-├── data/                  # Sample data
-├── notes/                 # Architecture notes
-├── pyproject.toml         # Dependencies
-├── justfile               # Build tasks
-└── README.md
-```
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Run tests: `just test`
-4. Format code: `just fmt`
-5. Submit a pull request
 
 ---
 
@@ -229,10 +154,10 @@ DocuFlow/
 - [x] Header-based smart chunking
 - [x] Structure detection (headings, tables, lists, code blocks)
 - [x] Dual OCR support (Docling + EasyOCR)
-- [ ] Local embedding pipeline with batch processing
-- [ ] Persistent vector storage (ChromaDB)
-- [ ] Pluggable TextEmbedder / VectorStore interfaces
-- [ ] RAG retrieval chain
-- [ ] LLM integration (Gemini / GPT-4 / Llama 3)
-- [ ] CLI interface for querying documents
+- [x] Local embedding pipeline with batch processing
+- [x] Persistent vector storage (ChromaDB)
+- [x] Pluggable TextEmbedder / VectorStore interfaces
+- [x] RAG retrieval chain
+- [x] LLM integration (Groq / OpenAI SDK)
+- [x] CLI interface for querying documents
 - [ ] Web UI for chat-based interaction

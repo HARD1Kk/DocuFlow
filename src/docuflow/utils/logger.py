@@ -31,7 +31,7 @@ def log_context(
 ) -> Generator[None, None, None]:
     """
     Context manager to bind correlation IDs and stage names to contextvars.
-    
+
     Ensures they are cleaned up after the block exits.
     """
     tokens = []
@@ -51,6 +51,7 @@ def log_context(
 
 class ContextFilter(logging.Filter):
     """Filter that injects context variables into each LogRecord."""
+
     def filter(self, record: logging.LogRecord) -> bool:
         record.request_id = request_id_var.get("")
         record.document_id = document_id_var.get("")
@@ -60,6 +61,7 @@ class ContextFilter(logging.Filter):
 
 class JSONFormatter(logging.Formatter):
     """Formatter that outputs structured logs in JSON format."""
+
     def format(self, record: logging.LogRecord) -> str:
         log_data = {
             "timestamp": self.formatTime(record, self.datefmt),
@@ -85,6 +87,7 @@ class JSONFormatter(logging.Formatter):
 
 class HumanReadableFormatter(logging.Formatter):
     """Formatter that appends context variables and metrics to console output."""
+
     def format(self, record: logging.LogRecord) -> str:
         req_id = getattr(record, "request_id", "")
         doc_id = getattr(record, "document_id", "")
@@ -131,7 +134,7 @@ def ist_timezone(*args: Any) -> time.struct_time:
 def setup_logging(level: str | None = None) -> None:
     """
     Configure the root logger with Console and RotatingFile handlers.
-    
+
     Ensures that logging handlers are only configured once for the entire application,
     avoiding multiple file handles/write conflicts on the same log file.
     """
@@ -199,7 +202,7 @@ def setup_logging(level: str | None = None) -> None:
 def get_logger(name: str = __name__) -> logging.Logger:
     """
     Get a named logger instance.
-    
+
     Automatically configures logging handlers on the root logger upon the first call.
     """
     setup_logging()

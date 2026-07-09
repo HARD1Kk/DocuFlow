@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 import json
-import os
 import shutil
-import uuid
-from pathlib import Path
 
 # Fix python path to find local docuflow package
 import sys
+import uuid
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from docuflow.configs import settings
-from docuflow.schemas import RawDocument
-from docuflow.processing.parsers import DocumentParser
 from docuflow.processing.chunking import ChunkingEngine
+from docuflow.processing.parsers import DocumentParser
+from docuflow.processing.rag.rag import RAGChain
+from docuflow.processing.rag.validation import ValidationLayer
+from docuflow.schemas import RawDocument
 from docuflow.schemas.chunk import ChunkingConfig, DocumentType
 from docuflow.services.bge_text_embedder import BGETextEmbedder
 from docuflow.services.chroma_vector_store import ChromaVectorStore
-from docuflow.services.retriever_chain import VectorRetriever
 from docuflow.services.llm_service import LLMService
 from docuflow.services.reranker import Reranker
-from docuflow.processing.rag.validation import ValidationLayer
-from docuflow.processing.rag.rag import RAGChain
+from docuflow.services.retriever_chain import VectorRetriever
 from docuflow.utils import log_context
 
 
@@ -38,8 +38,9 @@ def run_demo_trace():
     settings.log_file = "demo_pipeline.log"
     settings.LOG_LEVEL = "INFO"
 
-    from docuflow.utils.logger import setup_logging
     import docuflow.utils.logger as logger_module
+    from docuflow.utils.logger import setup_logging
+
     logger_module._logging_configured = False
     setup_logging(level="INFO")
 
@@ -60,7 +61,7 @@ Short.
 ## Deep Dive into ContextVars
 Explicit parameter passing couples business logic to telemetry metadata. Python's contextvars library solves this by maintaining task-local and thread-local state namespaces. This lets correlation IDs flow implicitly across sync/async boundaries.
 """
-    
+
     # Write mock file content to disk
     Path(doc_correlation_id).write_text(document_content, encoding="utf-8")
 
@@ -69,24 +70,18 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
         logger.info("Starting document ingestion demo run")
 
         # Parse
-        raw_doc = RawDocument(
-            content=document_content,
-            source=doc_correlation_id,
-            metadata={"format": ".md"}
-        )
+        raw_doc = RawDocument(content=document_content, source=doc_correlation_id, metadata={"format": ".md"})
         parser = DocumentParser()
         parsed_text = parser.parse(raw_doc)
 
         # Chunking (with metadata enrichment using Mock LLM)
         config = ChunkingConfig(max_chunk_size=150, min_chunk_size=30)
         chunking_engine = ChunkingEngine(config=config, enable_enrichment=True)
-        mock_llm = LLMService(model_name="gemini-1.5-pro")
+        mock_llm = LLMService(mock=False)
         chunking_engine.enricher.llm_service = mock_llm
 
         chunk_batch = chunking_engine.chunk(
-            content=parsed_text,
-            document_type=DocumentType.MD,
-            metadata={"source": doc_correlation_id}
+            content=parsed_text, document_type=DocumentType.MD, metadata={"source": doc_correlation_id}
         )
 
         # Embed
@@ -98,11 +93,11 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
         db_path = Path("chroma_demo_db")
         if db_path.exists():
             shutil.rmtree(db_path)
-            
+
         vector_store = ChromaVectorStore(db_path=db_path, collection_name="demo_collection")
         chunk_ids = [c.chunk_id for c in chunk_batch.chunks]
         metadatas = [c.to_dict() for c in chunk_batch.chunks]
-        
+
         # Clean dictionaries for Chroma
         for m in metadatas:
             if "keywords" in m:
@@ -120,7 +115,7 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
 
         # Add to index (First add)
         vector_store.add(ids=chunk_ids, documents=chunks_content, metadata=metadatas, embeddings=embeddings)
-        
+
         # Add again to demonstrate duplicate warning logging
         logger.info("Triggering simulated duplicate add to demonstrate silent overwrite warning:")
         vector_store.add(ids=chunk_ids, documents=chunks_content, metadata=metadatas, embeddings=embeddings)
@@ -130,14 +125,9 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
         retriever = VectorRetriever(embedder=embedder, vector_store=vector_store)
         reranker = Reranker()
         validator = ValidationLayer(llm_service=mock_llm)
-        
-        rag_chain = RAGChain(
-            retriever=retriever,
-            reranker=reranker,
-            llm_service=mock_llm,
-            validator=validator
-        )
-        
+
+        rag_chain = RAGChain(retriever=retriever, reranker=reranker, llm_service=mock_llm, validator=validator)
+
         # Ask a query that gets context
         answer = rag_chain.query("How do contextvars help in RAG systems?", top_k=2)
         print(f"\nFinal Answer:\n> {answer}\n")
@@ -147,7 +137,7 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
     print("               JSON LOG TRACE TIMELINE FOR DOCUMENT INGESTION")
     print(f"               (Filtered by document_id={doc_correlation_id})")
     print("================================================================================")
-    
+
     with open(demo_log_file, "r") as f:
         for line in f:
             data = json.loads(line)
@@ -155,21 +145,21 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
                 stage = data.get("stage", "Unknown")
                 level = data.get("level", "INFO")
                 msg = data.get("message", "")
-                
+
                 # Check for performance stats
                 perf_info = []
                 for attr in ["latency_ms", "input_tokens", "output_tokens", "cost_usd"]:
                     if attr in data:
                         perf_info.append(f"{attr}={data[attr]}")
                 perf_str = f" | {', '.join(perf_info)}" if perf_info else ""
-                
+
                 print(f"[{data['timestamp']}] [{level:<7}] [Stage: {stage:<19}] {msg}{perf_str}")
 
     print("\n================================================================================")
     print("               JSON LOG TRACE TIMELINE FOR USER QUERY")
     print(f"               (Filtered by request_id={query_correlation_id})")
     print("================================================================================")
-    
+
     with open(demo_log_file, "r") as f:
         for line in f:
             data = json.loads(line)
@@ -177,13 +167,13 @@ Explicit parameter passing couples business logic to telemetry metadata. Python'
                 stage = data.get("stage", "Unknown")
                 level = data.get("level", "INFO")
                 msg = data.get("message", "")
-                
+
                 perf_info = []
                 for attr in ["latency_ms", "input_tokens", "output_tokens", "cost_usd"]:
                     if attr in data:
                         perf_info.append(f"{attr}={data[attr]}")
                 perf_str = f" | {', '.join(perf_info)}" if perf_info else ""
-                
+
                 print(f"[{data['timestamp']}] [{level:<7}] [Stage: {stage:<19}] {msg}{perf_str}")
 
     # Cleanup demo database and log file

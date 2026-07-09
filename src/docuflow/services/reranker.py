@@ -1,8 +1,10 @@
-import time
 import random
+import time
 from typing import List
+
 from docuflow.schemas import RetrievedChunk
 from docuflow.utils import get_logger, log_context
+
 
 class Reranker:
     def __init__(self):
@@ -26,24 +28,17 @@ class Reranker:
                 # Simulate a score boost/change
                 boost = random.uniform(-0.1, 0.2)
                 new_score = min(1.0, max(0.0, chunk.score + boost))
-                
+
                 self.logger.info(
                     f"Reranked chunk: score_before={chunk.score:.4f}, score_after={new_score:.4f} (diff={boost:+.4f})"
                 )
-                
-                reranked.append(RetrievedChunk(
-                    content=chunk.content,
-                    score=new_score,
-                    metadata=chunk.metadata
-                ))
+
+                reranked.append(RetrievedChunk(content=chunk.content, score=new_score, metadata=chunk.metadata))
 
             # Sort by new score descending
             reranked.sort(key=lambda x: x.score, reverse=True)
 
             latency_ms = (time.perf_counter() - start_time) * 1000
-            self.logger.info(
-                f"Reranking completed in {latency_ms:.2f}ms",
-                extra={"latency_ms": latency_ms}
-            )
+            self.logger.info(f"Reranking completed in {latency_ms:.2f}ms", extra={"latency_ms": latency_ms})
 
             return reranked

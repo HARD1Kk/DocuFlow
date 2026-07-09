@@ -328,9 +328,19 @@ def _test_document(document_path: str, verbose: bool = True) -> dict:
 # ============ PYTEST INTEGRATION ============
 
 
-def test_sample_docx():
+def test_sample_docx(tmp_path):
     """Test sample DOCX file"""
-    results = _test_document("/home/hardik/projects/DocuFlow/data/sample2.docx")
+    from docx import Document
+
+    file_path = tmp_path / "sample2.docx"
+    doc = Document()
+    doc.add_heading("Introduction to RAG", level=1)
+    doc.add_paragraph("This is a test DOCX document used for automated system validation.")
+    doc.add_heading("Section 1: Details", level=2)
+    doc.add_paragraph("Here are some details about the layout extraction process.")
+    doc.save(str(file_path))
+
+    results = _test_document(str(file_path))
     assert results["status"] == "SUCCESS"
 
 
@@ -371,7 +381,22 @@ if __name__ == "__main__":
     print("║" + " " * 78 + "║")
     print("╚" + "=" * 78 + "╝")
 
-    results = _test_document(args.document, verbose=args.verbose)
+    doc_path = Path(args.document)
+    if not doc_path.exists():
+        if doc_path.suffix == ".docx":
+            from docx import Document
+
+            doc_path.parent.mkdir(parents=True, exist_ok=True)
+            doc = Document()
+            doc.add_heading("Introduction to RAG", level=1)
+            doc.add_paragraph("This is a dynamically created sample docx file.")
+            doc.save(str(doc_path))
+            print(f"Created default file at: {doc_path}")
+        else:
+            print(f"File not found: {doc_path}")
+            sys.exit(1)
+
+    results = _test_document(str(doc_path), verbose=args.verbose)
 
     # Exit code based on results
     sys.exit(0 if results["status"] == "SUCCESS" else 1)

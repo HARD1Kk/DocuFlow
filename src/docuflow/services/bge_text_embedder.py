@@ -24,6 +24,7 @@ class BGETextEmbedder(ITextEmbedder):
 
     def embed(self, texts: Sequence[str]) -> List[List[float]]:
         import time
+
         from docuflow.utils import log_context
 
         with log_context(stage="Embedding"):
@@ -46,7 +47,7 @@ class BGETextEmbedder(ITextEmbedder):
                     batch_latency = (time.perf_counter() - batch_start) * 1000
                     self.logger.info(
                         f"Embedded batch: size={len(batch)} (latency={batch_latency:.2f}ms)",
-                        extra={"latency_ms": batch_latency}
+                        extra={"latency_ms": batch_latency},
                     )
 
                     if isinstance(embeddings, np.ndarray):
@@ -64,15 +65,11 @@ class BGETextEmbedder(ITextEmbedder):
                         "latency_ms": total_latency,
                         "input_tokens": approx_tokens,
                         "output_tokens": approx_tokens,
-                    }
+                    },
                 )
                 return all_embeddings
 
             except Exception as e:
                 total_latency = (time.perf_counter() - start_time) * 1000
-                self.logger.error(
-                    f"Embedding failed: {e}",
-                    exc_info=True,
-                    extra={"latency_ms": total_latency}
-                )
+                self.logger.error(f"Embedding failed: {e}", exc_info=True, extra={"latency_ms": total_latency})
                 raise

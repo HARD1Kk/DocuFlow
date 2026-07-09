@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+from typing import Any
 
 from docuflow.configs import settings
 from docuflow.data_source import LoaderFactory
@@ -8,6 +9,9 @@ from docuflow.processing.converters import ConverterFactory
 from docuflow.processing.ingestion import save_markdown
 from docuflow.processing.parsers import DocumentParser
 from docuflow.schemas.chunk import ChunkingConfig, DocumentType
+from docuflow.services.bge_text_embedder import BGETextEmbedder
+from docuflow.services.chroma_vector_store import ChromaVectorStore
+from docuflow.services.llm_service import LLMService
 from docuflow.utils import ensure_directories, get_logger, log_context
 from docuflow.utils.dependency_checks import check_optional_dependencies, is_paddleocr_available
 
@@ -31,20 +35,26 @@ def get_document_type(file_path: Path) -> DocumentType:
     return type_map.get(ext, DocumentType.UNKNOWN)
 
 
-def create_app() -> dict:
+def create_app() -> dict[str, Any]:
     """Composition root: create and wire concrete implementations.
 
     Returns a mapping with commonly used components.
     """
     parser = DocumentParser(converter_provider=ConverterFactory)
     chunking_config = ChunkingConfig()
-    chunking_engine = ChunkingEngine(config=chunking_config, enable_enrichment=True)
+    llm_service = LLMService(mock=False)
+    chunking_engine = ChunkingEngine(config=chunking_config, llm_service=llm_service, enable_enrichment=True)
     loader_factory = LoaderFactory
+
+    embedder = BGETextEmbedder()
+    vector_store = ChromaVectorStore(db_path=settings.db_path, collection_name="documents")
 
     return {
         "parser": parser,
         "chunking_engine": chunking_engine,
         "loader_factory": loader_factory,
+        "embedder": embedder,
+        "vector_store": vector_store,
     }
 
 
@@ -60,9 +70,11 @@ def main() -> None:
     parser = app["parser"]
     chunking_engine = app["chunking_engine"]
     loader_factory = app["loader_factory"]
+    embedder = app["embedder"]
+    vector_store = app["vector_store"]
 
     # Run lightweight optional-dependency checks (logs availability) and set a flag
-    deps = check_optional_dependencies()
+    check_optional_dependencies()
     paddle_available = is_paddleocr_available()
 
     input_dir = settings.input_dir
@@ -84,7 +96,9 @@ def main() -> None:
                 continue
 
             with log_context(document_id=file_path.name, stage="Ingestion"):
-                logger.info(f"Document received: source={file_path}, type={file_path.suffix}, size={file_path.stat().st_size} bytes")
+                logger.info(
+                    f"Document received: source={file_path}, type={file_path.suffix}, size={file_path.stat().st_size} bytes"
+                )
 
                 # Load document
                 try:
@@ -122,6 +136,52 @@ def main() -> None:
 
                 if chunk_batch.processing_errors:
                     logger.warning(f"Chunking errors: {chunk_batch.processing_errors}")
+
+                # Save chunk metadata to JSON locally for visual auditing
+                import json
+
+                chunks_data = [chunk.to_dict() for chunk in chunk_batch.chunks]
+                json_out = settings.md_dir / f"{file_path.stem}_chunks.json"
+                with open(json_out, "w", encoding="utf-8") as f:
+                    json.dump(chunks_data, f, indent=2, ensure_ascii=False)
+                logger.info(f"Saved chunk metadata JSON: {json_out}")
+
+                # Embed chunks and index into ChromaDB Vector store
+                if chunk_batch.chunks:
+                    logger.info(f"Generating vector embeddings for {len(chunk_batch.chunks)} chunks...")
+                    texts = [chunk.content for chunk in chunk_batch.chunks]
+                    embeddings = embedder.embed(texts)
+
+                    ids = [chunk.chunk_id for chunk in chunk_batch.chunks]
+                    documents = texts
+
+                    # Flatten metadata dictionaries to satisfy ChromaDB schema requirements
+                    metadatas = []
+                    for chunk, emb in zip(chunk_batch.chunks, embeddings):
+                        chunk.embedding = emb
+
+                        meta = chunk.to_dict()
+                        if "keywords" in meta:
+                            meta["keywords"] = ", ".join(meta["keywords"])
+                        if "hypothetical_questions" in meta:
+                            meta["hypothetical_questions"] = ", ".join(meta["hypothetical_questions"])
+                        if "content_type" in meta:
+                            meta["content_type"] = str(meta["content_type"])
+                        if "document_type" in meta:
+                            meta["document_type"] = str(meta["document_type"])
+
+                        # Extract and flatten nested custom metadata
+                        nested_meta = meta.get("metadata", {})
+                        if isinstance(nested_meta, dict):
+                            for k, v in nested_meta.items():
+                                meta[f"meta_{k}"] = str(v)
+                            del meta["metadata"]
+
+                        metadatas.append(meta)
+
+                    logger.info("Indexing chunks into ChromaDB...")
+                    vector_store.add(ids=ids, documents=documents, metadata=metadatas, embeddings=embeddings)
+                    logger.info(f"Successfully indexed {len(ids)} chunks in ChromaDB vector store.")
 
         except Exception as e:
             logger.error(f"Failed to process {file_path}: {e}", exc_info=True)

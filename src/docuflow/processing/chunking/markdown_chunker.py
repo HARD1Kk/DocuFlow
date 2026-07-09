@@ -5,7 +5,6 @@ import re
 from typing import Dict, List
 
 from docuflow.processing.chunking.base_chunker import BaseChunker
-from docuflow.utils import get_logger
 from docuflow.processing.chunking.detectors import (
     CodeBlockDetector,
     DetectedElement,
@@ -17,6 +16,7 @@ from docuflow.processing.chunking.detectors import (
     TableDetector,
 )
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
+from docuflow.utils import get_logger
 
 
 class MarkdownChunker(BaseChunker):
@@ -339,7 +339,7 @@ class MarkdownChunker(BaseChunker):
         else:
             self.logger.warning(
                 f"Accumulated paragraph segment dropped below min_chunk_size ({current_tokens} < {self.config.min_chunk_size}). "
-                f"Content preview: {repr(content[current_start:len(content)].strip()[:60])}"
+                f"Content preview: {repr(content[current_start : len(content)].strip()[:60])}"
             )
 
         return split_points if split_points else [(0, len(content))]
