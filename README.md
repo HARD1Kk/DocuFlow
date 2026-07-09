@@ -81,6 +81,21 @@ just go
 
 ---
 
+## Configuration Reference
+
+You can customize the pipeline behavior by creating a `.env` file in the project root.
+
+| Setting | Default | Description |
+|---------|----------|-------------|
+| `LOG_LEVEL` | `INFO` | Logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`) |
+| `EMBEDDING_MODEL` | `BAAI/bge-small-en-v1.5` | Local HuggingFace embedding model to use |
+| `DB_PATH` | `chroma` | Persistent ChromaDB database directory |
+| `GROQ_API_KEY` | *None* | API Key for Groq Cloud (used for enrichment and generation) |
+| `LLM_MODEL` | `llama-3.3-70b-versatile` | Groq / OpenAI LLM model name |
+| `LLM_PROVIDER` | `openai` | OpenAI SDK provider connection |
+
+---
+
 ## Retrieval & Querying
 
 To query the database and test the retrieval/LLM generation quality:
@@ -149,15 +164,28 @@ just test
 
 ## Roadmap
 
-- [x] Multi-format document support (PDF, DOCX, Images, Spreadsheets)
-- [x] High-fidelity Markdown conversion
-- [x] Header-based smart chunking
-- [x] Structure detection (headings, tables, lists, code blocks)
-- [x] Dual OCR support (Docling + EasyOCR)
-- [x] Local embedding pipeline with batch processing
-- [x] Persistent vector storage (ChromaDB)
-- [x] Pluggable TextEmbedder / VectorStore interfaces
-- [x] RAG retrieval chain
-- [x] LLM integration (Groq / OpenAI SDK)
-- [x] CLI interface for querying documents
-- [ ] Web UI for chat-based interaction
+### 📦 Phase 1: Data Ingestion & Processing (Completed)
+- [x] Multi-format document loaders (PDF, DOCX, Spreadsheets, Images)
+- [x] Structure-aware Markdown parsing and cleaning (Structure Analyzer)
+- [x] Header-based smart chunking (Table, Heading, List boundary detection)
+- [x] Metadata creation (LLM Summary, Keywords, and Question generation)
+- [x] Dual OCR support (Docling + RapidOCR/EasyOCR)
+
+### 🗄️ Phase 2: Database Layer (In Progress)
+- [x] Persistent Vector Store (ChromaDB) for semantic embeddings
+- [ ] Relational Database (SQL/SQLite) for document registry, session state, and audit logs
+
+### 🧠 Phase 3: Reasoning Engine & Multi-Agent Retrieval
+- [x] Vector retriever chain and reranking stage
+- [ ] Hybrid Search (Vector similarity + Keyword BM25 Fusion)
+- [ ] Reasoning Engine (LLM Planner, Tool Execution Layer, and Conditional Router)
+- [ ] Multi-Agent Execution (Specialized worker agents for sub-tasks)
+
+### 🛡️ Phase 4: Validation & Stress Testing (Core Complete)
+- [x] Output Validation: Gatekeeper (relevance), Auditor (hallucination), and Strategist (logical consistency)
+- [ ] Stress Testing / Red-Teaming (Prompt injection safeguards, Biased opinion checks, Information evasion detection)
+
+### 📊 Phase 5: Evaluation & UI Interfaces
+- [x] CLI Query Interface & Telemetry (Token count, latencies, API costs)
+- [ ] Automated Evaluation Framework (LLM Judges, Precision & Recall metrics)
+- [ ] Web UI for interactive chat, retrieved sources timeline, and evaluation logs
