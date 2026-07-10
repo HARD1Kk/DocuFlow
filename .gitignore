@@ -22,8 +22,6 @@ data/
 .claude/
 .cache/
 
-# Markdown files
-*.md
 
 # text files 
 *.txt
