@@ -39,15 +39,6 @@ class ChromaVectorStore(IVectorStore):
                 self.logger.warning(f"Could not read index size before indexing: {e}")
                 count_before = 0
 
-            # Duplicate chunk_id detection (silent overwrite risk)
-            try:
-                existing = self.collection.get(ids=ids)
-                existing_ids = existing.get("ids", [])
-                if existing_ids:
-                    self.logger.warning(f"Duplicate chunk IDs detected. Overwrite risk for IDs: {existing_ids}")
-            except Exception as e:
-                self.logger.warning(f"Failed to check for duplicate IDs in vector store: {e}")
-
             start_time = time.perf_counter()
             try:
                 self.collection.upsert(

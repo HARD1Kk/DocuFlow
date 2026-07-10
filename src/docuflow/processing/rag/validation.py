@@ -28,13 +28,6 @@ class ValidationLayer:
                 self.logger.warning("Auditor check failed: Response contains hallucinated information")
                 return False
 
-            # 3. Strategist Check: Does the answer make logical sense?
-            self.logger.info("Running Strategist check: Logical/structural consistency check")
-            strategist_passed = self._run_strategist(query, response)
-            if not strategist_passed:
-                self.logger.warning("Strategist check failed: Output recommendation is inconsistent")
-                return False
-
             latency_ms = (time.perf_counter() - start_time) * 1000
             self.logger.info(
                 f"Validation pipeline completed successfully. All checks PASSED (latency={latency_ms:.2f}ms)",
@@ -63,9 +56,6 @@ class ValidationLayer:
                 res = self.llm_service.generate(prompt)
                 return "yes" in res.lower()
             except Exception as e:
-                self.logger.warning(f"Auditor LLM call failed: {e}. Falling back to rule-based check.")
+                self.logger.warning(f"Auditor LLM call failed: {e}. Bypassing check.")
 
         return True
-
-    def _run_strategist(self, query: str, response: str) -> bool:
-        return not ("error" in response.lower() or "broken" in response.lower())

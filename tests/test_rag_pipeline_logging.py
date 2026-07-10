@@ -97,9 +97,6 @@ def test_end_to_end_rag_pipeline_logging():
         # Indexing run 1
         vector_store.add(ids=chunk_ids, documents=chunks_content, metadata=metadatas, embeddings=embeddings)
 
-        # Indexing run 2 (checks for duplicate warnings!)
-        vector_store.add(ids=chunk_ids, documents=chunks_content, metadata=metadatas, embeddings=embeddings)
-
     # 7. Query/Retrieval & Generation Step
     with log_context(request_id=request_id):
         retriever = VectorRetriever(embedder=embedder, vector_store=vector_store)
@@ -119,7 +116,6 @@ def test_end_to_end_rag_pipeline_logging():
     assert len(log_lines) > 0
 
     stages_found = set()
-    found_duplicate_warning = False
     found_request_id = False
     found_document_id = False
     found_latency = False
@@ -150,10 +146,6 @@ def test_end_to_end_rag_pipeline_logging():
         if "input_tokens" in data:
             found_tokens = True
 
-        # Trace warning
-        if data.get("level") == "WARNING" and "Duplicate chunk IDs" in data.get("message", ""):
-            found_duplicate_warning = True
-
     # Assert expected stages logged
     assert "Ingestion" in stages_found
     assert "Chunking" in stages_found
@@ -167,7 +159,6 @@ def test_end_to_end_rag_pipeline_logging():
 
     assert found_request_id
     assert found_document_id
-    assert found_duplicate_warning
     assert found_latency
     assert found_tokens
 

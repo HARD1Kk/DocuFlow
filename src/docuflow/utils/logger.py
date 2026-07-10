@@ -8,8 +8,7 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from threading import Lock
 from typing import Any, Generator
-
-import pytz
+from zoneinfo import ZoneInfo
 
 from docuflow.configs import settings
 
@@ -127,7 +126,7 @@ class HumanReadableFormatter(logging.Formatter):
 
 def ist_timezone(*args: Any) -> time.struct_time:
     """Return IST time for logging formatter."""
-    tz = pytz.timezone("Asia/Kolkata")
+    tz = ZoneInfo("Asia/Kolkata")
     return datetime.now(tz).timetuple()
 
 
