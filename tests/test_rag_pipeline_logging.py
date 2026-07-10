@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from docuflow.configs import settings
 from docuflow.processing.chunking import ChunkingEngine
@@ -16,14 +15,10 @@ from docuflow.services.retriever_chain import VectorRetriever
 from docuflow.utils import log_context
 
 
-def test_end_to_end_rag_pipeline_logging():
+def test_end_to_end_rag_pipeline_logging(tmp_path):
     # 1. Setup local temporary paths for test logs
-    test_log_file = Path("logs/test_pipeline.log")
-    test_log_file.parent.mkdir(parents=True, exist_ok=True)
-    if test_log_file.exists():
-        test_log_file.unlink()
-
-    # Override setting's log path for this test run
+    test_log_file = tmp_path / "test_pipeline.log"
+    settings.log_dir = tmp_path
     settings.log_file = "test_pipeline.log"
 
     # Force re-configure logging to target test file
@@ -36,18 +31,19 @@ def test_end_to_end_rag_pipeline_logging():
     logger = logger_module.get_logger("test_pipeline")
 
     # 2. Pipeline Initialization
-    document_id = "test_doc_logging.md"
+    doc_file = tmp_path / "test_doc_logging.md"
+    document_id = doc_file.name
     request_id = "test_query_logging_req_123"
 
     # Write mock file content to disk so the converter can read it
     doc_content = "This is the content of a test document. Section 1 covers RAG concepts. Section 2 covers logging."
-    Path(document_id).write_text(doc_content, encoding="utf-8")
+    doc_file.write_text(doc_content, encoding="utf-8")
 
     with log_context(document_id=document_id, stage="Ingestion"):
         logger.info("Initializing logging pipeline test")
 
         # 3. Parser Step
-        raw_doc = RawDocument(content=doc_content, source=document_id, metadata={"format": ".md"})
+        raw_doc = RawDocument(content=doc_content.encode("utf-8"), source=str(doc_file), metadata={"format": ".md"})
         parser = DocumentParser()
         parsed_text = parser.parse(raw_doc)
         assert parsed_text is not None
@@ -69,12 +65,7 @@ def test_end_to_end_rag_pipeline_logging():
         assert len(embeddings) == len(chunks_content)
 
         # 6. Indexing Step
-        db_path = Path("chroma_test_logging")
-        if db_path.exists():
-            import shutil
-
-            shutil.rmtree(db_path)
-
+        db_path = tmp_path / "chroma_test_logging"
         vector_store = ChromaVectorStore(db_path=db_path, collection_name="test_collection")
 
         chunk_ids = [c.chunk_id for c in chunk_batch.chunks]
@@ -161,13 +152,3 @@ def test_end_to_end_rag_pipeline_logging():
     assert found_document_id
     assert found_latency
     assert found_tokens
-
-    # Cleanup test resources
-    if db_path.exists():
-        import shutil
-
-        shutil.rmtree(db_path)
-    if test_log_file.exists():
-        test_log_file.unlink()
-    if Path(document_id).exists():
-        Path(document_id).unlink()
