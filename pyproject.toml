@@ -29,7 +29,6 @@ dependencies = [
   "openpyxl>=3.1.0",
   "xlrd>=2.0.0",
   "pandas>=2.0.0",
-  "gramformer",
   "paddleocr>=3.7.0",
   "paddlepaddle>=3.3.1",
 ]
@@ -52,9 +51,6 @@ strict = true
 ignore_missing_imports = true
 explicit_package_bases = true
 mypy_path = ["src"]
-
-[tool.uv.sources]
-gramformer = { git = "https://github.com/PrithivirajDamodaran/Gramformer.git" }
 
 [dependency-groups]
 dev = [

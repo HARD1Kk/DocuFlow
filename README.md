@@ -7,9 +7,10 @@ DocuFlow is a modern Retrieval-Augmented Generation (RAG) system designed to pro
 ## Features
 
 - **Multi-format Support** — PDF, DOCX, TXT, MD, Images (PNG/JPG), Spreadsheets (XLS/XLSX, CSV/TSV)
-- **High-Fidelity Conversion** — Converts documents to structured Markdown preserving layout, tables, and headers
+- **Resilient PDF Extraction** — Two-stage pipeline: PyMuPDF4LLM (fast, primary) with automatic Docling fallback when heuristic quality checks detect degraded output (scanned pages, multi-column chaos, missing tables)
 - **Smart Chunking** — Hierarchical text splitting based on Markdown headers (`#`, `##`, `###`) with recursive fallback for long sections
 - **Structure Detection** — Automatically detects headings, tables, lists, and code blocks
+- **Deterministic Text Cleaning** — Regex-based OCR artifact removal: whitespace normalisation, smart-quote/dash mapping, hyphen-merge across line breaks, YAML frontmatter and code-block protection
 - **Dual OCR** — Docling + EasyOCR for image text extraction
 - **Metadata Enrichment** — Summaries, keywords, and hypothetical questions for better retrieval
 - **Local Embeddings** — BAAI/bge-small-en-v1.5 via FlagEmbedding with configurable batch processing
@@ -24,9 +25,12 @@ DocuFlow is a modern Retrieval-Augmented Generation (RAG) system designed to pro
 | Layer | Technology |
 |-------|-------------|
 | Core | Python 3.11+ |
-| PDF Parsing | PyMuPDF / PyMuPDF4LLM |
+| PDF Parsing (primary) | PyMuPDF / PyMuPDF4LLM |
+| PDF Parsing (fallback) | Docling (deep layout, table OCR, multi-column) |
+| PDF Quality Gating | `PdfQualityChecker` — heuristic scorer (content density, layout chaos, table presence) |
 | Document Processing | python-docx, pandas, openpyxl |
 | OCR | EasyOCR, Docling |
+| Text Cleaning | `TextCleaner` — deterministic regex-based OCR artifact removal |
 | Text Splitting | LangChain Text Splitters |
 | Embeddings | FlagEmbedding (BAAI/bge-small-en-v1.5) |
 | Vector DB | ChromaDB (Persistent) |
@@ -132,7 +136,7 @@ src/docuflow/
 │   │   └── detectors.py         # Structure detection
 │   │
 │   ├── converters/       # Format conversion
-│   │   ├── document_converter.py
+│   │   ├── document_converter.py  # Two-stage PDF pipeline (PyMuPDF4LLM → Docling fallback)
 │   │   ├── image_converter.py
 │   │   └── convert_image_text.py  # OCR (Docling + EasyOCR)
 │   │
@@ -149,6 +153,8 @@ src/docuflow/
 ├── schemas/              # Pydantic models
 ├── services/             # Concrete services (Chroma, BGE, LLM, Reranker)
 └── utils/                # Helpers & diagnostics
+    ├── pdf_quality.py        # PdfQualityChecker — heuristic quality scoring
+    └── text_cleaner.py       # TextCleaner — deterministic OCR artifact removal
 ```
 
 ---
@@ -166,6 +172,8 @@ just test
 
 ### 📦 Phase 1: Data Ingestion & Processing (Completed)
 - [x] Multi-format document loaders (PDF, DOCX, Spreadsheets, Images)
+- [x] Resilient PDF extraction — PyMuPDF4LLM primary with heuristic-gated Docling fallback
+- [x] Deterministic text cleaning — regex-based whitespace, hyphen-merge, smart-quote normalisation, Markdown-structure protection
 - [x] Structure-aware Markdown parsing and cleaning (Structure Analyzer)
 - [x] Header-based smart chunking (Table, Heading, List boundary detection)
 - [x] Metadata creation (LLM Summary, Keywords, and Question generation)

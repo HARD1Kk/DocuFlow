@@ -7,21 +7,107 @@ import pymupdf4llm
 
 from docuflow.interfaces import BaseConverter
 from docuflow.schemas import RawDocument
-from docuflow.utils import get_logger
+from docuflow.utils import PdfQualityChecker, get_logger
 
 logger = get_logger(__name__)
 
+# Shared quality checker — conservative defaults.
+# Only triggers Docling when PyMuPDF4LLM output is clearly degraded.
+_quality_checker = PdfQualityChecker(
+    min_chars=200,
+    min_chars_per_page=80,
+    max_short_line_ratio=0.60,
+    short_line_threshold=25,
+    min_tables=0,
+)
+
+
+def _convert_pdf_with_pymupdf(pdf_file: Path) -> str:
+    """Primary extractor: fast, low-memory, good for clean/digital PDFs."""
+    markdown_text = pymupdf4llm.to_markdown(str(pdf_file), use_ocr=True)
+    logger.info(
+        "PyMuPDF4LLM extracted %d chars from %s", len(markdown_text), pdf_file
+    )
+    return str(markdown_text)
+
+
+def _convert_pdf_with_docling(pdf_file: Path) -> str:
+    """Fallback extractor: handles complex layouts, multi-column, and table-heavy PDFs."""
+    from docling.datamodel.base_models import InputFormat
+    from docling.datamodel.pipeline_options import PdfPipelineOptions, TableStructureOptions
+    from docling.document_converter import DocumentConverter as DoclingConverter
+    from docling.document_converter import PdfFormatOption
+
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.do_ocr = True
+    pipeline_options.do_table_structure = True
+    pipeline_options.table_structure_options = TableStructureOptions(do_cell_matching=True)
+
+    converter = DoclingConverter(
+        format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
+    )
+    result = converter.convert(str(pdf_file))
+    markdown_text = result.document.export_to_markdown()
+    logger.info(
+        "Docling extracted %d chars from %s", len(markdown_text), pdf_file
+    )
+    return markdown_text
+
 
 def convert_pdf_to_markdown(pdf_file: Path) -> str:
-    """Convert a PDF file into markdown using PyMuPDF4LLM."""
+    """
+    Convert a PDF file to Markdown using a two-stage pipeline with quality-gated fallback.
+
+    Primary extractor: PyMuPDF4LLM (fast, low-memory).
+    Fallback extractor: Docling (handles complex layouts, multi-column, deep table OCR).
+
+    The fallback is triggered when heuristic quality checks detect degraded output:
+      - Total content below minimum character threshold (likely blank/image-only pages).
+      - Low characters-per-page ratio (per-page OCR failure).
+      - High ratio of very short lines (multi-column layout extraction chaos).
+      - Missing expected table structures (when min_tables > 0).
+
+    Raises
+    ------
+    RuntimeError
+        If both extractors fail. The error message includes context from both failures.
+    """
     pdf_file = pdf_file.expanduser().resolve()
+    primary_exc: Exception | None = None
+    primary_text: str | None = None
+
+    # --- Stage 1: PyMuPDF4LLM ---
     try:
-        markdown_text = pymupdf4llm.to_markdown(pdf_file, use_ocr=True)
-        logger.info("Converted PDF %s into %s characters of markdown", pdf_file, len(markdown_text))
-        return str(markdown_text)
+        primary_text = _convert_pdf_with_pymupdf(pdf_file)
     except Exception as exc:
-        logger.exception("Failed to convert PDF %s", pdf_file)
-        raise RuntimeError(f"PDF conversion failed for {pdf_file}") from exc
+        primary_exc = exc
+        logger.warning(
+            "PyMuPDF4LLM failed for %s (%s) — attempting Docling fallback",
+            pdf_file, exc,
+        )
+
+    # Check quality if we got output from the primary extractor
+    if primary_text is not None:
+        if _quality_checker.is_good_enough(primary_text, source_path=pdf_file, extractor="pymupdf4llm"):
+            return primary_text
+        logger.warning(
+            "PyMuPDF4LLM output quality insufficient for %s — triggering Docling fallback",
+            pdf_file,
+        )
+
+    # --- Stage 2: Docling fallback ---
+    try:
+        fallback_text = _convert_pdf_with_docling(pdf_file)
+        logger.info("Docling fallback succeeded for %s", pdf_file)
+        return fallback_text
+    except Exception as fallback_exc:
+        # Both failed — surface both errors for diagnosis
+        primary_msg = f"PyMuPDF4LLM: {primary_exc}" if primary_exc else "PyMuPDF4LLM: quality check failed"
+        raise RuntimeError(
+            f"PDF conversion failed for {pdf_file}. "
+            f"Primary failure — {primary_msg}. "
+            f"Fallback (Docling) failure — {fallback_exc}"
+        ) from fallback_exc
 
 
 def convert_docx_to_markdown(docx_file: Path) -> str:
