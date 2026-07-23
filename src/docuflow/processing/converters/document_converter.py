@@ -1,3 +1,4 @@
+import re
 import subprocess
 from pathlib import Path
 
@@ -22,11 +23,32 @@ _quality_checker = PdfQualityChecker(
 )
 
 
-def _convert_pdf_with_pymupdf(pdf_file: Path) -> str:
+def preprocess_markdown(text: str) -> str:
+    """Preprocess markdown content to clean up artifacts before chunking."""
+    if not text:
+        return ""
+
+    # 1. Remove PyMuPDF image placeholders: **==> picture [...] intentionally omitted <==**
+    # Matches with or without bold format asterisks, case-insensitive
+    text = re.sub(
+        r"\*?\*?==>\s*picture\s*\[\d+\s*x\s*\d+\]\s*intentionally\s*omitted\s*<==\*?\*?", "", text, flags=re.IGNORECASE
+    )
+
+    # 2. Remove standalone page numbers
+    # A standalone page number is a line containing only a number (optionally with whitespace)
+    text = re.sub(r"^\s*\d+\s*$", "", text, flags=re.MULTILINE)
+
+    # 3. Collapse extra blank lines (limit to maximum one consecutive blank line)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+
+    return text.strip()
+
+
+def _convert_pdf_with_pymupdf(pdf_file: Path, ignore_images: bool = False) -> str:
     """Primary extractor: fast, low-memory, good for clean/digital PDFs."""
-    markdown_text = pymupdf4llm.to_markdown(str(pdf_file), use_ocr=True)
+    markdown_text = pymupdf4llm.to_markdown(str(pdf_file), use_ocr=True, ignore_images=ignore_images)
     logger.info(
-        "PyMuPDF4LLM extracted %d chars from %s", len(markdown_text), pdf_file
+        "PyMuPDF4LLM extracted %d chars from %s (ignore_images=%s)", len(markdown_text), pdf_file, ignore_images
     )
     return str(markdown_text)
 
@@ -43,18 +65,14 @@ def _convert_pdf_with_docling(pdf_file: Path) -> str:
     pipeline_options.do_table_structure = True
     pipeline_options.table_structure_options = TableStructureOptions(do_cell_matching=True)
 
-    converter = DoclingConverter(
-        format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
-    )
+    converter = DoclingConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)})
     result = converter.convert(str(pdf_file))
     markdown_text = result.document.export_to_markdown()
-    logger.info(
-        "Docling extracted %d chars from %s", len(markdown_text), pdf_file
-    )
+    logger.info("Docling extracted %d chars from %s", len(markdown_text), pdf_file)
     return markdown_text
 
 
-def convert_pdf_to_markdown(pdf_file: Path) -> str:
+def convert_pdf_to_markdown(pdf_file: Path, ignore_images: bool = False) -> str:
     """
     Convert a PDF file to Markdown using a two-stage pipeline with quality-gated fallback.
 
@@ -78,12 +96,14 @@ def convert_pdf_to_markdown(pdf_file: Path) -> str:
 
     # --- Stage 1: PyMuPDF4LLM ---
     try:
-        primary_text = _convert_pdf_with_pymupdf(pdf_file)
+        primary_text = _convert_pdf_with_pymupdf(pdf_file, ignore_images=ignore_images)
+        primary_text = preprocess_markdown(primary_text)
     except Exception as exc:
         primary_exc = exc
         logger.warning(
             "PyMuPDF4LLM failed for %s (%s) — attempting Docling fallback",
-            pdf_file, exc,
+            pdf_file,
+            exc,
         )
 
     # Check quality if we got output from the primary extractor
@@ -98,6 +118,7 @@ def convert_pdf_to_markdown(pdf_file: Path) -> str:
     # --- Stage 2: Docling fallback ---
     try:
         fallback_text = _convert_pdf_with_docling(pdf_file)
+        fallback_text = preprocess_markdown(fallback_text)
         logger.info("Docling fallback succeeded for %s", pdf_file)
         return fallback_text
     except Exception as fallback_exc:
@@ -163,12 +184,16 @@ class DocumentConverter(BaseConverter):
 
     SUPPORTED_EXTENSIONS = (".pdf", ".docx", ".txt", ".md", ".xls", ".xlsx", ".csv", ".tsv")
 
+    def __init__(self, ignore_images: bool = False) -> None:
+        self.ignore_images = ignore_images
+
     def convert(self, raw_document: RawDocument) -> str:
         source_path = Path(raw_document.source)
         file_format = raw_document.metadata.get("format", source_path.suffix.lower()).lower()
+        ignore_images = raw_document.metadata.get("ignore_images", self.ignore_images)
 
         if file_format == ".pdf":
-            return convert_pdf_to_markdown(source_path)
+            return convert_pdf_to_markdown(source_path, ignore_images=ignore_images)
         if file_format == ".docx":
             return convert_docx_to_markdown(source_path)
         if file_format in {".txt", ".md"}:

@@ -149,6 +149,9 @@ class ChunkingEngine:
             start_time = time.perf_counter()
             try:
                 batch = chunker.chunk(content, metadata)
+                batch.format = document_type
+                for chunk in batch.chunks:
+                    chunk.document_type = document_type
             except Exception as e:
                 self.logger.error(f"Chunking failed for {source}: {e}", exc_info=True)
                 return ChunkBatch(

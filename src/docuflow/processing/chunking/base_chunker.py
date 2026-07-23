@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, DocumentType
+from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 
 
 class BaseChunker(ABC):
@@ -42,13 +42,19 @@ class BaseChunker(ABC):
         self,
         chunk_id: str,
         content: str,
-        content_type: str = "text",
+        content_type: str | ContentType = "text",
         metadata: Dict[str, any] | None = None,
         token_count: int | None = None,
     ) -> Chunk:
         """Helper to create a chunk with consistent token counting."""
         if token_count is None:
             token_count = self._count_tokens(content)
+
+        if isinstance(content_type, str):
+            try:
+                content_type = ContentType(content_type)
+            except ValueError:
+                content_type = ContentType.TEXT
 
         return Chunk(
             chunk_id=chunk_id,

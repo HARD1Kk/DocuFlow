@@ -6,6 +6,7 @@ No PDF files or external libraries are required to run these tests.
 """
 
 import pytest
+
 from docuflow.utils.pdf_quality import PdfQualityChecker, QualityCheckResult
 
 
@@ -24,6 +25,7 @@ def checker():
 # ---------------------------------------------------------------------------
 # Positive cases (should PASS — PyMuPDF4LLM output is good enough)
 # ---------------------------------------------------------------------------
+
 
 class TestQualityPass:
     def test_clean_dense_text_passes(self, checker):
@@ -62,6 +64,7 @@ class TestQualityPass:
 # ---------------------------------------------------------------------------
 # Negative cases — each heuristic triggers independently
 # ---------------------------------------------------------------------------
+
 
 class TestQualityFail:
     def test_low_content_fails(self, checker):
@@ -112,6 +115,7 @@ class TestQualityFail:
 # Multiple heuristics firing simultaneously
 # ---------------------------------------------------------------------------
 
+
 class TestMultipleFailures:
     def test_multiple_reasons_accumulated(self):
         checker = PdfQualityChecker(min_chars=500, min_tables=2)
@@ -132,6 +136,7 @@ class TestMultipleFailures:
 # ---------------------------------------------------------------------------
 # QualityCheckResult dataclass
 # ---------------------------------------------------------------------------
+
 
 class TestQualityCheckResult:
     def test_passed_result_str(self):

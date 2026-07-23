@@ -68,6 +68,7 @@ class MarkdownChunker(BaseChunker):
 
         for section in sections:
             section_chunks = self._chunk_section(
+                full_content=content,
                 section=section,
                 headings=headings,
                 tables=tables,
@@ -75,6 +76,13 @@ class MarkdownChunker(BaseChunker):
                 code_blocks=code_blocks,
                 chunk_index=chunk_index,
             )
+            # Merge small chunks under the same section/heading
+            section_chunks = self._merge_small_chunks(section_chunks)
+
+            # Re-generate chunk IDs with correct sequential index
+            for idx, chunk in enumerate(section_chunks):
+                chunk.chunk_id = self._generate_chunk_id(section["title"], chunk_index + idx)
+
             chunks.extend(section_chunks)
             chunk_index += len(section_chunks)
 
@@ -126,6 +134,7 @@ class MarkdownChunker(BaseChunker):
 
     def _chunk_section(
         self,
+        full_content: str,
         section: Dict[str, any],
         headings: List[Heading],
         tables: List[Table],
@@ -134,17 +143,18 @@ class MarkdownChunker(BaseChunker):
         chunk_index: int,
     ) -> List[Chunk]:
         """Chunk a single section respecting structure."""
-        content = section["content"]
+        section_start = section["start"]
+        section_end = section["end"]
         chunks: List[Chunk] = []
 
-        # Check if section is a protected element (table, list, code)
-        protected = self._find_protected_elements(content, tables, lists, code_blocks)
+        # Check if section contains protected elements (table, list, code)
+        protected = self._find_protected_elements(section_start, section_end, tables, lists, code_blocks)
 
         if protected:
             # Section contains protected elements - handle specially
             chunks.extend(
                 self._chunk_with_protected_elements(
-                    content=content,
+                    full_content=full_content,
                     protected=protected,
                     section=section,
                     chunk_index=chunk_index,
@@ -152,9 +162,10 @@ class MarkdownChunker(BaseChunker):
             )
         else:
             # Regular text - split by size with overlap
+            section_content = full_content[section_start:section_end]
             chunks.extend(
                 self._chunk_regular_text(
-                    content=content,
+                    content=section_content,
                     section=section,
                     chunk_index=chunk_index,
                 )
@@ -164,26 +175,27 @@ class MarkdownChunker(BaseChunker):
 
     def _find_protected_elements(
         self,
-        content: str,
+        section_start: int,
+        section_end: int,
         tables: List[Table],
         lists: List[ListBlock],
         code_blocks: List[DetectedElement],
     ) -> List[Dict[str, any]]:
-        """Find protected elements within section content."""
+        """Find protected elements within section boundaries (using global indices)."""
         protected = []
 
         for table in tables:
-            if 0 <= table.start < len(content):
+            if section_start <= table.start < section_end:
                 protected.append({"type": ContentType.TABLE, "element": table, "start": table.start, "end": table.end})
 
         for list_block in lists:
-            if 0 <= list_block.start < len(content):
+            if section_start <= list_block.start < section_end:
                 protected.append(
                     {"type": ContentType.LIST, "element": list_block, "start": list_block.start, "end": list_block.end}
                 )
 
         for code in code_blocks:
-            if 0 <= code.start < len(content):
+            if section_start <= code.start < section_end:
                 protected.append({"type": ContentType.CODE, "element": code, "start": code.start, "end": code.end})
 
         # Sort by start position
@@ -192,20 +204,20 @@ class MarkdownChunker(BaseChunker):
 
     def _chunk_with_protected_elements(
         self,
-        content: str,
+        full_content: str,
         protected: List[Dict[str, any]],
         section: Dict[str, any],
         chunk_index: int,
     ) -> List[Chunk]:
         """Chunk content while keeping protected elements intact."""
         chunks = []
-        pos = 0
+        pos = section["start"]
         local_index = 0
 
         for element in protected:
             # Chunk text before protected element
             if element["start"] > pos:
-                text_before = content[pos : element["start"]]
+                text_before = full_content[pos : element["start"]]
                 text_chunks = self._chunk_regular_text(
                     content=text_before,
                     section=section,
@@ -215,7 +227,7 @@ class MarkdownChunker(BaseChunker):
                 local_index += len(text_chunks)
 
             # Add protected element as its own chunk
-            element_content = content[element["start"] : element["end"]]
+            element_content = full_content[element["start"] : element["end"]]
             chunk = self._create_chunk(
                 chunk_id=self._generate_chunk_id(section["title"], chunk_index + local_index),
                 content=element_content,
@@ -232,8 +244,8 @@ class MarkdownChunker(BaseChunker):
             pos = element["end"]
 
         # Handle remaining text after last protected element
-        if pos < len(content):
-            text_after = content[pos:]
+        if pos < section["end"]:
+            text_after = full_content[pos : section["end"]]
             text_chunks = self._chunk_regular_text(
                 content=text_after,
                 section=section,
@@ -264,13 +276,7 @@ class MarkdownChunker(BaseChunker):
                     "section_level": section["level"],
                 },
             )
-            if chunk.token_count >= self.config.min_chunk_size:
-                chunks.append(chunk)
-            else:
-                self.logger.warning(
-                    f"Chunk dropped below min_chunk_size ({chunk.token_count} < {self.config.min_chunk_size}). "
-                    f"Section/Heading: '{section['title']}'. Content preview: {repr(content.strip()[:60])}"
-                )
+            chunks.append(chunk)
             return chunks
 
         # Need to split - find natural boundaries
@@ -295,14 +301,7 @@ class MarkdownChunker(BaseChunker):
                     "section_level": section["level"],
                 },
             )
-
-            if chunk.token_count >= self.config.min_chunk_size:
-                chunks.append(chunk)
-            else:
-                self.logger.warning(
-                    f"Chunk dropped below min_chunk_size ({chunk.token_count} < {self.config.min_chunk_size}). "
-                    f"Section/Heading: '{section['title']}'. Content preview: {repr(chunk_content[:60])}"
-                )
+            chunks.append(chunk)
 
         return chunks
 
@@ -322,8 +321,7 @@ class MarkdownChunker(BaseChunker):
 
             if current_tokens + para_tokens > self.config.max_chunk_size:
                 # End current chunk at previous paragraph
-                if current_tokens >= self.config.min_chunk_size:
-                    split_points.append((current_start, pos))
+                split_points.append((current_start, pos))
 
                 # Start new chunk with overlap
                 overlap_start = max(0, pos - 200)  # ~50 tokens overlap
@@ -334,13 +332,7 @@ class MarkdownChunker(BaseChunker):
             pos += len(para) + 2  # +2 for \n\n
 
         # Add final chunk
-        if current_tokens >= self.config.min_chunk_size:
-            split_points.append((current_start, len(content)))
-        else:
-            self.logger.warning(
-                f"Accumulated paragraph segment dropped below min_chunk_size ({current_tokens} < {self.config.min_chunk_size}). "
-                f"Content preview: {repr(content[current_start : len(content)].strip()[:60])}"
-            )
+        split_points.append((current_start, len(content)))
 
         return split_points if split_points else [(0, len(content))]
 
@@ -376,3 +368,52 @@ class MarkdownChunker(BaseChunker):
             pos = end
 
         return chunks
+
+    def _merge_small_chunks(self, chunks: List[Chunk]) -> List[Chunk]:
+        """Merge chunks that are smaller than min_chunk_size with their neighbors."""
+        if not chunks:
+            return []
+
+        merged_chunks: List[Chunk] = []
+
+        for chunk in chunks:
+            if not merged_chunks:
+                merged_chunks.append(chunk)
+                continue
+
+            last_chunk = merged_chunks[-1]
+
+            # If either the last chunk or the current chunk is smaller than min_chunk_size,
+            # and their combined size doesn't exceed max_chunk_size, merge them.
+            if last_chunk.token_count < self.config.min_chunk_size or chunk.token_count < self.config.min_chunk_size:
+                combined_content = last_chunk.content + "\n\n" + chunk.content
+                combined_tokens = self._count_tokens(combined_content)
+
+                if combined_tokens <= self.config.max_chunk_size:
+                    # Update last chunk with combined content and tokens
+                    last_chunk.content = combined_content
+                    last_chunk.token_count = combined_tokens
+                    # If they are different content types, generalize to 'text'
+                    if last_chunk.content_type != chunk.content_type:
+                        last_chunk.content_type = ContentType.TEXT.value
+                    continue
+
+            merged_chunks.append(chunk)
+
+        # If the last chunk is still too small, and we have at least two chunks,
+        # try merging it with the previous one even if the previous one wasn't small,
+        # as long as they fit in max_chunk_size.
+        if len(merged_chunks) > 1:
+            last_chunk = merged_chunks[-1]
+            if last_chunk.token_count < self.config.min_chunk_size:
+                prev_chunk = merged_chunks[-2]
+                combined_content = prev_chunk.content + "\n\n" + last_chunk.content
+                combined_tokens = self._count_tokens(combined_content)
+                if combined_tokens <= self.config.max_chunk_size:
+                    prev_chunk.content = combined_content
+                    prev_chunk.token_count = combined_tokens
+                    if prev_chunk.content_type != last_chunk.content_type:
+                        prev_chunk.content_type = ContentType.TEXT.value
+                    merged_chunks.pop()
+
+        return merged_chunks

@@ -1,6 +1,6 @@
 from docuflow.processing.converters import ConverterFactory
 from docuflow.schemas import RawDocument
-from docuflow.utils import TextCleaner, get_logger
+from docuflow.utils import get_logger
 
 
 class DocumentParser:
@@ -12,7 +12,6 @@ class DocumentParser:
                 Defaults to `ConverterFactory`.
         """
         self.logger = get_logger(__name__)
-        self.cleaner = TextCleaner()
         self.converter_provider = converter_provider or ConverterFactory
 
     def parse(self, raw_document: RawDocument) -> str:
@@ -29,19 +28,9 @@ class DocumentParser:
                 self.logger.error(f"Conversion returned None for {file_format}")
                 raise RuntimeError("Conversion failed: None returned")
 
-            cleaned_result = self._clean_text(result, raw_document.source)
-            self.logger.info(f"Successfully parsed: {len(cleaned_result)} chars")
-            return cleaned_result
+            self.logger.info(f"Successfully parsed: {len(result)} chars")
+            return result
 
         except Exception as e:
             self.logger.error(f"Error parsing {raw_document.source}: {e}", exc_info=True)
             raise
-
-    def _clean_text(self, text: str, source: str) -> str:
-        try:
-            cleaned_text = self.cleaner.clean(text)
-            self.logger.info(f"Applied text cleaning to {source}")
-            return cleaned_text
-        except Exception as exc:
-            self.logger.warning(f"Text cleaning failed for {source}: {exc}")
-            return text

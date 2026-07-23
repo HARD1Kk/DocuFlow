@@ -119,30 +119,24 @@ class PdfQualityChecker:
         # 1. Total content density
         total_chars = len(text.strip())
         if total_chars < self.min_chars:
-            reasons.append(
-                f"low_content: {total_chars} chars < threshold {self.min_chars}"
-            )
+            reasons.append(f"low_content: {total_chars} chars < threshold {self.min_chars}")
 
         # 2. Per-page density (only when page count is available)
         if num_pages and num_pages > 0:
             chars_per_page = total_chars / num_pages
             if chars_per_page < self.min_chars_per_page:
                 reasons.append(
-                    f"low_density_per_page: {chars_per_page:.0f} chars/page "
-                    f"< threshold {self.min_chars_per_page}"
+                    f"low_density_per_page: {chars_per_page:.0f} chars/page < threshold {self.min_chars_per_page}"
                 )
 
         # 3. Layout chaos — high ratio of very short lines
         lines = [ln for ln in text.splitlines() if ln.strip()]
         if lines:
-            short_lines = sum(
-                1 for ln in lines if len(ln.strip()) < self.short_line_threshold
-            )
+            short_lines = sum(1 for ln in lines if len(ln.strip()) < self.short_line_threshold)
             short_ratio = short_lines / len(lines)
             if short_ratio > self.max_short_line_ratio:
                 reasons.append(
-                    f"layout_chaos: {short_ratio:.0%} short lines "
-                    f"(>{self.max_short_line_ratio:.0%} threshold)"
+                    f"layout_chaos: {short_ratio:.0%} short lines (>{self.max_short_line_ratio:.0%} threshold)"
                 )
 
         # 4. Missing tables (optional — only active when min_tables > 0)
@@ -151,10 +145,7 @@ class PdfQualityChecker:
             # Count distinct table blocks (separated by non-pipe lines)
             table_count = len(re.findall(r"(?:^\|.+\|\n?)+", text, re.MULTILINE))
             if table_count < self.min_tables:
-                reasons.append(
-                    f"missing_tables: found {table_count} table(s), "
-                    f"expected >= {self.min_tables}"
-                )
+                reasons.append(f"missing_tables: found {table_count} table(s), expected >= {self.min_tables}")
 
         result = QualityCheckResult(
             passed=len(reasons) == 0,

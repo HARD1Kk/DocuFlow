@@ -3,7 +3,6 @@ from docuflow.utils.bootstrap import ensure_directories
 from docuflow.utils.load_file import get_all_pdfs
 from docuflow.utils.logger import get_logger, log_context
 from docuflow.utils.pdf_quality import PdfQualityChecker
-from docuflow.utils.text_cleaner import TextCleaner
 
 __all__ = [
     "settings",
@@ -13,5 +12,4 @@ __all__ = [
     "log_context",
     "ensure_directories",
     "PdfQualityChecker",
-    "TextCleaner",
 ]
