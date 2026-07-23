@@ -1,8 +1,9 @@
 # src/docuflow/processing/chunking/base_chunker.py
 """Abstract base class for all chunkers - follows Open/Closed Principle."""
 
+import hashlib
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 
@@ -25,7 +26,7 @@ class BaseChunker(ABC):
         pass
 
     @abstractmethod
-    def chunk(self, content: str, metadata: Dict[str, any]) -> ChunkBatch:
+    def chunk(self, content: str, metadata: Dict[str, Any]) -> ChunkBatch:
         """
         Chunk content into semantically meaningful units.
 
@@ -43,10 +44,24 @@ class BaseChunker(ABC):
         chunk_id: str,
         content: str,
         content_type: str | ContentType = "text",
-        metadata: Dict[str, any] | None = None,
-        token_count: int | None = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        token_count: Optional[int] = None,
+        heading: str = "",
+        heading_level: int = 0,
+        parser: str = "",
+        parser_version: str = "",
     ) -> Chunk:
-        """Helper to create a chunk with consistent token counting."""
+        """Helper to create a chunk with consistent token counting.
+
+        Args:
+            chunk_id: Unique identifier for the chunk.
+            content: Text content of the chunk.
+            content_type: Type of content (text, table, list, code, etc.).
+            metadata: Structural metadata dict (section info, element type).
+            token_count: Pre-computed token count; computed if ``None``.
+            heading: Section heading this chunk belongs to.
+            heading_level: Markdown heading level (1-6, 0 = no heading).
+        """
         if token_count is None:
             token_count = self._count_tokens(content)
 
@@ -62,6 +77,10 @@ class BaseChunker(ABC):
             content_type=content_type,
             metadata=metadata or {},
             token_count=token_count,
+            heading=heading,
+            heading_level=heading_level,
+            parser=parser,
+            parser_version=parser_version,
         )
 
     def _count_tokens(self, text: str) -> int:
@@ -71,8 +90,10 @@ class BaseChunker(ABC):
         return max(1, len(text) // 4)
 
     def _generate_chunk_id(self, source: str, index: int) -> str:
-        """Generate unique chunk ID."""
-        import hashlib
+        """Generate a deterministic chunk ID from *source* and *index*.
 
-        source_hash = hashlib.md5(source.encode()).hexdigest()[:8]
-        return f"{source_hash}_{index:04d}"
+        The ID is stable across repeated processing of the same document
+        as long as the source identifier and chunk ordering are unchanged.
+        """
+        raw = f"{source}::{index}"
+        return hashlib.md5(raw.encode()).hexdigest()[:8] + f"_{index:04d}"

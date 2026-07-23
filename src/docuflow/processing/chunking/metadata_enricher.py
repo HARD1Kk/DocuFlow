@@ -44,7 +44,8 @@ class MetadataEnricher:
             self.logger.debug("Metadata enrichment disabled")
             return chunks
 
-        with log_context(stage="Metadata Enrichment"):
+        doc_id = chunks[0].document_id if chunks else None
+        with log_context(document_id=doc_id, stage="Metadata Enrichment"):
             self.logger.info(f"Enriching {len(chunks)} chunks with metadata")
 
             for chunk in chunks:

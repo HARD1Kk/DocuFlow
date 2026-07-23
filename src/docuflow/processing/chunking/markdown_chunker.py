@@ -14,6 +14,7 @@ from docuflow.processing.chunking.detectors import (
     ListDetector,
     Table,
     TableDetector,
+    clean_heading_title,
 )
 from docuflow.schemas.chunk import Chunk, ChunkBatch, ChunkingConfig, ContentType, DocumentType
 from docuflow.utils import get_logger
@@ -115,10 +116,11 @@ class MarkdownChunker(BaseChunker):
             # Create section for each heading
             for i, heading in enumerate(headings):
                 next_start = headings[i + 1].start if i + 1 < len(headings) else len(content)
+                clean_title = clean_heading_title(heading.title)
 
                 sections.append(
                     {
-                        "title": heading.title,
+                        "title": clean_title,
                         "level": heading.level,
                         "start": heading.start,
                         "end": next_start,
@@ -233,10 +235,10 @@ class MarkdownChunker(BaseChunker):
                 content=element_content,
                 content_type=element["type"].value,
                 metadata={
-                    "section": section["title"],
-                    "section_level": section["level"],
                     "element_type": element["type"].value,
                 },
+                heading=section["title"],
+                heading_level=section["level"],
             )
             chunks.append(chunk)
             local_index += 1
@@ -271,10 +273,9 @@ class MarkdownChunker(BaseChunker):
                 chunk_id=self._generate_chunk_id(section["title"], chunk_index),
                 content=content.strip(),
                 content_type=ContentType.TEXT.value,
-                metadata={
-                    "section": section["title"],
-                    "section_level": section["level"],
-                },
+                metadata={},
+                heading=section["title"],
+                heading_level=section["level"],
             )
             chunks.append(chunk)
             return chunks
@@ -296,10 +297,9 @@ class MarkdownChunker(BaseChunker):
                 chunk_id=self._generate_chunk_id(section["title"], chunk_index + i),
                 content=chunk_content,
                 content_type=ContentType.TEXT.value,
-                metadata={
-                    "section": section["title"],
-                    "section_level": section["level"],
-                },
+                metadata={},
+                heading=section["title"],
+                heading_level=section["level"],
             )
             chunks.append(chunk)
 
@@ -357,10 +357,9 @@ class MarkdownChunker(BaseChunker):
                     chunk_id=self._generate_chunk_id(section["title"], chunk_index + i),
                     content=chunk_content,
                     content_type=ContentType.TEXT.value,
-                    metadata={
-                        "section": section["title"],
-                        "section_level": section["level"],
-                    },
+                    metadata={},
+                    heading=section["title"],
+                    heading_level=section["level"],
                 )
                 chunks.append(chunk)
                 i += 1

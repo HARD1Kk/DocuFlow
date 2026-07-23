@@ -20,6 +20,7 @@ from docuflow.processing.chunking.markdown_chunker import MarkdownChunker
 from docuflow.processing.chunking.metadata_enricher import MetadataEnricher
 from docuflow.processing.chunking.spreadsheet_chunker import SpreadsheetChunker
 from docuflow.schemas.chunk import ChunkBatch, ChunkingConfig, DocumentType
+from docuflow.schemas.document_context import DocumentContext
 from docuflow.utils import get_logger, log_context
 
 logger = get_logger(__name__)
@@ -115,8 +116,9 @@ class ChunkingEngine:
         """
         metadata = metadata or {}
         source = metadata.get("source", "unknown")
+        doc_id = metadata.get("document_id") or DocumentContext.generate_document_id(content=content, source_path=source)
 
-        with log_context(stage="Chunking"):
+        with log_context(document_id=doc_id, stage="Chunking"):
             self.logger.info(f"Starting chunking for {source} ({document_type.value})")
 
             # Validate input
@@ -150,8 +152,29 @@ class ChunkingEngine:
             try:
                 batch = chunker.chunk(content, metadata)
                 batch.format = document_type
-                for chunk in batch.chunks:
+
+                # Build document context from content and metadata
+                doc_ctx = DocumentContext.from_source(
+                    source_path=source,
+                    document_type=document_type,
+                    total_pages=metadata.get("total_pages", 1),
+                    content=content,
+                    parser=metadata.get("parser", ""),
+                    parser_version=metadata.get("parser_version", ""),
+                )
+                if metadata.get("document_id"):
+                    doc_ctx.document_id = metadata["document_id"]
+
+                # Stamp every chunk with document-level provenance
+                for idx, chunk in enumerate(batch.chunks):
                     chunk.document_type = document_type
+                    chunk.document_id = doc_ctx.document_id
+                    chunk.document_name = doc_ctx.document_name
+                    chunk.source_path = doc_ctx.source_path
+                    chunk.chunk_index = idx
+                    chunk.parser = doc_ctx.parser
+                    chunk.parser_version = doc_ctx.parser_version
+                    chunk.chunk_id = f"{doc_ctx.document_id[:8]}_{idx:04d}"
             except Exception as e:
                 self.logger.error(f"Chunking failed for {source}: {e}", exc_info=True)
                 return ChunkBatch(

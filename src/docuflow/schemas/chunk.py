@@ -5,6 +5,14 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+__all__ = [
+    "ContentType",
+    "DocumentType",
+    "Chunk",
+    "ChunkBatch",
+    "ChunkingConfig",
+]
+
 
 class ContentType(str, Enum):
     """Type of content in chunk."""
@@ -47,7 +55,18 @@ class Chunk:
     content_type: ContentType = ContentType.TEXT
     document_type: DocumentType = DocumentType.UNKNOWN
 
-    # Structural metadata
+    # ---- Document-level provenance (populated by ChunkingEngine) ----
+    document_id: str = ""
+    document_name: str = ""
+    source_path: str = ""
+    page_number: Optional[int] = None
+    chunk_index: int = 0
+    heading: str = ""
+    heading_level: int = 0
+    parser: str = ""
+    parser_version: str = ""
+
+    # Structural metadata (legacy dict — still populated by chunkers)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     # Rich metadata for better retrieval (rag.md Section 6.3)
@@ -66,17 +85,28 @@ class Chunk:
         content_type_val = self.content_type.value if hasattr(self.content_type, "value") else self.content_type
         document_type_val = self.document_type.value if hasattr(self.document_type, "value") else self.document_type
 
-        return {
+        d = {
             "chunk_id": self.chunk_id,
             "content": self.content,
             "content_type": content_type_val,
             "document_type": document_type_val,
-            "metadata": self.metadata,
+            "document_id": self.document_id,
+            "document_name": self.document_name,
+            "source_path": self.source_path,
+            "page_number": self.page_number,
+            "chunk_index": self.chunk_index,
+            "heading": self.heading,
+            "heading_level": self.heading_level,
+            "parser": self.parser,
+            "parser_version": self.parser_version,
             "summary": self.summary,
             "keywords": self.keywords,
             "hypothetical_questions": self.hypothetical_questions,
             "token_count": self.token_count,
         }
+        if self.metadata:
+            d["metadata"] = self.metadata
+        return d
 
 
 @dataclass

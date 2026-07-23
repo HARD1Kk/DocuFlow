@@ -14,6 +14,23 @@ from docuflow.utils import get_logger
 logger = get_logger(__name__)
 
 
+def clean_heading_title(title: str) -> str:
+    """Clean markdown formatting from heading titles to produce plain text.
+
+    E.g. '**Introduction**' -> 'Introduction'
+         '**1.** Objectives' -> '1. Objectives'
+    """
+    if not title:
+        return ""
+    # Strip leading hashes if present
+    text = re.sub(r"^#+\s*", "", title)
+    # Remove bold/italic/code formatting: **, *, __, _, `
+    text = re.sub(r"(\*\*|__|\*|_|`)(.*?)\1", r"\2", text)
+    # Strip any remaining surrounding markdown punctuation
+    text = text.strip("*_`").strip()
+    return text
+
+
 @dataclass
 class DetectedElement:
     """Base class for detected structural elements."""
@@ -138,7 +155,8 @@ class HeadingDetector(StructureDetector):
             match = self.md_heading_pattern.match(line)
             if match:
                 hash_marks = match.group(1)
-                title = match.group(2).strip()
+                raw_title = match.group(2).strip()
+                title = clean_heading_title(raw_title)
                 level = len(hash_marks)
 
                 heading = Heading(
@@ -160,7 +178,8 @@ class HeadingDetector(StructureDetector):
         headings = []
 
         for match in self.cap_heading_pattern.finditer(content):
-            title = match.group(1).strip()
+            raw_title = match.group(1).strip()
+            title = clean_heading_title(raw_title)
             start = match.start()
 
             heading = Heading(
@@ -180,7 +199,8 @@ class HeadingDetector(StructureDetector):
         headings = []
 
         for match in self.underline_pattern.finditer(content):
-            title = match.group(1).strip()
+            raw_title = match.group(1).strip()
+            title = clean_heading_title(raw_title)
             underline = match.group(2)
             level = 1 if "=" in underline else 2
 

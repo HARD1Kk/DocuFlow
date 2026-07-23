@@ -17,4 +17,7 @@ dead:
     @uv run vulture . --exclude .venv
 
 clean:
-	rm -f *.md
+	@uv run rm -rf data/markdown/
+
+clean-logs:
+    @uv run rm -rf logs/

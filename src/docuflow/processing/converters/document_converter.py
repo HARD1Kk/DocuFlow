@@ -1,5 +1,7 @@
+import importlib.metadata
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -11,6 +13,14 @@ from docuflow.schemas import RawDocument
 from docuflow.utils import PdfQualityChecker, get_logger
 
 logger = get_logger(__name__)
+
+
+def _get_package_version(pkg_name: str, fallback: str = "unknown") -> str:
+    """Safely fetch installed package version."""
+    try:
+        return importlib.metadata.version(pkg_name)
+    except Exception:
+        return fallback
 
 # Shared quality checker — conservative defaults.
 # Only triggers Docling when PyMuPDF4LLM output is clearly degraded.
@@ -72,24 +82,10 @@ def _convert_pdf_with_docling(pdf_file: Path) -> str:
     return markdown_text
 
 
-def convert_pdf_to_markdown(pdf_file: Path, ignore_images: bool = False) -> str:
-    """
-    Convert a PDF file to Markdown using a two-stage pipeline with quality-gated fallback.
-
-    Primary extractor: PyMuPDF4LLM (fast, low-memory).
-    Fallback extractor: Docling (handles complex layouts, multi-column, deep table OCR).
-
-    The fallback is triggered when heuristic quality checks detect degraded output:
-      - Total content below minimum character threshold (likely blank/image-only pages).
-      - Low characters-per-page ratio (per-page OCR failure).
-      - High ratio of very short lines (multi-column layout extraction chaos).
-      - Missing expected table structures (when min_tables > 0).
-
-    Raises
-    ------
-    RuntimeError
-        If both extractors fail. The error message includes context from both failures.
-    """
+def convert_pdf_to_markdown_with_meta(
+    pdf_file: Path, ignore_images: bool = False
+) -> tuple[str, str, str]:
+    """Convert PDF file to Markdown and return (markdown_text, parser_name, parser_version)."""
     pdf_file = pdf_file.expanduser().resolve()
     primary_exc: Exception | None = None
     primary_text: str | None = None
@@ -109,7 +105,8 @@ def convert_pdf_to_markdown(pdf_file: Path, ignore_images: bool = False) -> str:
     # Check quality if we got output from the primary extractor
     if primary_text is not None:
         if _quality_checker.is_good_enough(primary_text, source_path=pdf_file, extractor="pymupdf4llm"):
-            return primary_text
+            version_str = _get_package_version("pymupdf4llm", fallback=_get_package_version("pymupdf", "1.27.2"))
+            return primary_text, "pymupdf4llm", version_str
         logger.warning(
             "PyMuPDF4LLM output quality insufficient for %s — triggering Docling fallback",
             pdf_file,
@@ -120,15 +117,20 @@ def convert_pdf_to_markdown(pdf_file: Path, ignore_images: bool = False) -> str:
         fallback_text = _convert_pdf_with_docling(pdf_file)
         fallback_text = preprocess_markdown(fallback_text)
         logger.info("Docling fallback succeeded for %s", pdf_file)
-        return fallback_text
+        return fallback_text, "docling", _get_package_version("docling", "2.64.0")
     except Exception as fallback_exc:
-        # Both failed — surface both errors for diagnosis
         primary_msg = f"PyMuPDF4LLM: {primary_exc}" if primary_exc else "PyMuPDF4LLM: quality check failed"
         raise RuntimeError(
             f"PDF conversion failed for {pdf_file}. "
             f"Primary failure — {primary_msg}. "
             f"Fallback (Docling) failure — {fallback_exc}"
         ) from fallback_exc
+
+
+def convert_pdf_to_markdown(pdf_file: Path, ignore_images: bool = False) -> str:
+    """Convert a PDF file to Markdown using a two-stage pipeline with quality-gated fallback."""
+    text, _, _ = convert_pdf_to_markdown_with_meta(pdf_file, ignore_images=ignore_images)
+    return text
 
 
 def convert_docx_to_markdown(docx_file: Path) -> str:
@@ -193,12 +195,26 @@ class DocumentConverter(BaseConverter):
         ignore_images = raw_document.metadata.get("ignore_images", self.ignore_images)
 
         if file_format == ".pdf":
-            return convert_pdf_to_markdown(source_path, ignore_images=ignore_images)
+            text, parser_name, parser_ver = convert_pdf_to_markdown_with_meta(
+                source_path, ignore_images=ignore_images
+            )
+            raw_document.metadata["parser"] = parser_name
+            raw_document.metadata["parser_version"] = parser_ver
+            return text
+
         if file_format == ".docx":
+            raw_document.metadata["parser"] = "pandoc"
+            raw_document.metadata["parser_version"] = _get_package_version("pandoc", fallback="cli")
             return convert_docx_to_markdown(source_path)
+
         if file_format in {".txt", ".md"}:
+            raw_document.metadata["parser"] = "utf8"
+            raw_document.metadata["parser_version"] = sys.version.split()[0]
             return extract_text_content(source_path)
+
         if file_format in {".xls", ".xlsx", ".csv", ".tsv"}:
+            raw_document.metadata["parser"] = "pandas"
+            raw_document.metadata["parser_version"] = _get_package_version("pandas", fallback="2.0.0")
             return convert_spreadsheet_to_markdown(source_path)
 
         raise ValueError(f"Unsupported document format: {file_format}")

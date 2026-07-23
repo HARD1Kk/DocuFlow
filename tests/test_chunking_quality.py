@@ -372,8 +372,9 @@ Section content with detailed information and explanations about the topic cover
             metadata={"source": "test.md", "author": "Test Author"},
         )
 
-        # At least some chunks should have metadata
-        chunks_with_metadata = [c for c in chunk_batch.chunks if c.metadata]
+        # Chunks carry provenance and structural metadata
+        chunks_with_metadata = [c for c in chunk_batch.chunks if c.heading or c.metadata or c.source_path]
+        assert len(chunks_with_metadata) == len(chunk_batch.chunks)
         logger.info(f"✓ {len(chunks_with_metadata)}/{len(chunk_batch.chunks)} chunks have metadata")
 
     def test_content_type_classification(self, chunking_engine):

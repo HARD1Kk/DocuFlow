@@ -14,8 +14,24 @@ class ImageConverter(BaseConverter):
     SUPPORTED_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".gif")
 
     def convert(self, raw_document: RawDocument) -> str:
+        import importlib.metadata
+
         file_format = raw_document.metadata.get("format", "").lower()
         if file_format not in self.SUPPORTED_EXTENSIONS:
             raise ValueError(f"Unsupported image format: {file_format}")
+
+        try:
+            version = importlib.metadata.version("paddleocr")
+            parser_name = "paddleocr"
+        except Exception:
+            try:
+                version = importlib.metadata.version("easyocr")
+                parser_name = "easyocr"
+            except Exception:
+                version = "1.0.0"
+                parser_name = "ocr"
+
+        raw_document.metadata["parser"] = parser_name
+        raw_document.metadata["parser_version"] = version
 
         return convert_image_to_markdown(Path(raw_document.source))

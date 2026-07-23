@@ -9,6 +9,7 @@ from docuflow.processing.converters import ConverterFactory
 from docuflow.processing.ingestion import save_markdown
 from docuflow.processing.parsers import DocumentParser
 from docuflow.schemas.chunk import ChunkingConfig, DocumentType
+from docuflow.schemas.document_context import DocumentContext
 from docuflow.services.bge_text_embedder import BGETextEmbedder
 from docuflow.services.chroma_vector_store import ChromaVectorStore
 from docuflow.services.llm_service import LLMService
@@ -95,24 +96,25 @@ def main() -> None:
                 logger.warning(f"Skipping image {file_path.name} because PaddleOCR/PPStructureV3 is not available.")
                 continue
 
-            with log_context(document_id=file_path.name, stage="Ingestion"):
+            # Load document
+            try:
+                loader = loader_factory.get_loader(str(file_path))
+            except ValueError:
+                logger.warning(f"No loader for {file_path.suffix}; skipping file")
+                continue
+
+            raw_documents = loader.load(str(file_path))
+            if not raw_documents:
+                logger.warning(f"No content loaded for {file_path}, skipping file.")
+                continue
+
+            raw_doc = raw_documents[0]
+            doc_id = DocumentContext.generate_document_id(content=raw_doc.content, source_path=str(file_path))
+
+            with log_context(document_id=doc_id, stage="Ingestion"):
                 logger.info(
                     f"Document received: source={file_path}, type={file_path.suffix}, size={file_path.stat().st_size} bytes"
                 )
-
-                # Load document
-                try:
-                    loader = loader_factory.get_loader(str(file_path))
-                except ValueError:
-                    logger.warning(f"No loader for {file_path.suffix}; skipping file")
-                    continue
-
-                raw_documents = loader.load(str(file_path))
-                if not raw_documents:
-                    logger.warning(f"No content loaded for {file_path}, skipping file.")
-                    continue
-
-                raw_doc = raw_documents[0]
 
                 # Parse / convert & clean document to text
                 parsed_text = parser.parse(raw_doc)
@@ -124,10 +126,25 @@ def main() -> None:
 
                 # Chunk with advanced ChunkingEngine
                 doc_type = get_document_type(file_path)
+                doc_ctx = DocumentContext.from_source(
+                    source_path=str(file_path),
+                    document_type=doc_type,
+                    content=raw_doc.content,
+                    parser=raw_doc.metadata.get("parser", "unknown"),
+                    parser_version=raw_doc.metadata.get("parser_version", "unknown"),
+                )
                 chunk_batch = chunking_engine.chunk(
                     content=parsed_text,
                     document_type=doc_type,
-                    metadata={"source": str(file_path), "filename": file_path.name},
+                    metadata={
+                        "source": str(file_path),
+                        "filename": file_path.name,
+                        "document_id": doc_ctx.document_id,
+                        "document_name": doc_ctx.document_name,
+                        "source_path": doc_ctx.source_path,
+                        "parser": doc_ctx.parser,
+                        "parser_version": doc_ctx.parser_version,
+                    },
                 )
 
                 logger.info(
@@ -170,12 +187,26 @@ def main() -> None:
                         if "document_type" in meta:
                             meta["document_type"] = str(meta["document_type"])
 
-                        # Extract and flatten nested custom metadata
+                        # Extract and flatten nested custom metadata, avoiding duplicate keys
                         nested_meta = meta.get("metadata", {})
                         if isinstance(nested_meta, dict):
+                            redundant_keys = {
+                                "section",
+                                "section_level",
+                                "source",
+                                "filename",
+                                "source_path",
+                                "document_id",
+                                "document_name",
+                                "heading",
+                                "heading_level",
+                                "parser",
+                                "parser_version",
+                            }
                             for k, v in nested_meta.items():
-                                meta[f"meta_{k}"] = str(v)
-                            del meta["metadata"]
+                                if k not in redundant_keys:
+                                    meta[f"meta_{k}"] = str(v)
+                            meta.pop("metadata", None)
 
                         metadatas.append(meta)
 
